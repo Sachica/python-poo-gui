@@ -195,43 +195,102 @@ public class Proyecto extends Observable implements Observer {
         this.update("comandoPython");
     }
 
-    public void setDirectorioRaiz(File directorioRaiz) throws Exceptions {
+    public void setDirectorioRaiz(File directorioRaiz){
         this.directorioRaiz = directorioRaiz;
         this.directorioTrabajo = new Directorio(new File(this.directorioRaiz.getAbsolutePath() + File.separator + "src"));
-
-        // Crear archivo properties
-        try {
-            File properties = new File(this.directorioRaiz.getAbsolutePath() + File.separator + "project.properties");
-            if (!properties.exists() && this.nombre == null) {
-                throw new Exceptions("El directorio seleccionado no contiene ningún proyecto.", null);
-            }
-            if (properties.exists() && this.nombre != null) {
-                throw new Exceptions("El directorio seleccionado ya contiene un proyecto.", null);
-            }
-            if (!properties.exists()) {
-                properties.createNewFile();
-                FileOutputStream out = new FileOutputStream(properties);
-                this.fileProperties.setProperty("NAME", this.nombre);
-                this.fileProperties.setProperty("PYTHON", this.comandoPython);
-                this.fileProperties.setProperty("DIR", this.directorioRaiz.getAbsolutePath());
-                fileProperties.store(out, null);
-                out.close();
-            } else {
-                FileInputStream in = new FileInputStream(properties);
-                this.fileProperties.load(in);
-                this.nombre = this.fileProperties.getProperty("NAME");
-                this.comandoPython = this.fileProperties.getProperty("PYTHON");
-                in.close();
-            }
-        } catch (IOException e) {
-            throw new Exceptions("No se ha podido acceder al archivo de configuración", e);
+    }
+    
+    /**
+     * Carga el proyecto por medio de la operación que se desea crear/abrir
+     * @param crearProyecto Si es verdadero indica que se desea crear un proyecto, de lo contrario abrir
+     * @throws Exceptions 
+     */
+    public void cargarProyecto(boolean crearProyecto) throws Exceptions {
+        File properties = new File(this.directorioRaiz.getAbsolutePath() + File.separator + "project.properties");
+        
+        if(!crearProyecto) this.cargarPropiedades(properties);
+        
+        this.testearPython();
+        
+        if(crearProyecto){
+            this.directorioRaiz.mkdirs();
+            this.crearPropiedades(properties);
         }
-
-        this.terminalInteractiva.inicializarTerminal(this.directorioRaiz, this.comandoPython, new String[]{"scan.py"});
+        
+        this.inicializarProyecto();
+        
         this.update("directorio");
         this.escanearProyecto();
     }
-
+    
+    /**
+     * Inicializa el proyecto en el sistema, carga los ficheros y clases correspondientes del proyecto
+     * @throws Exceptions 
+     */
+    private void inicializarProyecto() throws Exceptions {
+        String commands[] = new String[]{this.comandoPython ,"-i" ,"-q" ,"scan.py"};
+        this.terminalInteractiva.setDirectorio(this.directorioRaiz);
+        this.terminalInteractiva.setParameters(commands);        
+        this.terminalInteractiva.inicializarTerminal();
+    }
+    
+    /**
+     * Testea si el comando para ejecutar python es funcional, de no ser funcional <br>
+     * lanza una excepción
+     * @throws Exceptions 
+     */
+    private void testearPython() throws Exceptions{
+        try{
+            this.terminalInteractiva.setParameters(new String[]{this.comandoPython});
+            this.terminalInteractiva.inicializarTerminal();
+        }catch(Exceptions e){
+            throw new Exceptions("El comando para ejecutar python no es funcional", null);
+        }
+    }
+    
+    /**
+     * Carga el archivo de propiedades del proyecto, es llamado cuando se esta abriendo un proyecto
+     * @param properties
+     * @throws Exceptions 
+     */
+    private void cargarPropiedades(File properties) throws Exceptions{
+        if (!properties.exists() && this.nombre == null) {
+            throw new Exceptions("El directorio seleccionado no contiene ningún proyecto.", null);
+        }
+        if (properties.exists() && this.nombre != null) {
+            throw new Exceptions("El directorio seleccionado ya contiene un proyecto.", null);
+        }
+        
+        try{
+            FileInputStream in = new FileInputStream(properties);
+            this.fileProperties.load(in);
+            this.nombre = this.fileProperties.getProperty("NAME");
+            this.comandoPython = this.fileProperties.getProperty("PYTHON");
+            in.close();
+        }catch(IOException e){
+            throw new Exceptions("No se ha podido acceder al archivo de configuración", null);
+        }
+    }
+    
+    /**
+     * Crea el archivo de propiedades, es llamado cuando se esta creando un proyecto
+     * @param properties
+     * @throws Exceptions 
+     */
+    private void crearPropiedades(File properties) throws Exceptions{
+        try{
+            properties.createNewFile();
+            FileOutputStream out = new FileOutputStream(properties);
+            this.fileProperties.setProperty("NAME", this.nombre);
+            this.fileProperties.setProperty("PYTHON", this.comandoPython);
+            this.fileProperties.setProperty("DIR", this.directorioRaiz.getAbsolutePath());
+            fileProperties.store(out, null);
+            out.close();
+        }catch(IOException e){
+            throw new Exceptions("Ha ocurrido un problema al crear el archivo de propiedades");
+        }
+    }
+    
     public Directorio getDirectorioTrabajo() {
         return directorioTrabajo;
     }

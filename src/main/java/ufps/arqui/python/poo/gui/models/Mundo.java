@@ -73,6 +73,9 @@ public class Mundo extends Observable implements Observer{
         this.entradas.add(mensaje);
         this.terminalInteractiva.ingresarComando(entrada);
         this.nuevaSalida(mensaje);
+        
+        //Luego de enviar comando verificar si el usuario ha creado instancias
+        this.terminalInteractiva.ingresarComando("list_all_instancias(locals()) if 'list_all_instancias' in dir() else [].clear()");
     }
 
     /**
@@ -90,7 +93,7 @@ public class Mundo extends Observable implements Observer{
      * @throws Exceptions En caso de que la terminal no esté inicializada.
      */
     public void reiniciarTerminal() throws Exceptions{
-        this.terminalInteractiva.reiniciarTerminal();
+        this.terminalInteractiva.inicializarTerminal();
         this.salidas.clear();
         this.salidas2.clear();
     }

@@ -29,6 +29,7 @@ public class MenuController implements IMenuController{
         if (dir.exists() && dir.isDirectory()) {
             this.proyecto.resetearProyecto();
             this.proyecto.setDirectorioRaiz(dir);
+            this.proyecto.cargarProyecto(false);
         } else {
             throw new Exceptions("El directorio no existe", null);
         }
@@ -48,7 +49,8 @@ public class MenuController implements IMenuController{
         }
         this.proyecto.setNombre(nombre);
         this.proyecto.setComandoPython(comandoPython);
-        this.proyecto.setDirectorioRaiz(new File(directorio));
+        this.proyecto.setDirectorioRaiz(new File(directorio + File.separator + nombre));
+        this.proyecto.cargarProyecto(true);
     }
 
     @Override

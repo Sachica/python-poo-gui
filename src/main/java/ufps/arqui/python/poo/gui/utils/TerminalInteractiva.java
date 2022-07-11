@@ -5,8 +5,6 @@ import ufps.arqui.python.poo.gui.models.Mensaje;
 import ufps.arqui.python.poo.gui.models.TipoMensaje;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,27 +18,19 @@ public class TerminalInteractiva extends Observable {
 
     private final Logger logger = Logger.getLogger(TerminalInteractiva.class.getName());
 
-    private String directorio;
-    private String python;
-    private Process process;
+    private File directorio;
     private String parameters[];
+    private Process process;
     private BufferedWriter bufferedWriter;
     private BufferedReader bufferedReader;
     private BufferedReader bufferedReaderError;
 
-    /**
-     * Inicializa la terminal de python.
-     *
-     * @param directorio directorio raiz donde ejecutará python
-     * @param parameters listado de parametros que ejecutará despues de inicializar la terminal de python.
-     * @throws Exceptions En caso de que los comando sean invalidos.
-     */
-    public void inicializarTerminal(File directorio, String python, String parameters[]) throws Exceptions {
-        this.parameters = parameters;
-        this.python = python;
+    public TerminalInteractiva() {
+    }
 
-        this.directorio = directorio.getAbsolutePath();
-        this.reiniciarTerminal();
+    public TerminalInteractiva(File directorio, String[] parameters) {
+        this.directorio = directorio;
+        this.parameters = parameters;
     }
 
     /**
@@ -54,7 +44,7 @@ public class TerminalInteractiva extends Observable {
     /**
      * Reinicia el proceso siempre y cuando el proceso este activo.
      */
-    public void reiniciarTerminal() throws Exceptions {
+    public void inicializarTerminal() throws Exceptions {
         try {
             if (terminalActiva()) {
                 this.process.destroyForcibly();
@@ -62,18 +52,8 @@ public class TerminalInteractiva extends Observable {
                 this.bufferedWriter.close();
                 this.bufferedWriter.close();
             }
-            List<String> lineas = new ArrayList();
-            // Inicializar proceso de python, el usuario debe contar con la variable de entorno en sus systema operativo.
-            lineas.add(this.python);
-            // Terminal de python interactiva, donde espera la interacción del usuario.
-            lineas.add("-i");
-            // No imprimir la versión de python.
-            lineas.add("-q");
 
-            for (String p : this.parameters) {
-                lineas.add(p);
-            }
-            this.process = new ProcessBuilder(lineas).directory(new File(this.directorio)).start();
+            this.process = new ProcessBuilder(this.parameters).directory(this.directorio).start();
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(this.process.getInputStream()));
             this.bufferedReaderError = new BufferedReader(new InputStreamReader(this.process.getErrorStream()));
@@ -81,7 +61,7 @@ public class TerminalInteractiva extends Observable {
             this.leerSalida(this.bufferedReader, false);
             this.leerSalida(this.bufferedReaderError, true);
         } catch (IOException e) {
-            throw new Exceptions("La terminal ha fallado", e);
+            throw new Exceptions("La terminal ha fallado", null);
         }
     }
 
@@ -96,11 +76,6 @@ public class TerminalInteractiva extends Observable {
         try {
             if (terminalActiva()) {
                 bufferedWriter.write(command);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
-
-                // En caso de que se modifique las instancias, volver a consultar las instancias.
-                bufferedWriter.write("list_all_instancias(locals()) if 'list_all_instancias' in dir() else [].clear()");
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
             } else {
@@ -132,4 +107,11 @@ public class TerminalInteractiva extends Observable {
         }).start();
     }
 
+    public void setDirectorio(File directorio) {
+        this.directorio = directorio;
+    }
+
+    public void setParameters(String[] parameters) {
+        this.parameters = parameters;
+    }
 }

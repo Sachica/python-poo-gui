@@ -39,7 +39,6 @@ public class PythonPooGui {
 
         // Modelo
         TerminalInteractiva terminalInteractiva = new TerminalInteractiva();
-        terminalInteractiva.inicializarTerminal(new File("."), "python", new String[]{});
 
         Editor editor = new Editor();
         Proyecto proyecto = new Proyecto(terminalInteractiva, editor);
