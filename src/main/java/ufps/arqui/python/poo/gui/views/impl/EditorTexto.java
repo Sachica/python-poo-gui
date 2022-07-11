@@ -207,8 +207,7 @@ public class EditorTexto implements IPanelView, Observer{
         if(arg.toString().equals("archivoAbierto")){
             Editor editor = (Editor)o;
             EditorArchivoContenido eac = new EditorArchivoContenido(
-                    editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath(), 
-                    editor.getUltimoArchivoAbierto().getContenido().toString(),
+                    editor.getUltimoArchivoAbierto(),
                     this.tabbedPane
             );
             

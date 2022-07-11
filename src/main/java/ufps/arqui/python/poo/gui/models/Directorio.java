@@ -87,7 +87,7 @@ public class Directorio {
     
     public ArchivoPython getArchivoPorNombre(String nombre){
         return this.getArchivos().stream()
-                .filter(archivo -> nombre.equals(archivo.getArchivo().getName().split("\\.")[0].split("\\(")[0]))
+                .filter(archivo -> nombre.equals(archivo.getArchivo().getName().split("\\.")[0]))
                 .findAny()
                 .orElse(null);
     }

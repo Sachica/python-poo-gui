@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Modelo para la gestión del proyecto del usuario.
@@ -461,7 +462,8 @@ public class Proyecto extends Observable implements Observer {
         ArchivoPython archivoPython = this.directorioTrabajo.getArchivo(absolutePath);
         
         String dirWork = this.directorioRaiz.getAbsolutePath();
-        String module = absolutePath.replace(dirWork, "").substring(1).replaceAll("\\\\", ".").replace(".py", "");
+        String separador = File.separator+File.separator;
+        String module = absolutePath.replace(dirWork, "").substring(1).replaceAll(separador, ".").replace(".py", "");
         
         this.editor.crearClase(archivoPython, module, nombre);
         

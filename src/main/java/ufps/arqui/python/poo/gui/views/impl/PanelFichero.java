@@ -159,12 +159,14 @@ public class PanelFichero implements IPanelFichero {
     }
 
     private String getFileName(String path) {
-        String[] parts = path.split("\\\\");
+        String separador = File.separator+File.separator;
+        String[] parts = path.split(separador);
         return parts[parts.length - 1];
     }
 
     private String getFolderPath(String path) {
-        return "src"+ File.separator +path.split("\\\\")[0];
+        String separador = File.separator+File.separator;
+        return "src"+ File.separator +path.split(separador)[0];
     }
 
 }

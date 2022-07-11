@@ -10,6 +10,8 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import ufps.arqui.python.poo.gui.models.ArchivoPython;
 
 /**
  *Clase Editor Archivo Contenido
@@ -29,15 +31,15 @@ public class EditorArchivoContenido {
     private final UndoManager undo = new UndoManager(); //instantiate an UndoManager
     private final Document doc;
     
-    public EditorArchivoContenido(String path, String contenido, JTabbedPane tabbedPane) {
+    public EditorArchivoContenido(ArchivoPython archivoPython, JTabbedPane tabbedPane) {
         this.tabbedPane = tabbedPane;
-        this.cotenidoInicial = contenido;
-        
-        this.ruta = path.replace('\\', '/');
+        this.cotenidoInicial = archivoPython.getContenido().toString();
+                        
+        this.ruta = archivoPython.getArchivo().getAbsolutePath();
         
         this.txtArea = new JTextArea();
         this.txtArea.setTabSize(2);
-        this.txtArea.setText(contenido);
+        this.txtArea.setText(this.cotenidoInicial);
         this.doc = txtArea.getDocument();  //instantiate a Document class of the txtArea
         
         this.jsCroll = new JScrollPane();
@@ -46,8 +48,7 @@ public class EditorArchivoContenido {
         this.jsCroll.setRowHeaderView(numero);
         this.jsCroll.setViewportView(txtArea);
         
-        String pathArray[] = this.ruta.split("/");
-        this.titulo = pathArray[pathArray.length - 1];
+        this.titulo = archivoPython.getArchivo().getName();
         
         this.addEvent();
     }

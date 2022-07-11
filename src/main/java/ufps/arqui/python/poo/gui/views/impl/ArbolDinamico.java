@@ -86,7 +86,7 @@ public class ArbolDinamico implements IPanelView {
         String path = "";
         for (TreeNode tn : node.getPath()) {
             if (i++ > 0) {
-                path += tn + "\\";
+                path += tn + File.separator;
             }
         }
 

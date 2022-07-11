@@ -8,6 +8,7 @@ import ufps.arqui.python.poo.gui.views.IPanelProyecto;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.List;
 import java.util.*;
 
@@ -71,7 +72,8 @@ public class PanelProyecto implements IPanelProyecto {
         this.x = 0;
         this.y = 0;
         for (ClasePython clase : classes) {
-            String relativePath = clase.getPathModule().replaceAll("\\.", "\\\\")+".py";
+            String separador = File.separator + File.separator;
+            String relativePath = clase.getPathModule().replaceAll("\\.", separador)+".py";
             PanelClass pcBase = panels.getOrDefault(
                     clase.getNombre(), 
                     new PanelClass(
@@ -87,7 +89,7 @@ public class PanelProyecto implements IPanelProyecto {
             panels.put(clase.getNombre(), pcBase);
 
             for (ClasePython herencia : clase.getHerencia()) {
-                String relativePathHerencia = herencia.getPathModule().replaceAll("\\.", "\\\\")+".py";
+                String relativePathHerencia = herencia.getPathModule().replaceAll("\\.", separador)+".py";
                 PanelClass pcHerencia = panels.getOrDefault(
                         herencia.getNombre(), 
                         new PanelClass(
