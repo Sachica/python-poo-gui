@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane id="BorderPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLTerminalController">
+    <center>
+        <VBox fx:id="paneOutput">
+            <Label text="One"/>
+            <Label text="Two"/>
+            <Label text="Three"/>
+        </VBox>
+    </center>
+    <bottom>
+        <TextField text="Hi!" fx:id="textInput" onKeyPressed="#handleKeyPressed"/>
+    </bottom>
+</BorderPane>
