@@ -45,7 +45,7 @@ public class AdministrarArchivo {
                 stringBuilder.append(line);
                 stringBuilder.append("\n");
             }
-        }catch(IOException E){
+        }catch(IOException e){
             throw new Exceptions("Ocurrio un problema al momento de leer el archivo.", null);
         }
     }
@@ -65,6 +65,8 @@ public class AdministrarArchivo {
             
             out.print(contenido);
             out.close();
+            bw.close();
+            fw.close();
             
         }catch(Exception e){
             throw new Exceptions("No se ha podido escribir en el archivo", null);

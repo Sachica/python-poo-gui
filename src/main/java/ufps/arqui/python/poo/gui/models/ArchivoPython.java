@@ -6,6 +6,7 @@ import ufps.arqui.python.poo.gui.utils.AdministrarArchivo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Modelado de archivo de python.
@@ -13,7 +14,9 @@ import java.util.List;
  * @author Omar Ramón Montes
  */
 public class ArchivoPython {
-
+    
+    private ExcepcionCompilar excepcionCompilar;
+    
     /**
      * Representación del archivo python en String. Es necesario para parsear el
      * json
@@ -57,7 +60,6 @@ public class ArchivoPython {
             String contenidoClase = "\nclass " + nombre + "(object):\n\tpass\n";
                 
             AdministrarArchivo.escribirArchivo(this.getArchivo(), contenidoClase, true);
-            this.leerContenido();
         }else{
             throw new Exceptions("Ya existe una clase con el mismo nombre en el archivo");
         }
@@ -80,6 +82,13 @@ public class ArchivoPython {
         
         ArchivoPython other = (ArchivoPython)o;
         return this.archivo.getAbsolutePath().equals(other.getArchivo().getAbsolutePath());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.archivo);
+        return hash;
     }
     
     public File getArchivo() {
@@ -105,7 +114,17 @@ public class ArchivoPython {
         this.clases.add(clase);
     }
 
-    public StringBuilder getContenido() {
-        return contenido;
+    public String getContenido() throws Exceptions {
+        this.contenido.setLength(0);
+        AdministrarArchivo.abrirArchivo(this.archivo, this.contenido);
+        return this.contenido.toString();
+    }
+
+    public ExcepcionCompilar getExcepcionCompilar() {
+        return excepcionCompilar;
+    }
+
+    public void setExcepcionCompilar(ExcepcionCompilar excepcionCompilar) {
+        this.excepcionCompilar = excepcionCompilar;
     }
 }

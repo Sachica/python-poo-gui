@@ -3,7 +3,7 @@ import inspect
 import json
 import os
 import sys
-import re
+import traceback
 
 
 class ClasePython:
@@ -257,3 +257,28 @@ def scanner_project():
         import_modules.append("from {} import *".format(module))
     print("get_directorio_trabajo:"+json.dumps(json.loads(str(src).replace("'", '"'))))
     print("import_modules:"+json.dumps(json.loads(str(import_modules).replace("'", '"'))))
+
+def compile_file(pathfile):
+    data = None
+    file = open(pathfile, "r")
+    file_read = file.read()
+    file.close()
+    
+    try:
+        exec(file_read)
+    except Exception as e:
+        out_ex = traceback.format_exception(*sys.exc_info())[2:]
+        lineno = int(out_ex[0].split(',')[1].replace(' line ', ""))
+        error = out_ex[-1].rstrip()
+        problem = ""
+        with open(pathfile, "r") as file:
+            n = 1
+            for line in file:
+                if n == lineno:
+                    problem = line.rstrip()
+                n += 1
+        data = {'nlinea': lineno, 'error': error, 'problema': problem}
+    if data:
+        print("error_compile:"+json.dumps(data))
+    else:
+        print("error_compile:")

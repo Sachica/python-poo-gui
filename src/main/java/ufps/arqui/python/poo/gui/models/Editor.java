@@ -26,14 +26,11 @@ public class Editor extends Observable{
      * @param archivo
      * @throws Exceptions 
      */
-    public void abrirArchivo(ArchivoPython archivo) throws Exceptions{
-        this.ultimoArchivoAbierto = archivo;
-        
-        if(this.estaAbierto(archivo)){
+    public void abrirArchivo() throws Exceptions{
+        if(this.estaAbierto(this.ultimoArchivoAbierto)){
             this.update("estaAbierto");
         }else{
-            this.archivosAbiertos.add(archivo);
-            this.ultimoArchivoAbierto.leerContenido();
+            this.archivosAbiertos.add(this.ultimoArchivoAbierto);
             this.update("archivoAbierto");
         }
     }
@@ -55,6 +52,10 @@ public class Editor extends Observable{
     public Set<ArchivoPython> getArchivosAbiertos() {
         return archivosAbiertos;
     }
+
+    public void setUltimoArchivoAbierto(ArchivoPython ultimoArchivoAbierto) {
+        this.ultimoArchivoAbierto = ultimoArchivoAbierto;
+    }
     
     public ArchivoPython getUltimoArchivoAbierto() {
         return ultimoArchivoAbierto;
@@ -73,16 +74,11 @@ public class Editor extends Observable{
 
     public void guardarArchivo(ArchivoPython archivoPython, String contenido) throws Exceptions {
         AdministrarArchivo.escribirArchivo(archivoPython.getArchivo(), contenido, false);
-        archivoPython.leerContenido();
         this.ultimoArchivoAbierto = archivoPython;
-        
-        this.update("actualizacionArchivo");
     }
     
     public void crearClase(ArchivoPython archivoPython, String modulo, String nombre) throws Exceptions{
         archivoPython.crearClase(modulo, nombre);
         this.ultimoArchivoAbierto = archivoPython;
-        
-        this.update("actualizacionArchivo");
     }
 }

@@ -63,6 +63,7 @@ public interface IProyectoController {
      * Se debe de pedir el directorio y el nombre
      * @param path representa el nombre del proyecto.
      * @param contenido representa el directorio raiz donde se guardo.
+     * @throws ufps.arqui.python.poo.gui.exceptions.Exceptions
      */
     void guardarArchivo(String path, String contenido) throws Exceptions;
 

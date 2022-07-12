@@ -36,6 +36,9 @@ public class Mensaje {
         } else if (linea.startsWith("get_lines_class:")) {
             this.linea = this.linea.replaceAll("get_lines_class:", "");
             this.tipo = TipoMensaje.LINE_CLASS;
+        } else if (linea.startsWith("error_compile:")) {
+            this.linea = this.linea.replaceAll("error_compile:", "");
+            this.tipo = TipoMensaje.ERROR_COMPILE;
         }
     }
 

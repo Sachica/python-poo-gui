@@ -10,8 +10,11 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
+import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.models.ArchivoPython;
+import ufps.arqui.python.poo.gui.utils.ConfGrid;
+import ufps.arqui.python.poo.gui.utils.ViewTool;
+import ufps.arqui.python.poo.gui.views.IPanelView;
 
 /**
  *Clase Editor Archivo Contenido
@@ -20,39 +23,75 @@ import ufps.arqui.python.poo.gui.models.ArchivoPython;
  * 
  * @author Rafael Peña
  */
-public class EditorArchivoContenido {
+public class EditorArchivoContenido implements IPanelView{
+    private JPanel panel;
     private JTabbedPane tabbedPane;
-    private String cotenidoInicial;
-    private String titulo;
-    private String ruta;
+    private JTextArea textAreaErrores;
     private JTextArea txtArea;
     private NumeroLinea numero;
-    private JScrollPane jsCroll;
+    private JScrollPane scrollEditor;
     private final UndoManager undo = new UndoManager(); //instantiate an UndoManager
     private final Document doc;
+
     
-    public EditorArchivoContenido(ArchivoPython archivoPython, JTabbedPane tabbedPane) {
+    private String cotenidoInicial;
+    private String ruta;
+    private boolean sinGuardar;
+    
+    public EditorArchivoContenido(JTabbedPane tabbedPane) {
+        this.panel = new JPanel(new GridBagLayout());
         this.tabbedPane = tabbedPane;
-        this.cotenidoInicial = archivoPython.getContenido().toString();
-                        
-        this.ruta = archivoPython.getArchivo().getAbsolutePath();
+        this.sinGuardar = true;
         
         this.txtArea = new JTextArea();
         this.txtArea.setTabSize(2);
         this.txtArea.setText(this.cotenidoInicial);
         this.doc = txtArea.getDocument();  //instantiate a Document class of the txtArea
+        this.textAreaErrores = new JTextArea();
         
-        this.jsCroll = new JScrollPane();
+        this.scrollEditor = new JScrollPane();
         this.numero = new NumeroLinea(txtArea);
         
-        this.jsCroll.setRowHeaderView(numero);
-        this.jsCroll.setViewportView(txtArea);
+        this.scrollEditor.setRowHeaderView(numero);
+        this.scrollEditor.setViewportView(txtArea);
         
-        this.titulo = archivoPython.getArchivo().getName();
-        
+        this.inicializarContenido();
         this.addEvent();
     }
-
+    
+    @Override
+    public void inicializarContenido(){
+        ConfGrid config = new ConfGrid(this.panel, this.scrollEditor);
+        config.setGridx(0);
+        config.setGridy(0);
+        config.setWeightx(1);
+        config.setWeighty(1);
+        config.setGridwidth(1);
+        config.setGridheight(1);
+        config.setFill(GridBagConstraints.BOTH);
+        config.setAnchor(GridBagConstraints.CENTER);
+        config.setIpadx(0);
+        config.setIpady(0);
+        ViewTool.insert(config);
+        
+        this.textAreaErrores.setEditable(false);
+        this.textAreaErrores.setFont(new Font("Monospaced", 1, 12));
+        this.textAreaErrores.setForeground(Color.RED);
+        JScrollPane scrollTextAreaErrores = new JScrollPane(this.textAreaErrores);
+        config = new ConfGrid(this.panel, scrollTextAreaErrores);
+        config.setGridx(0);
+        config.setGridy(1);
+        config.setWeightx(1);
+        config.setWeighty(0);
+        config.setGridwidth(1);
+        config.setGridheight(1);
+        config.setFill(GridBagConstraints.HORIZONTAL);
+        config.setAnchor(GridBagConstraints.CENTER);
+        config.setIpadx(0);
+        config.setIpady(0);
+        ViewTool.insert(config);
+    }
+    
     private void addEvent(){
         doc.addUndoableEditListener(new UndoableEditListener() {
             public void undoableEditHappened(UndoableEditEvent evt) {
@@ -87,17 +126,21 @@ public class EditorArchivoContenido {
             }
             
             private void validateContent(){
-                if(!cotenidoInicial.equals(txtArea.getText())){
-                    tabbedPane.setBackgroundAt(tabbedPane.getSelectedIndex(), Color.GRAY);
-                }else{
-                    tabbedPane.setBackgroundAt(tabbedPane.getSelectedIndex(), new Color(242, 242, 242));
+                if(tabbedPane.getSelectedIndex() != -1){
+                    sinGuardar = !cotenidoInicial.equals(txtArea.getText());
+                    if(sinGuardar){
+                        changeBackgroundColor(tabbedPane.getSelectedIndex(), Color.GRAY);
+                    }else{
+                        changeBackgroundColor(tabbedPane.getSelectedIndex(), new Color(242, 242, 242));
+                    }
                 }
             }
         });
     }
     
-    public JScrollPane getPanel() {
-        return this.jsCroll;
+    @Override
+    public JPanel getPanel() {
+        return this.panel;
     }
 
     public String getPath() {
@@ -115,19 +158,32 @@ public class EditorArchivoContenido {
     public void setTxtArea(JTextArea txtArea) {
         this.txtArea = txtArea;
     }
-
-    public String getTitle() {
-        return titulo;
-    }
-
-    public void setTitle(String title) {
-        this.titulo = title;
+    
+    public void setContenido(ArchivoPython archivoPython){
+        this.ruta = archivoPython.getArchivo().getAbsolutePath();
+        if(sinGuardar){
+            try{
+                this.cotenidoInicial = archivoPython.getContenido();
+                this.sinGuardar = false;
+            }catch(Exceptions e){
+                mostrarError(this.panel, e);
+            }
+        }
+        this.txtArea.setText(this.cotenidoInicial);
+        
+        if(archivoPython.getExcepcionCompilar() != null){
+            this.textAreaErrores.setText(archivoPython.getExcepcionCompilar().toString());
+        }else{
+            this.textAreaErrores.setText("");
+        }
+        
+        this.changeBackgroundColor(tabbedPane.getSelectedIndex(), new Color(242, 242, 242));
     }
     
-    public void setContenido(String contenido){
-        this.txtArea.setText(contenido);
-        this.cotenidoInicial = contenido;
-        tabbedPane.setBackgroundAt(tabbedPane.getSelectedIndex(), new Color(242, 242, 242));
+    private void changeBackgroundColor(int indexTab, Color color){
+        if(indexTab != -1){
+            tabbedPane.setBackgroundAt(indexTab, color);
+        }
     }
     
     public String getContenido(){

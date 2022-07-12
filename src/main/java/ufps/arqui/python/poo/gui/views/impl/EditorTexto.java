@@ -29,7 +29,6 @@ public class EditorTexto implements IPanelView, Observer{
 
     private JFrame frame;
     private JTabbedPane tabbedPane;
-    private JTextArea textAreaErrores;
     private JButton btnNewClass;
     private JButton btnSave;
     private JButton btnClose;
@@ -45,7 +44,6 @@ public class EditorTexto implements IPanelView, Observer{
         this.btnSave.setToolTipText("Alt + S");
         this.btnNewClass = new JButton("Nueva Clase");
         this.btnNewClass.setToolTipText("Alt + C");
-        this.textAreaErrores = new JTextArea();
         this.modalCrearClase = new ModalCrearClase(this);
         this.inicializarContenido();
     }
@@ -121,20 +119,6 @@ public class EditorTexto implements IPanelView, Observer{
         config.setIpady(0);
         ViewTool.insert(config);
         
-        this.textAreaErrores.setEditable(false);
-        config = new ConfGrid(container, this.textAreaErrores);
-        config.setGridx(0);
-        config.setGridy(2);
-        config.setWeightx(1);
-        config.setWeighty(0);
-        config.setGridwidth(1);
-        config.setGridheight(1);
-        config.setFill(GridBagConstraints.HORIZONTAL);
-        config.setAnchor(GridBagConstraints.CENTER);
-        config.setIpadx(0);
-        config.setIpady(100);
-        ViewTool.insert(config);
-
         this.btnSave.setMnemonic(KeyEvent.VK_S);
         this.btnSave.addActionListener(e -> {
             String key_path = this.getKeyComponent(this.tabbedPane.getSelectedComponent());
@@ -204,12 +188,10 @@ public class EditorTexto implements IPanelView, Observer{
 
     @Override
     public void update(Observable o, Object arg) {
+        Editor editor = (Editor)o;
         if(arg.toString().equals("archivoAbierto")){
-            Editor editor = (Editor)o;
-            EditorArchivoContenido eac = new EditorArchivoContenido(
-                    editor.getUltimoArchivoAbierto(),
-                    this.tabbedPane
-            );
+            EditorArchivoContenido eac = new EditorArchivoContenido(this.tabbedPane);
+            eac.setContenido(editor.getUltimoArchivoAbierto());
             
             this.tabbedPane.add(editor.getUltimoArchivoAbierto().getArchivo().getName(), eac.getPanel());
             this.tabbedPane.setSelectedComponent(eac.getPanel());
@@ -217,15 +199,11 @@ public class EditorTexto implements IPanelView, Observer{
             this.frame.setVisible(true);
             
         }else if(arg.toString().equals("estaAbierto")){
-            Editor editor = (Editor)o;
             EditorArchivoContenido eac = this.pestañasAbiertas.get(editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath());
+            eac.setContenido(editor.getUltimoArchivoAbierto());
+            
             this.tabbedPane.setSelectedComponent(eac.getPanel());
             this.frame.setVisible(true);
-            
-        }else if(arg.toString().equals("actualizacionArchivo")){
-            Editor editor = (Editor)o;
-            EditorArchivoContenido eac = this.pestañasAbiertas.get(editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath());
-            eac.setContenido(editor.getUltimoArchivoAbierto().getContenido().toString());
         }
     }
 }

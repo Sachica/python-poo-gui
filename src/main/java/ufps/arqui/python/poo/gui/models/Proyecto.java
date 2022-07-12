@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Modelo para la gestión del proyecto del usuario.
@@ -349,6 +348,17 @@ public class Proyecto extends Observable implements Observer {
                 } catch (Exception e) {
                 }
             }
+            
+            if(m.getTipo().esErrorCompilacion()){
+                try{
+                    ExcepcionCompilar excepcionCompilar = gson.fromJson(m.getLinea(), ExcepcionCompilar.class);
+                    this.editor.getUltimoArchivoAbierto().setExcepcionCompilar(excepcionCompilar);
+                    this.editor.abrirArchivo();
+                    this.escanearProyecto();
+                }catch(Exceptions e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -371,12 +381,25 @@ public class Proyecto extends Observable implements Observer {
      * @throws Exceptions
      */
     public void abrirArchivo(String relativaPathFile) throws Exceptions {
-        relativaPathFile = this.directorioRaiz.getAbsolutePath() + File.separator + relativaPathFile;
-        ArchivoPython archivoPython = this.directorioTrabajo.getArchivo(relativaPathFile);
-        this.editor.abrirArchivo(archivoPython);
+        String absolutePathFile = this.directorioRaiz.getAbsolutePath() + File.separator + relativaPathFile;
+        ArchivoPython archivoPython = this.directorioTrabajo.getArchivo(absolutePathFile);
+        this.editor.setUltimoArchivoAbierto(archivoPython);
+        
+        this.compilarArchivo(relativaPathFile);
     }
 
-
+    /**
+     * Compila uel archivo python destinado en la ruta dada por absolutePathFile
+     * Luego de compilar el archivo se escaneara el proyecto
+     * @param absolutePathFile
+     * @throws Exceptions 
+     */
+    private void compilarArchivo(String absolutePathFile) throws Exceptions{
+        String separador = File.separator + File.separator;
+        absolutePathFile = absolutePathFile.replaceAll(separador, separador+separador);
+        this.terminalInteractiva.ingresarComando("compile_file('"+absolutePathFile+"')");
+    }
+    
     /**
      * Elimina una clase del proyecto
      * @param nombreClase Nombre de la clase a eliminar
@@ -409,7 +432,7 @@ public class Proyecto extends Observable implements Observer {
     public void guardarArchivo(String absolutePathFile, String contenido) throws Exceptions {
         ArchivoPython archivoPython = this.directorioTrabajo.getArchivo(absolutePathFile);
         this.editor.guardarArchivo(archivoPython, contenido);
-        this.escanearProyecto();
+        this.compilarArchivo(absolutePathFile);
     }
 
     /**
@@ -467,7 +490,6 @@ public class Proyecto extends Observable implements Observer {
         
         this.editor.crearClase(archivoPython, module, nombre);
         
-        super.setChanged();
-        super.notifyObservers(obtenerClasesDesde(this.directorioTrabajo));
+        this.escanearProyecto();
     }
 }
