@@ -190,20 +190,23 @@ public class EditorTexto implements IPanelView, Observer{
     public void update(Observable o, Object arg) {
         Editor editor = (Editor)o;
         if(arg.toString().equals("archivoAbierto")){
-            EditorArchivoContenido eac = new EditorArchivoContenido(this.tabbedPane);
-            eac.setContenido(editor.getUltimoArchivoAbierto());
-            
-            this.tabbedPane.add(editor.getUltimoArchivoAbierto().getArchivo().getName(), eac.getPanel());
-            this.tabbedPane.setSelectedComponent(eac.getPanel());
-            this.pestañasAbiertas.put(editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath(), eac);
-            this.frame.setVisible(true);
-            
+            SwingUtilities.invokeLater(() -> {
+                EditorArchivoContenido eac = new EditorArchivoContenido(this.tabbedPane);
+                eac.setContenido(editor.getUltimoArchivoAbierto());
+
+                this.tabbedPane.add(editor.getUltimoArchivoAbierto().getArchivo().getName(), eac.getPanel());
+                this.tabbedPane.setSelectedComponent(eac.getPanel());
+                this.pestañasAbiertas.put(editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath(), eac);
+                this.frame.setVisible(true);
+            });
         }else if(arg.toString().equals("estaAbierto")){
-            EditorArchivoContenido eac = this.pestañasAbiertas.get(editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath());
-            eac.setContenido(editor.getUltimoArchivoAbierto());
-            
-            this.tabbedPane.setSelectedComponent(eac.getPanel());
-            this.frame.setVisible(true);
+            SwingUtilities.invokeLater(() -> {
+                EditorArchivoContenido eac = this.pestañasAbiertas.get(editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath());
+                eac.setContenido(editor.getUltimoArchivoAbierto());
+
+                this.tabbedPane.setSelectedComponent(eac.getPanel());
+                this.frame.setVisible(true);
+            });
         }
     }
 }
