@@ -9,7 +9,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController">
-    <MenuBar>
+    <MenuBar fx:id="menuBar">
         <Menu text="Proyecto">
             <MenuItem text="Abrir proyecto" onAction="#handleModalOpenProject" />
             <MenuItem text="Crear proyecto" onAction="#handleModalCreateProject"/>
