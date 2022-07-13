@@ -12,8 +12,8 @@
             fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController"
             prefHeight="100.0" prefWidth="500.0">
     <center>
-        <GridPane   hgap="10" vgap="10"
-                    alignment="CENTER">
+        <GridPane hgap="10" vgap="10"
+                  alignment="CENTER">
 
             <columnConstraints>
                 <ColumnConstraints percentWidth="15.0"/>
@@ -45,6 +45,6 @@
     </center>
 
     <padding>
-        <Insets left="5" bottom="5" right="5" top="5"/>
+        <Insets left="10" bottom="10" right="10" top="10"/>
     </padding>
 </BorderPane>

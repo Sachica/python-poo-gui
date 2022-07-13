@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController"
+            prefHeight="180.0" prefWidth="500.0">
+    <center>
+        <GridPane   hgap="10" vgap="10"
+                    alignment="CENTER">
+
+            <columnConstraints>
+                <ColumnConstraints percentWidth="15.0"/>
+                <ColumnConstraints percentWidth="65.0"/>
+                <ColumnConstraints percentWidth="20.0"/>
+            </columnConstraints>
+
+            <Label  GridPane.rowIndex="0"
+                    GridPane.columnIndex="0"
+                    text="Nombre"/>
+
+            <TextField  GridPane.rowIndex="0"
+                        GridPane.columnIndex="1"/>
+
+            <Label  GridPane.rowIndex="1"
+                    GridPane.columnIndex="0"
+                    text="Localización"/>
+
+            <TextField  GridPane.rowIndex="1"
+                        GridPane.columnIndex="1"/>
+
+            <Button GridPane.rowIndex="1"
+                    GridPane.columnIndex="2"
+                    text="Buscar"
+                    maxWidth="Infinity"/>
+
+            <Label  GridPane.rowIndex="2"
+                    GridPane.columnIndex="0"
+                    text="Python"/>
+
+            <TextField  GridPane.rowIndex="2"
+                        GridPane.columnIndex="1"
+                        text="python"/>
+
+            <Button GridPane.rowIndex="3"
+                    GridPane.columnIndex="2"
+                    text="Aceptar"
+                    maxWidth="Infinity">
+                <GridPane.margin>
+                    <Insets top="10" />
+                </GridPane.margin>
+            </Button>
+        </GridPane>
+    </center>
+
+    <padding>
+        <Insets left="10" bottom="10" right="10" top="10"/>
+    </padding>
+</BorderPane>
