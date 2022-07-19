@@ -28,15 +28,12 @@ public class FXMLControllerOpenProject extends FXMLBaseController implements Ini
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(() -> {
-            System.out.println(this.proyecto);
-        });
+        super.resources = resources;
     }
    
     @FXML
     private void handleOpenProject(ActionEvent event){
         String directorio = this.textPathProject.getText();
-        System.out.println(directorio);
         
         try {
             if (directorio == null || directorio.trim().isEmpty()) {

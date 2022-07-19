@@ -18,6 +18,7 @@ public class FXMLMundoController extends FXMLBaseController implements Initializ
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        super.resources = resources;
     }
     
 }

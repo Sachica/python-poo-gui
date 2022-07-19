@@ -29,13 +29,7 @@ public class FXMLTerminalController extends FXMLBaseController implements Initia
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Platform.runLater(() -> {
-            this.init(location, resources);
-        });
-    }
-    
-    private void init(URL location, ResourceBundle resources){
-        System.out.println(textInput);
+        super.resources = resources;
     }
     
     @FXML

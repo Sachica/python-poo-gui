@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  *
@@ -26,6 +29,7 @@ public class BluePyUtilities {
     public static final String VIEW_TERMINAL = FXML_LOCATION + "PanelTerminal.fxml";
     
     public final static String MODAL_OPEN_PROJECT = FXML_MODAL_LOCATION + "OpenProject.fxml";
+    public final static String MODAL_CREATE_PROJECT = FXML_MODAL_LOCATION + "CreateProject.fxml";
     
     public static Parent getView(String fxml, Object controller, ResourceBundle resources) throws IOException{
         FXMLLoader loader = new FXMLLoader(BluePyUtilities.class.getResource(fxml), resources);

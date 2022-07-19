@@ -18,6 +18,7 @@ public class FXMLFicheroController extends FXMLBaseController implements Initial
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        super.resources = resources;
     }
     
 }
