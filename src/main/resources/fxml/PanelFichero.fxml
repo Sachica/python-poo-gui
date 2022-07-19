@@ -8,7 +8,6 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml">
-    <!-- TreeView fx:id="treeFiles">
-        <TreeItem value="test"/>
-    </TreeView -->
+    <TreeView fx:id="treeView">
+    </TreeView>
 </AnchorPane>

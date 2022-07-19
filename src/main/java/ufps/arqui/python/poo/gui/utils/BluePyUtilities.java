@@ -31,6 +31,8 @@ public class BluePyUtilities {
     public final static String MODAL_OPEN_PROJECT = FXML_MODAL_LOCATION + "OpenProject.fxml";
     public final static String MODAL_CREATE_PROJECT = FXML_MODAL_LOCATION + "CreateProject.fxml";
     
+    public final static String PYTHON_FILE_LOGO = "/python_logo.png";
+    
     public static Parent getView(String fxml, Object controller, ResourceBundle resources) throws IOException{
         FXMLLoader loader = new FXMLLoader(BluePyUtilities.class.getResource(fxml), resources);
         loader.setController(controller);

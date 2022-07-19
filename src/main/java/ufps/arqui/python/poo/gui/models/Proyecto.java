@@ -11,6 +11,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  * Modelo para la gestión del proyecto del usuario.
@@ -49,7 +55,7 @@ public class Proyecto extends Observable implements Observer {
      * <p>
      * El directorio debe llamarse src, y debe estár dentro del directorio raiz.
      */
-    private Directorio directorioTrabajo;
+    private final ObjectProperty<Directorio> directorioTrabajo = new SimpleObjectProperty<>();
 
     /**
      * Editor de texto, encargado de administrar las operaciones sobre los archivos <br>
@@ -68,6 +74,14 @@ public class Proyecto extends Observable implements Observer {
     public Proyecto(TerminalInteractiva terminalInteractiva, Editor editor) {
         this.terminalInteractiva = terminalInteractiva;
         this.editor = editor;
+        
+        terminalInteractiva.getCurrentMessage().addListener(new ChangeListener<Mensaje>() {
+            @Override
+            public void changed(ObservableValue<? extends Mensaje> observable, Mensaje oldValue, Mensaje newValue) {
+                update(null, newValue);
+            }
+        });
+        
     }
 
     /**
@@ -92,7 +106,7 @@ public class Proyecto extends Observable implements Observer {
         } catch (IOException e) {
             throw new Exceptions("No se ha podido actualizar el archivo scan", e);
         }
-        this.directorioTrabajo = new Directorio(file);
+        this.directorioTrabajo.setValue(new Directorio(file));
         this.terminalInteractiva.ingresarComando("scanner_project()");
 //        this.terminalInteractiva.inicializarTerminal(this.directorioRaiz, new String[]{"scan.py"});
     }
@@ -107,11 +121,11 @@ public class Proyecto extends Observable implements Observer {
      * @param relativePath
      */
     public void obtenerClasesDesde(String relativePath) {
-        String absolutePath = this.directorioTrabajo.getDirectorio().getAbsolutePath()
+        String absolutePath = this.directorioTrabajo.get().getDirectorio().getAbsolutePath()
                 + (!relativePath.isEmpty() ? File.separator : "") + relativePath;
 
         List<ClasePython> classes = this.obtenerClasesDesde(
-                this.obtenerDirectorio(directorioTrabajo, absolutePath));
+                this.obtenerDirectorio(directorioTrabajo.get(), absolutePath));
 
         this.setChanged();
         this.notifyObservers(classes);
@@ -189,7 +203,6 @@ public class Proyecto extends Observable implements Observer {
         this.nombre = null;
         this.comandoPython = null;
         this.fileProperties = new Properties();
-        this.directorioTrabajo = null;
         this.directorioRaiz = null;
     }
 
@@ -200,7 +213,7 @@ public class Proyecto extends Observable implements Observer {
 
     public void setDirectorioRaiz(File directorioRaiz){
         this.directorioRaiz = directorioRaiz;
-        this.directorioTrabajo = new Directorio(new File(this.directorioRaiz.getAbsolutePath() + File.separator + "src"));
+        this.directorioTrabajo.setValue(new Directorio(new File(this.directorioRaiz.getAbsolutePath() + File.separator + "src")));
     }
     
     /**
@@ -294,8 +307,12 @@ public class Proyecto extends Observable implements Observer {
         }
     }
     
-    public Directorio getDirectorioTrabajo() {
+    public ObjectProperty<Directorio> getDirectorioTrabajoProperty() {
         return directorioTrabajo;
+    }
+    
+    public Directorio getDirectorioTrabajo() {
+        return directorioTrabajo.get();
     }
 
     /**
@@ -317,9 +334,7 @@ public class Proyecto extends Observable implements Observer {
             Gson gson = new Gson();
             if (m.getTipo().esDirectorio()) {
                 try {
-                    this.directorioTrabajo = gson.fromJson(m.getLinea(), Directorio.class);
-                    super.setChanged();
-                    super.notifyObservers(obtenerClasesDesde(this.directorioTrabajo));
+                    this.directorioTrabajo.setValue(gson.fromJson(m.getLinea(), Directorio.class));
                     this.update("directoriosTrabajo");
                 } catch (Exception e) {
                 }
@@ -366,8 +381,8 @@ public class Proyecto extends Observable implements Observer {
     }
 
     public void eliminarArchivo(String relativePath) throws Exceptions {
-        File file = new File(this.directorioTrabajo.getDirectorio().getAbsolutePath() + File.separator + relativePath);
-        if (file.getAbsolutePath().equals(this.directorioTrabajo.getDirectorio().getAbsolutePath())) {
+        File file = new File(this.directorioTrabajo.get().getDirectorio().getAbsolutePath() + File.separator + relativePath);
+        if (file.getAbsolutePath().equals(this.directorioTrabajo.get().getDirectorio().getAbsolutePath())) {
             throw new Exceptions("No se puede eliminar el Directorio de Trabajo", null);
         }
         AdministrarArchivo.eliminarArchivo(file);
@@ -385,7 +400,7 @@ public class Proyecto extends Observable implements Observer {
      */
     public void abrirArchivo(String relativaPathFile) throws Exceptions {
         String absolutePathFile = this.directorioRaiz.getAbsolutePath() + File.separator + relativaPathFile;
-        ArchivoPython archivoPython = this.directorioTrabajo.getArchivo(absolutePathFile);
+        ArchivoPython archivoPython = this.directorioTrabajo.get().getArchivo(absolutePathFile);
         this.editor.setUltimoArchivoAbierto(archivoPython);
         
         this.compilarArchivo(relativaPathFile);
@@ -420,7 +435,7 @@ public class Proyecto extends Observable implements Observer {
      * @throws Exceptions
      */
     public void cerrarArchivo(String absolutePathFile) throws Exceptions {
-        ArchivoPython archivoPython = this.directorioTrabajo.getArchivo(absolutePathFile);
+        ArchivoPython archivoPython = this.directorioTrabajo.get().getArchivo(absolutePathFile);
         this.editor.cerrarArchivo(archivoPython);
     }
 
@@ -433,7 +448,7 @@ public class Proyecto extends Observable implements Observer {
      * @throws Exceptions
      */
     public void guardarArchivo(String absolutePathFile, String contenido) throws Exceptions {
-        ArchivoPython archivoPython = this.directorioTrabajo.getArchivo(absolutePathFile);
+        ArchivoPython archivoPython = this.directorioTrabajo.get().getArchivo(absolutePathFile);
         this.editor.guardarArchivo(archivoPython, contenido);
         this.compilarArchivo(absolutePathFile);
     }
@@ -474,7 +489,7 @@ public class Proyecto extends Observable implements Observer {
         }
         ArchivoPython archivo = new ArchivoPython();
         archivo.setArchivo(file);
-        this.directorioTrabajo.addArchivo(archivo);
+        this.directorioTrabajo.get().addArchivo(archivo);
         this.escanearProyecto();
     }
     
@@ -485,7 +500,7 @@ public class Proyecto extends Observable implements Observer {
      * @param nombre Nombre de la clase a ser añadida
      */
     public void crearClase(String absolutePath, String nombre) throws Exceptions {
-        ArchivoPython archivoPython = this.directorioTrabajo.getArchivo(absolutePath);
+        ArchivoPython archivoPython = this.directorioTrabajo.get().getArchivo(absolutePath);
         
         String dirWork = this.directorioRaiz.getAbsolutePath();
         String separador = File.separator+File.separator;

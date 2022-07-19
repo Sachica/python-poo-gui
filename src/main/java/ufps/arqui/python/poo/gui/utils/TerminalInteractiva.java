@@ -8,6 +8,8 @@ import java.io.*;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * Terminal interactiva que interactura con python.
@@ -24,7 +26,9 @@ public class TerminalInteractiva extends Observable {
     private BufferedWriter bufferedWriter;
     private BufferedReader bufferedReader;
     private BufferedReader bufferedReaderError;
-
+    
+    private final ObjectProperty<Mensaje> currentMessage = new SimpleObjectProperty<>();
+    
     public TerminalInteractiva() {
     }
 
@@ -98,8 +102,7 @@ public class TerminalInteractiva extends Observable {
             try {
                 String linea = "";
                 while ((linea = buffered.readLine()) != null) {
-                    this.setChanged();
-                    this.notifyObservers(new Mensaje(linea, error ? TipoMensaje.ERROR : TipoMensaje.SALIDA));
+                    this.currentMessage.setValue(new Mensaje(linea, error ? TipoMensaje.ERROR : TipoMensaje.SALIDA));
                 }
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Error al leer el archivo: " + e.getMessage() + ": " + e.getLocalizedMessage());
@@ -113,5 +116,9 @@ public class TerminalInteractiva extends Observable {
 
     public void setParameters(String[] parameters) {
         this.parameters = parameters;
+    }
+
+    public ObjectProperty<Mensaje> getCurrentMessage() {
+        return currentMessage;
     }
 }

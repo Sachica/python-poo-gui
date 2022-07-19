@@ -24,26 +24,31 @@
                     GridPane.columnIndex="0"
                     text="%Modal.name"/>
 
-            <TextField  GridPane.rowIndex="0"
-                        GridPane.columnIndex="1"/>
+            <TextField  fx:id="txtName"
+                        GridPane.rowIndex="0"
+                        GridPane.columnIndex="1"
+                        onKeyReleased="#handleChangeName"/>
 
             <Label  GridPane.rowIndex="1"
                     GridPane.columnIndex="0"
                     text="%Modal.localization"/>
 
-            <TextField  GridPane.rowIndex="1"
+            <TextField  fx:id="txtPathFolder"
+                        GridPane.rowIndex="1"
                         GridPane.columnIndex="1"/>
 
             <Button GridPane.rowIndex="1"
                     GridPane.columnIndex="2"
                     text="%Modal.search"
-                    maxWidth="Infinity"/>
+                    maxWidth="Infinity"
+                    onAction="#handleSearchFolder"/>
 
             <Label  GridPane.rowIndex="2"
                     GridPane.columnIndex="0"
                     text="Python"/>
 
-            <TextField  GridPane.rowIndex="2"
+            <TextField  fx:id="txtPython"
+                        GridPane.rowIndex="2"
                         GridPane.columnIndex="1"
                         text="python"/>
 
