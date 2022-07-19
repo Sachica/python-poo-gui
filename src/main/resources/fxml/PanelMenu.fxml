@@ -6,17 +6,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController">
-    <MenuBar fx:id="menuBar">
-        <Menu text="Proyecto">
-            <MenuItem text="Abrir proyecto" onAction="#handleModalOpenProject" />
-            <MenuItem text="Crear proyecto" onAction="#handleModalCreateProject"/>
-        </Menu>
-        <Menu text="Ayuda">
-            <MenuItem text="Manual de usuario"/>
-            <MenuItem text="Acerca de"/>
-        </Menu>
-    </MenuBar>
-</AnchorPane>
+<!-- Controller: ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController -->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml">
+    <center>
+        <MenuBar fx:id="menuBar">
+            <Menu text="%PanelMenu.project">
+                <MenuItem text="%Modal.openProject" onAction="#handleModalOpenProject"/>
+                <MenuItem text="%Modal.createProject" onAction="#handleModalCreateProject"/>
+            </Menu>
+            <Menu text="%PanelMenu.tools">
+                <MenuItem text="%PanelMenu.search"/>
+                <SeparatorMenuItem />
+                <MenuItem text="%PanelMenu.preferences"/>
+            </Menu>
+            <Menu text="%PanelMenu.help">
+                <MenuItem text="%PanelMenu.manual"/>
+                <MenuItem text="%PanelMenu.aboutUs"/>
+            </Menu>
+        </MenuBar>
+    </center>
+</BorderPane>

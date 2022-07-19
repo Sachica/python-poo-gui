@@ -10,9 +10,9 @@ import ufps.arqui.python.poo.gui.models.Proyecto;
  *
  * @author Sachikia
  */
-public class FXMLMundoController extends FXMLBaseController implements Initializable{
+public class FXMLFicheroController extends FXMLBaseController implements Initializable{
 
-    public FXMLMundoController(Stage stage, Proyecto proyecto) {
+    public FXMLFicheroController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
     }
 

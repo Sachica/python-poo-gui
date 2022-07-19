@@ -60,7 +60,10 @@ public class Proyecto extends Observable implements Observer {
     /**
      * Instancia de la terminal interactiva.
      */
-    private final TerminalInteractiva terminalInteractiva;
+    private TerminalInteractiva terminalInteractiva;
+
+    public Proyecto() {
+    }
 
     public Proyecto(TerminalInteractiva terminalInteractiva, Editor editor) {
         this.terminalInteractiva = terminalInteractiva;

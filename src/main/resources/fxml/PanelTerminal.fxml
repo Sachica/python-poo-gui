@@ -8,8 +8,7 @@
 
 <BorderPane id="BorderPane"
             xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLTerminalController">
+            xmlns:fx="http://javafx.com/fxml/1">
     <center>
         <VBox fx:id="paneOutput">
             <Label text="One"/>
@@ -18,6 +17,6 @@
         </VBox>
     </center>
     <bottom>
-        <TextField text="Hi!" fx:id="textInput" onKeyPressed="#handleKeyPressed"/>
+        <TextField text="Hi!" fx:id="textInput"/>
     </bottom>
 </BorderPane>

@@ -1,27 +1,75 @@
 package ufps.arqui.python.poo.gui;
 
+import java.io.IOException;
 import java.util.ResourceBundle;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import ufps.arqui.python.poo.gui.controllers.impl.FXMLFicheroController;
+import ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController;
+import ufps.arqui.python.poo.gui.controllers.impl.FXMLMundoController;
+import ufps.arqui.python.poo.gui.controllers.impl.FXMLProyectoController;
+import ufps.arqui.python.poo.gui.controllers.impl.FXMLTerminalController;
+import ufps.arqui.python.poo.gui.models.Editor;
+import ufps.arqui.python.poo.gui.models.Proyecto;
+import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
+import ufps.arqui.python.poo.gui.utils.TerminalInteractiva;
 
 
 public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        ResourceBundle resources = ResourceBundle.getBundle("strings/strings_es");
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"), resources);
-        
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
+        Scene mainScene = this.getMainScene(stage);
         
         stage.setTitle("JavaFX and Maven");
-        stage.setScene(scene);
+        stage.setScene(mainScene);
         stage.show();
+    }
+    
+    private Scene getMainScene(Stage stage) throws IOException{
+        ResourceBundle resources = BluePyUtilities.getDefaultResources();
+        
+        Proyecto proyecto = new Proyecto(new TerminalInteractiva(), new Editor());
+        
+        FXMLMenuController menuController = new FXMLMenuController(stage, proyecto);
+        Parent menuView = BluePyUtilities.getView(BluePyUtilities.VIEW_MENU, menuController, resources);
+        
+        FXMLFicheroController ficheroController = new FXMLFicheroController(stage, proyecto);
+        Parent ficheroView = BluePyUtilities.getView(BluePyUtilities.VIEW_FICHERO, ficheroController, resources);
+        
+        FXMLProyectoController proyectoController = new FXMLProyectoController(stage, proyecto);
+        Parent proyectoView = BluePyUtilities.getView(BluePyUtilities.VIEW_PROYECTO, proyectoController, resources);
+        
+        FXMLMundoController mundoController = new FXMLMundoController(stage, proyecto);
+        Parent mundoView = BluePyUtilities.getView(BluePyUtilities.VIEW_MUNDO, mundoController, resources);
+        
+        FXMLTerminalController terminalController = new FXMLTerminalController(stage, proyecto);
+        Parent terminalView = BluePyUtilities.getView(BluePyUtilities.VIEW_TERMINAL, terminalController, resources);
+        
+        SplitPane ficheroProyecto = new SplitPane(ficheroView, proyectoView);
+        ficheroProyecto.setDividerPositions(0.2);
+        
+        SplitPane mundoTerminal = new SplitPane(mundoView, terminalView);
+        mundoTerminal.setDividerPositions(0.7);
+        
+        SplitPane mainSplitPane = new SplitPane(ficheroProyecto, mundoTerminal);
+        mainSplitPane.setDividerPositions(0.7);
+        mainSplitPane.setOrientation(Orientation.VERTICAL);
+        
+        BorderPane root = new BorderPane();
+        root.setPrefSize(1110, 650);
+        root.setTop(menuView);
+        root.setCenter(mainSplitPane);
+        
+        return new Scene(root);
     }
 
     /**

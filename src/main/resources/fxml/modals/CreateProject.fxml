@@ -23,21 +23,21 @@
 
             <Label  GridPane.rowIndex="0"
                     GridPane.columnIndex="0"
-                    text="Nombre"/>
+                    text="%Modal.name"/>
 
             <TextField  GridPane.rowIndex="0"
                         GridPane.columnIndex="1"/>
 
             <Label  GridPane.rowIndex="1"
                     GridPane.columnIndex="0"
-                    text="Localización"/>
+                    text="%Modal.localization"/>
 
             <TextField  GridPane.rowIndex="1"
                         GridPane.columnIndex="1"/>
 
             <Button GridPane.rowIndex="1"
                     GridPane.columnIndex="2"
-                    text="Buscar"
+                    text="%Modal.search"
                     maxWidth="Infinity"/>
 
             <Label  GridPane.rowIndex="2"
@@ -50,7 +50,7 @@
 
             <Button GridPane.rowIndex="3"
                     GridPane.columnIndex="2"
-                    text="Aceptar"
+                    text="%Modal.search"
                     maxWidth="Infinity">
                 <GridPane.margin>
                     <Insets top="10" />
