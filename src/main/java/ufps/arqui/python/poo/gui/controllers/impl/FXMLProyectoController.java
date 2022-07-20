@@ -34,23 +34,9 @@ public class FXMLProyectoController extends FXMLBaseController implements Initia
     public void initialize(URL location, ResourceBundle resources) {
         super.resources = resources;
         
-        final Callback<Class<?>, Object> controllerFactory = type -> {
-            try {
-                for (Constructor<?> c : type.getConstructors()) {
-                    if (c.getParameterCount() == 2 && c.getParameterTypes()[0] == Stage.class
-                            && c.getParameterTypes()[1] == Proyecto.class) {
-                        return c.newInstance(this.stage, this.proyecto);
-                    }
-                }
-                return type.newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
-        
         this.view.setRoot(this.root);
         this.view.setResources(resources);
-        this.view.setControllerFactory(controllerFactory);
+        this.view.setControllerFactory(super.getControllerFactory());
         
         this.proyecto.getCurrentListClassesProperty().addListener(new ChangeListener<List<ClasePython>>() {
             @Override

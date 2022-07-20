@@ -6,9 +6,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<!-- Controller: ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController -->
 <BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml">
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController">
     <center>
         <MenuBar fx:id="menuBar">
             <Menu text="%PanelMenu.project">

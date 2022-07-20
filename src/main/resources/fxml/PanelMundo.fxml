@@ -8,6 +8,7 @@
 
 <GridPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            style="-fx-background-color: #000">
+            style="-fx-background-color: #000"
+            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLMundoController">
 
 </GridPane>

@@ -6,7 +6,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<!-- fx:controller="ufps.arqui.python.poo.gui.controllers.impl.complements.FXMLPanelClassController" -->
 <BorderPane id="root"
             prefHeight="80.0"
             prefWidth="140.0"

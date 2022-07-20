@@ -32,7 +32,9 @@ public class ViewProject implements IViewProject{
             try{
                 int i = 0, j = 0;
                 for(ClasePython clasePython: classes){
-                    Parent classPanel = BluePyUtilities.getView(BluePyUtilities.COMPLEMENT_PANEL_CLASS, this.controllerFactory, this.resources);
+                    Object objsClassPanel[] = BluePyUtilities.loadView(BluePyUtilities.COMPLEMENT_PANEL_CLASS, this.controllerFactory, this.resources);
+                    
+                    Parent classPanel = BluePyUtilities.get(Parent.class, objsClassPanel);
                     ((Label)classPanel.lookup("#lblName")).setText(clasePython.getNombre());
                     root.add(classPanel, j, i);
                     j++;

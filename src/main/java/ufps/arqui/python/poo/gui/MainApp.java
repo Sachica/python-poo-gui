@@ -12,6 +12,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import ufps.arqui.python.poo.gui.controllers.impl.FXMLBaseController;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLFicheroController;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLMundoController;
@@ -41,34 +42,43 @@ public class MainApp extends Application {
         
         Proyecto proyecto = new Proyecto(new TerminalInteractiva(), new Editor());
         
+        FXMLBaseController baseController = new FXMLBaseController(stage, proyecto);
+        
         //View Menu
-        FXMLControllerOpenProject controllerModalOpenProject = new FXMLControllerOpenProject(stage, proyecto);
-        Parent modalOpenProject = BluePyUtilities.getView(BluePyUtilities.MODAL_OPEN_PROJECT, controllerModalOpenProject, resources);
+        Object objModalOpenProject[] = BluePyUtilities.loadView(BluePyUtilities.MODAL_OPEN_PROJECT, baseController.getControllerFactory(), resources);
+        FXMLControllerOpenProject controllerModalOpenProject = BluePyUtilities.get(FXMLControllerOpenProject.class, objModalOpenProject);
+        Parent modalOpenProject = BluePyUtilities.get(Parent.class, objModalOpenProject);
         
-        FXMLControllerCreateProject controllerCreateProject = new FXMLControllerCreateProject(stage, proyecto);
-        Parent modalCreateProject = BluePyUtilities.getView(BluePyUtilities.MODAL_CREATE_PROJECT, controllerCreateProject, resources);
+        Object objModalCreateProject[] = BluePyUtilities.loadView(BluePyUtilities.MODAL_CREATE_PROJECT, baseController.getControllerFactory(), resources);
+        FXMLControllerCreateProject controllerCreateProject = BluePyUtilities.get(FXMLControllerCreateProject.class, objModalCreateProject);
+        Parent modalCreateProject = BluePyUtilities.get(Parent.class, objModalCreateProject);
         
-        FXMLMenuController menuController = new FXMLMenuController(stage, proyecto);
-        Parent menuView = BluePyUtilities.getView(BluePyUtilities.VIEW_MENU, menuController, resources);
+        Object objMenu[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_MENU, baseController.getControllerFactory(), resources);
+        FXMLMenuController menuController = BluePyUtilities.get(FXMLMenuController.class, objMenu);
+        Parent menuView = BluePyUtilities.get(Parent.class, objMenu);
         
         menuController.setModalOpenProject(modalOpenProject);
         menuController.setModalCreateProject(modalCreateProject);
         
         //View Fichero
-        FXMLFicheroController ficheroController = new FXMLFicheroController(stage, proyecto);
-        Parent ficheroView = BluePyUtilities.getView(BluePyUtilities.VIEW_FICHERO, ficheroController, resources);
+        Object objFichero[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_FICHERO, baseController.getControllerFactory(), resources);
+        FXMLFicheroController ficheroController = BluePyUtilities.get(FXMLFicheroController.class, objFichero);
+        Parent ficheroView = BluePyUtilities.get(Parent.class, objFichero);
         
         //View Project
-        FXMLProyectoController proyectoController = new FXMLProyectoController(stage, proyecto);
-        Parent proyectoView = BluePyUtilities.getView(BluePyUtilities.VIEW_PROYECTO, proyectoController, resources);
+        Object objProject[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_PROYECTO, baseController.getControllerFactory(), resources);
+        FXMLProyectoController proyectoController = BluePyUtilities.get(FXMLProyectoController.class, objProject);
+        Parent proyectoView = BluePyUtilities.get(Parent.class, objProject);
         
         //View Mundo
-        FXMLMundoController mundoController = new FXMLMundoController(stage, proyecto);
-        Parent mundoView = BluePyUtilities.getView(BluePyUtilities.VIEW_MUNDO, mundoController, resources);
+        Object objMundo[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_MUNDO, baseController.getControllerFactory(), resources);
+        FXMLMundoController mundoController = BluePyUtilities.get(FXMLMundoController.class, objMundo);
+        Parent mundoView = BluePyUtilities.get(Parent.class, objMundo);
         
         //View Terminal
-        FXMLTerminalController terminalController = new FXMLTerminalController(stage, proyecto);
-        Parent terminalView = BluePyUtilities.getView(BluePyUtilities.VIEW_TERMINAL, terminalController, resources);
+        Object objTerminal[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_TERMINAL, baseController.getControllerFactory(), resources);
+        FXMLTerminalController terminalController = BluePyUtilities.get(FXMLTerminalController.class, objTerminal);
+        Parent terminalView = BluePyUtilities.get(Parent.class, objTerminal);
         
         SplitPane ficheroProyecto = new SplitPane(ficheroView, proyectoView);
         ficheroProyecto.setDividerPositions(0.2);
