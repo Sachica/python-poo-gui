@@ -56,6 +56,8 @@ public class Proyecto extends Observable implements Observer {
      * El directorio debe llamarse src, y debe estár dentro del directorio raiz.
      */
     private final ObjectProperty<Directorio> directorioTrabajo = new SimpleObjectProperty<>();
+    
+    private final ObjectProperty<List<ClasePython>> currentListClasses = new SimpleObjectProperty<>();
 
     /**
      * Editor de texto, encargado de administrar las operaciones sobre los archivos <br>
@@ -126,7 +128,8 @@ public class Proyecto extends Observable implements Observer {
 
         List<ClasePython> classes = this.obtenerClasesDesde(
                 this.obtenerDirectorio(directorioTrabajo.get(), absolutePath));
-
+        
+        this.currentListClasses.setValue(classes);
         this.setChanged();
         this.notifyObservers(classes);
     }
@@ -314,6 +317,10 @@ public class Proyecto extends Observable implements Observer {
     public Directorio getDirectorioTrabajo() {
         return directorioTrabajo.get();
     }
+    
+    public ObjectProperty<List<ClasePython>> getCurrentListClassesProperty() {
+        return this.currentListClasses;
+    }
 
     /**
      * Actualiza el modelo y notifica a los observaciones del Mundo a que se a
@@ -335,6 +342,7 @@ public class Proyecto extends Observable implements Observer {
             if (m.getTipo().esDirectorio()) {
                 try {
                     this.directorioTrabajo.setValue(gson.fromJson(m.getLinea(), Directorio.class));
+                    this.currentListClasses.setValue(this.obtenerClasesDesde(this.directorioTrabajo.get()));
                     this.update("directoriosTrabajo");
                 } catch (Exception e) {
                 }
