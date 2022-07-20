@@ -6,8 +6,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml">
-    <TreeView fx:id="treeView">
-    </TreeView>
-</AnchorPane>
+    <center>
+        <TreeView fx:id="treeView">
+        </TreeView>
+    </center>
+</BorderPane>
