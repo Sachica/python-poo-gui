@@ -42,20 +42,12 @@ public class FXMLControllerOpenProject extends FXMLBaseController<BorderPane, Vi
    
     @FXML
     private void handleOpenProject(ActionEvent event){
-        String directorio = this.txtPathProject.getText();
-        
         try {
-            if (directorio == null || directorio.trim().isEmpty()) {
-                throw new Exceptions("El directorio del proyecto está vacio", null);
-            }
-            File dir = new File(directorio);
-            if (dir.exists() && dir.isDirectory()) {
-                this.proyecto.resetearProyecto();
-                this.proyecto.setDirectorioRaiz(dir);
-                this.proyecto.cargarProyecto(false);
-            } else {
-                throw new Exceptions("El directorio no existe", null);
-            }
+            File directorio = this.view.getValidatePathProject();
+            
+            this.proyecto.resetearProyecto();
+            this.proyecto.setDirectorioRaiz(directorio);
+            this.proyecto.cargarProyecto(false);
         }catch (Exceptions e){
 //            super.showError(e);
         }
