@@ -118,14 +118,11 @@ public class Proyecto extends Observable implements Observer {
      * obtener la ruta absooluta del directorio en el cual se extraeran las
      * clases
      *
-     * @param relativePath
+     * @param fichero
      */
-    public void obtenerClasesDesde(String relativePath) {
-        String absolutePath = this.directorioTrabajo.get().getFichero().getAbsolutePath()
-                + (!relativePath.isEmpty() ? File.separator : "") + relativePath;
-
+    public void obtenerClasesDesde(Fichero fichero) {
         List<ClasePython> classes = this.obtenerClasesDesde(
-                this.obtenerDirectorio(directorioTrabajo.get(), absolutePath));
+                this.obtenerDirectorio(directorioTrabajo.get(), fichero.getFichero().getAbsolutePath()));
         
         this.currentListClasses.setValue(classes);
         this.setChanged();

@@ -28,6 +28,7 @@ public class ViewProject extends ViewBase<GridPane, Object> implements IViewProj
     public void drawClasses(List<ClasePython> classes){
         Platform.runLater(() -> {
             try{
+                super.root.getChildren().clear();
                 int i = 0, j = 0;
                 for(ClasePython clasePython: classes){
                     Object objsClassPanel[] = BluePyUtilities.loadView(BluePyUtilities.COMPLEMENT_PANEL_CLASS, this.controllerFactory, this.resources);

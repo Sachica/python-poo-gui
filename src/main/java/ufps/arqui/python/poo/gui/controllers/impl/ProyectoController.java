@@ -26,7 +26,7 @@ public class ProyectoController implements IProyectoController {
 
     @Override
     public void obtenerClasesDesde(String relativePath) {
-        this.proyecto.obtenerClasesDesde(relativePath);
+//        this.proyecto.obtenerClasesDesde(relativePath);
     }
 
     public void eliminarArchivo(String relativePath) throws Exceptions {
