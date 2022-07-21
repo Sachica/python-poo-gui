@@ -1,9 +1,12 @@
 package ufps.arqui.python.poo.gui.views.impl;
 
+import java.util.ResourceBundle;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
@@ -13,8 +16,12 @@ import ufps.arqui.python.poo.gui.views.IViewFichero;
  *
  * @author Sachikia
  */
-public class ViewFichero implements IViewFichero{
+public class ViewFichero extends ViewBase<BorderPane, Object> implements IViewFichero{
     private TreeView<String> treeView;
+
+    public ViewFichero(BorderPane view, Stage stage, ResourceBundle resources) {
+        super(view, stage, resources);
+    }
     
     @Override
     public void populateTreeView(Directorio directorio) {

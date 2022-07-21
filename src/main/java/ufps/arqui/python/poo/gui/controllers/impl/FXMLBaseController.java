@@ -1,28 +1,26 @@
-
 package ufps.arqui.python.poo.gui.controllers.impl;
 
 import java.lang.reflect.Constructor;
 import java.util.ResourceBundle;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.models.Proyecto;
 
-public class FXMLBaseController {
+public class FXMLBaseController<T, K> {
+
     protected final Stage stage;
     protected final Proyecto proyecto;
+
+    @FXML
+    protected T root;
+    protected K view;
+
     protected ResourceBundle resources;
 
     public FXMLBaseController(Stage stage, Proyecto proyecto) {
         this.stage = stage;
         this.proyecto = proyecto;
-    }
-
-    protected void showError(Exceptions e){
-        Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
-        alert.show();
     }
 
     public Proyecto getProyecto() {
@@ -40,8 +38,12 @@ public class FXMLBaseController {
     public void setResources(ResourceBundle resources) {
         this.resources = resources;
     }
-    
-    public Callback<Class<?>, Object> getControllerFactory(){
+
+    public K getView() {
+        return view;
+    }
+
+    public Callback<Class<?>, Object> getControllerFactory() {
         return type -> {
             try {
                 for (Constructor<?> c : type.getConstructors()) {
@@ -55,5 +57,17 @@ public class FXMLBaseController {
                 throw new RuntimeException(e);
             }
         };
+    }
+
+    public void init(Class<K> view) {
+        try {
+            for (Constructor c : view.getConstructors()) {
+                if (c.getParameterCount() == 3) {
+                    this.view = (K) c.newInstance(this.root, this.stage, this.resources);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

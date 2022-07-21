@@ -7,19 +7,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.stage.DirectoryChooser;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLBaseController;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.models.Proyecto;
+import ufps.arqui.python.poo.gui.views.impl.modals.ViewModalOpenProject;
 
 /**
  *
  * @author Sachikia
  */
-public class FXMLControllerOpenProject extends FXMLBaseController implements Initializable{
-    private final DirectoryChooser folderChooser = new DirectoryChooser();
-    
+public class FXMLControllerOpenProject extends FXMLBaseController<BorderPane, ViewModalOpenProject> implements Initializable{
     @FXML
     private TextField txtPathProject; 
 
@@ -30,15 +29,15 @@ public class FXMLControllerOpenProject extends FXMLBaseController implements Ini
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.resources = resources;
+        
+        super.init(ViewModalOpenProject.class);
+        
+        super.view.setTxtPathProject(this.txtPathProject);
     }
     
     @FXML
     private void handleSearchFolder(ActionEvent event){
-        final File selectedFolder = this.folderChooser.showDialog(this.stage);
-        
-        if(selectedFolder != null){
-            this.txtPathProject.setText(selectedFolder.getAbsolutePath());
-        }
+        this.view.showSearchFolder();
     }
    
     @FXML
@@ -58,7 +57,7 @@ public class FXMLControllerOpenProject extends FXMLBaseController implements Ini
                 throw new Exceptions("El directorio no existe", null);
             }
         }catch (Exceptions e){
-            super.showError(e);
+//            super.showError(e);
         }
         
     }

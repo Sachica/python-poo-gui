@@ -2,32 +2,20 @@ package ufps.arqui.python.poo.gui.controllers.impl;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
+import javafx.scene.layout.BorderPane;
 import ufps.arqui.python.poo.gui.models.Proyecto;
+import ufps.arqui.python.poo.gui.views.impl.ViewMenu;
 
 /**
  *
  * @author Sachikia
  */
-public class FXMLMenuController extends FXMLBaseController implements Initializable{
-
-    /**
-     * Stage para cargar el FXML "OpenProject"
-     */
-    private final Stage modalOpenProject = new Stage();
-    
-    /**
-     * Stage para cargar el FXML "CreateProject"
-     */
-    private final Stage modalCreateProject = new Stage();
+public class FXMLMenuController extends FXMLBaseController<BorderPane, ViewMenu> implements Initializable{
 
     public FXMLMenuController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
@@ -36,29 +24,20 @@ public class FXMLMenuController extends FXMLBaseController implements Initializa
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.resources = resources;
+        
+        super.init(ViewMenu.class);
+        
+        super.view.setControllerFactory(super.getControllerFactory());
+        super.view.preload(null);
     }
        
     @FXML
-    private void handleModalOpenProject(ActionEvent event) throws IOException {
-        this.modalOpenProject.show();
+    private void handleModalOpenProject(ActionEvent event) {
+        super.view.showModalOpenProject();
     }
     
     @FXML
     private void handleModalCreateProject(ActionEvent event){
-        this.modalCreateProject.show();
-    }
-
-    public void setModalOpenProject(Parent root) {
-        this.modalOpenProject.setScene(new Scene(root));
-        this.modalOpenProject.setTitle(resources.getString("Modal.openProject"));
-        this.modalOpenProject.initModality(Modality.APPLICATION_MODAL);
-        this.modalOpenProject.initOwner(this.stage);
-    }
-    
-    public void setModalCreateProject(Parent root) {
-        this.modalCreateProject.setScene(new Scene(root));
-        this.modalCreateProject.setTitle(resources.getString("Modal.createProject"));
-        this.modalCreateProject.initModality(Modality.APPLICATION_MODAL);
-        this.modalCreateProject.initOwner(this.stage);
+        this.view.showModalCreateProject();
     }
 }

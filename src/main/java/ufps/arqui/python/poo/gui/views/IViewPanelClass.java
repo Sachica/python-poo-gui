@@ -7,5 +7,5 @@ import ufps.arqui.python.poo.gui.models.ClasePython;
  *
  * @author Sachikia
  */
-public interface IVIewPanelClass {
+public interface IViewPanelClass {
 }

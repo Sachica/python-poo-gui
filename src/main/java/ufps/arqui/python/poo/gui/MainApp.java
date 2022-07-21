@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLBaseController;
@@ -18,8 +16,6 @@ import ufps.arqui.python.poo.gui.controllers.impl.FXMLMenuController;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLMundoController;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLProyectoController;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLTerminalController;
-import ufps.arqui.python.poo.gui.controllers.impl.modals.FXMLControllerCreateProject;
-import ufps.arqui.python.poo.gui.controllers.impl.modals.FXMLControllerOpenProject;
 import ufps.arqui.python.poo.gui.models.Editor;
 import ufps.arqui.python.poo.gui.models.Proyecto;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
@@ -45,20 +41,12 @@ public class MainApp extends Application {
         FXMLBaseController baseController = new FXMLBaseController(stage, proyecto);
         
         //View Menu
-        Object objModalOpenProject[] = BluePyUtilities.loadView(BluePyUtilities.MODAL_OPEN_PROJECT, baseController.getControllerFactory(), resources);
-        FXMLControllerOpenProject controllerModalOpenProject = BluePyUtilities.get(FXMLControllerOpenProject.class, objModalOpenProject);
-        Parent modalOpenProject = BluePyUtilities.get(Parent.class, objModalOpenProject);
-        
-        Object objModalCreateProject[] = BluePyUtilities.loadView(BluePyUtilities.MODAL_CREATE_PROJECT, baseController.getControllerFactory(), resources);
-        FXMLControllerCreateProject controllerCreateProject = BluePyUtilities.get(FXMLControllerCreateProject.class, objModalCreateProject);
-        Parent modalCreateProject = BluePyUtilities.get(Parent.class, objModalCreateProject);
-        
         Object objMenu[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_MENU, baseController.getControllerFactory(), resources);
         FXMLMenuController menuController = BluePyUtilities.get(FXMLMenuController.class, objMenu);
         Parent menuView = BluePyUtilities.get(Parent.class, objMenu);
         
-        menuController.setModalOpenProject(modalOpenProject);
-        menuController.setModalCreateProject(modalCreateProject);
+//        menuController.setModalOpenProject(modalOpenProject);
+//        menuController.setModalCreateProject(modalCreateProject);
         
         //View Fichero
         Object objFichero[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_FICHERO, baseController.getControllerFactory(), resources);

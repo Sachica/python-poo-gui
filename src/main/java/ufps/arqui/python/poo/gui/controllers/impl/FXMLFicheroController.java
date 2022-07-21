@@ -7,19 +7,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Proyecto;
-import ufps.arqui.python.poo.gui.views.IViewFichero;
 import ufps.arqui.python.poo.gui.views.impl.ViewFichero;
 
 /**
  *
  * @author Sachikia
  */
-public class FXMLFicheroController extends FXMLBaseController implements Initializable{
-    private final IViewFichero view = new ViewFichero();
-    
+public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFichero>  implements Initializable{
     @FXML
     private TreeView<String> treeView;
     
@@ -30,6 +28,8 @@ public class FXMLFicheroController extends FXMLBaseController implements Initial
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.resources = resources;
+        
+        super.init(ViewFichero.class);
         
         this.view.setTreeView(this.treeView);
         
