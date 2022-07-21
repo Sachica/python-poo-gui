@@ -13,20 +13,9 @@ import java.util.Objects;
  *
  * @author Omar Ramón Montes
  */
-public class ArchivoPython {
+public class ArchivoPython extends Fichero{
     
     private ExcepcionCompilar excepcionCompilar;
-    
-    /**
-     * Representación del archivo python en String. Es necesario para parsear el
-     * json
-     */
-    private String archivoStr;
-
-    /**
-     * Representación del archivo python.
-     */
-    private File archivo;
     
     /**
      * Contenido del archivo
@@ -38,6 +27,13 @@ public class ArchivoPython {
      */
     private List<ClasePython> clases = new ArrayList<>();
 
+    public ArchivoPython() {
+    }
+
+    public ArchivoPython(File fichero) {
+        super(fichero);
+    }
+    
     /**
      * Crear una clase en el atchivo actual.
      * 
@@ -59,7 +55,7 @@ public class ArchivoPython {
                 
             String contenidoClase = "\nclass " + nombre + "(object):\n\tpass\n";
                 
-            AdministrarArchivo.escribirArchivo(this.getArchivo(), contenidoClase, true);
+            AdministrarArchivo.escribirArchivo(super.getFichero(), contenidoClase, true);
         }else{
             throw new Exceptions("Ya existe una clase con el mismo nombre en el archivo");
         }
@@ -71,7 +67,7 @@ public class ArchivoPython {
      */
     public void leerContenido() throws Exceptions{
         this.contenido.setLength(0);
-        AdministrarArchivo.abrirArchivo(this.archivo, this.contenido);
+        AdministrarArchivo.abrirArchivo(this.fichero, this.contenido);
     }
     
     @Override
@@ -81,25 +77,14 @@ public class ArchivoPython {
         }
         
         ArchivoPython other = (ArchivoPython)o;
-        return this.archivo.getAbsolutePath().equals(other.getArchivo().getAbsolutePath());
+        return this.fichero.getAbsolutePath().equals(other.getFichero().getAbsolutePath());
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 67 * hash + Objects.hashCode(this.archivo);
+        hash = 67 * hash + Objects.hashCode(super.fichero);
         return hash;
-    }
-    
-    public File getArchivo() {
-        if (this.archivo == null && this.archivoStr != null) {
-            this.archivo = new File(this.archivoStr);
-        }
-        return archivo;
-    }
-
-    public void setArchivo(File archivo) {
-        this.archivo = archivo;
     }
 
     public List<ClasePython> getClases() {
@@ -116,7 +101,7 @@ public class ArchivoPython {
 
     public String getContenido() throws Exceptions {
         this.contenido.setLength(0);
-        AdministrarArchivo.abrirArchivo(this.archivo, this.contenido);
+        AdministrarArchivo.abrirArchivo(super.fichero, this.contenido);
         return this.contenido.toString();
     }
 

@@ -160,7 +160,7 @@ public class EditorArchivoContenido implements IPanelView{
     }
     
     public void setContenido(ArchivoPython archivoPython){
-        this.ruta = archivoPython.getArchivo().getAbsolutePath();
+        this.ruta = archivoPython.getFichero().getAbsolutePath();
         if(sinGuardar){
             try{
                 this.cotenidoInicial = archivoPython.getContenido();

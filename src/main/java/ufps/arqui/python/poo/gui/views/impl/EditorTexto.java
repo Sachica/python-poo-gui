@@ -194,14 +194,14 @@ public class EditorTexto implements IPanelView, Observer{
                 EditorArchivoContenido eac = new EditorArchivoContenido(this.tabbedPane);
                 eac.setContenido(editor.getUltimoArchivoAbierto());
 
-                this.tabbedPane.add(editor.getUltimoArchivoAbierto().getArchivo().getName(), eac.getPanel());
+                this.tabbedPane.add(editor.getUltimoArchivoAbierto().getFichero().getName(), eac.getPanel());
                 this.tabbedPane.setSelectedComponent(eac.getPanel());
-                this.pestañasAbiertas.put(editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath(), eac);
+                this.pestañasAbiertas.put(editor.getUltimoArchivoAbierto().getFichero().getAbsolutePath(), eac);
                 this.frame.setVisible(true);
             });
         }else if(arg.toString().equals("estaAbierto")){
             SwingUtilities.invokeLater(() -> {
-                EditorArchivoContenido eac = this.pestañasAbiertas.get(editor.getUltimoArchivoAbierto().getArchivo().getAbsolutePath());
+                EditorArchivoContenido eac = this.pestañasAbiertas.get(editor.getUltimoArchivoAbierto().getFichero().getAbsolutePath());
                 eac.setContenido(editor.getUltimoArchivoAbierto());
 
                 this.tabbedPane.setSelectedComponent(eac.getPanel());

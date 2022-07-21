@@ -11,8 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -123,7 +121,7 @@ public class Proyecto extends Observable implements Observer {
      * @param relativePath
      */
     public void obtenerClasesDesde(String relativePath) {
-        String absolutePath = this.directorioTrabajo.get().getDirectorio().getAbsolutePath()
+        String absolutePath = this.directorioTrabajo.get().getFichero().getAbsolutePath()
                 + (!relativePath.isEmpty() ? File.separator : "") + relativePath;
 
         List<ClasePython> classes = this.obtenerClasesDesde(
@@ -169,7 +167,7 @@ public class Proyecto extends Observable implements Observer {
      * @return
      */
     private Directorio obtenerDirectorio(Directorio dir, String absolutePath) {
-        if (dir.getDirectorio().getAbsolutePath().equals(absolutePath)) {
+        if (dir.getFichero().getAbsolutePath().equals(absolutePath)) {
             return dir;
         }
         Directorio directorio = null;
@@ -389,8 +387,8 @@ public class Proyecto extends Observable implements Observer {
     }
 
     public void eliminarArchivo(String relativePath) throws Exceptions {
-        File file = new File(this.directorioTrabajo.get().getDirectorio().getAbsolutePath() + File.separator + relativePath);
-        if (file.getAbsolutePath().equals(this.directorioTrabajo.get().getDirectorio().getAbsolutePath())) {
+        File file = new File(this.directorioTrabajo.get().getFichero().getAbsolutePath() + File.separator + relativePath);
+        if (file.getAbsolutePath().equals(this.directorioTrabajo.get().getFichero().getAbsolutePath())) {
             throw new Exceptions("No se puede eliminar el Directorio de Trabajo", null);
         }
         AdministrarArchivo.eliminarArchivo(file);
@@ -496,7 +494,7 @@ public class Proyecto extends Observable implements Observer {
             throw new Exceptions("El archivo no puede ser creado", e);
         }
         ArchivoPython archivo = new ArchivoPython();
-        archivo.setArchivo(file);
+        archivo.setFichero(file);
         this.directorioTrabajo.get().addArchivo(archivo);
         this.escanearProyecto();
     }

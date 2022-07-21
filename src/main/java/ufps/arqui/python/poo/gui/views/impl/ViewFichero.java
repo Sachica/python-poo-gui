@@ -9,29 +9,30 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.Directorio;
+import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
-import ufps.arqui.python.poo.gui.views.IViewFichero;
 
 /**
  *
  * @author Sachikia
  */
-public class ViewFichero extends ViewBase<BorderPane, Object> implements IViewFichero{
-    private TreeView<String> treeView;
+public class ViewFichero extends ViewBase<BorderPane, Object>{
+    private TreeView<Fichero> treeView;
 
     public ViewFichero(BorderPane view, Stage stage, ResourceBundle resources) {
         super(view, stage, resources);
     }
     
-    @Override
     public void populateTreeView(Directorio directorio) {
         this.populate(directorio, null);
     }
     
-    private void populate(Directorio dir, TreeItem<String> parent){
-        TreeItem<String> child = new TreeItem<>(dir.getDirectorio().getName());
+    private void populate(Directorio dir, TreeItem<Fichero> parent){
+        TreeItem<Fichero> child = new TreeItem<>(dir);
+        child.setExpanded(true);
         if(parent == null){
             this.treeView.setRoot(child);
+            
         }else{
             parent.getChildren().add(child);
         }
@@ -41,7 +42,7 @@ public class ViewFichero extends ViewBase<BorderPane, Object> implements IViewFi
             imgView.setFitHeight(15);
             imgView.setFitWidth(15);
             
-            TreeItem<String> treeFile = new TreeItem<>(archivoPython.getArchivo().getName(), imgView);
+            TreeItem<Fichero> treeFile = new TreeItem<>(archivoPython, imgView);
             child.getChildren().add(treeFile);
         }
         
@@ -50,8 +51,7 @@ public class ViewFichero extends ViewBase<BorderPane, Object> implements IViewFi
         }
     }
 
-    @Override
-    public void setTreeView(TreeView<String> treeView) {
+    public void setTreeView(TreeView<Fichero> treeView) {
         this.treeView = treeView;
     }
 }

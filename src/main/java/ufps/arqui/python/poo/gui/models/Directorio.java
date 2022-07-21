@@ -9,18 +9,7 @@ import java.util.List;
  *
  * @author Omar Ramón Montes
  */
-public class Directorio {
-
-    /**
-     * Representación de un directorio en String. Es necesario para parsear el
-     * json
-     */
-    private String directorioStr;
-
-    /**
-     * Representación de un directorio.
-     */
-    private File directorio;
+public class Directorio extends Fichero{
 
     /**
      * Listado de directorios dentro del directorio actual.
@@ -32,12 +21,11 @@ public class Directorio {
      */
     private List<ArchivoPython> archivos = new ArrayList<>();
 
-    public Directorio(File directorio) {
-        this.directorio = directorio;
+    public Directorio() {
     }
-    
-    public Directorio(){
-        
+
+    public Directorio(File fichero) {
+        super(fichero);
     }
 
     /**
@@ -47,12 +35,12 @@ public class Directorio {
      * @param nombreArchivo
      */
     public void crearArchivo(String nombreArchivo) {
-        File file = new File(directorio.getAbsolutePath() + "/" + nombreArchivo + ".py");
+        File file = new File(super.fichero.getAbsolutePath() + "/" + nombreArchivo + ".py");
         try {
             if (!file.exists()) {
                 file.createNewFile();
                 ArchivoPython ap = new ArchivoPython();
-                ap.setArchivo(file);
+                ap.setFichero(file);
                 addArchivo(ap);
             } else {
                 //..
@@ -60,17 +48,6 @@ public class Directorio {
         } catch (Exception e) {
             //..
         }
-    }
-
-    public File getDirectorio() {
-        if (this.directorio == null && this.directorioStr != null) {
-            this.directorio = new File(this.directorioStr);
-        }
-        return directorio;
-    }
-
-    public void setDirectorio(File directorio) {
-        this.directorio = directorio;
     }
 
     public List<Directorio> getDirectorios() {
@@ -87,7 +64,7 @@ public class Directorio {
     
     public ArchivoPython getArchivoPorNombre(String nombre){
         return this.getArchivos().stream()
-                .filter(archivo -> nombre.equals(archivo.getArchivo().getName().split("\\.")[0]))
+                .filter(archivo -> nombre.equals(archivo.getFichero().getName().split("\\.")[0]))
                 .findAny()
                 .orElse(null);
     }
@@ -112,7 +89,7 @@ public class Directorio {
     public ArchivoPython getArchivo(String absolutePath){
         ArchivoPython res = null;
         for(ArchivoPython archivoPython: this.archivos){
-            if(archivoPython.getArchivo().getAbsolutePath().equals(absolutePath)){
+            if(archivoPython.getFichero().getAbsolutePath().equals(absolutePath)){
                 res = archivoPython;
                 break;
             }
@@ -127,10 +104,4 @@ public class Directorio {
         
         return res;
     }
-
-    @Override
-    public String toString() {
-        return "Directorio{" + "directorio=" + directorio + '}';
-    }
-
 }

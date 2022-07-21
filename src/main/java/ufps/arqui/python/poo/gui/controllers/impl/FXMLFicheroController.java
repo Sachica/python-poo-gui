@@ -10,6 +10,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.models.Directorio;
+import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.models.Proyecto;
 import ufps.arqui.python.poo.gui.views.impl.ViewFichero;
 
@@ -19,7 +20,7 @@ import ufps.arqui.python.poo.gui.views.impl.ViewFichero;
  */
 public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFichero>  implements Initializable{
     @FXML
-    private TreeView<String> treeView;
+    private TreeView<Fichero> treeView;
     
     public FXMLFicheroController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);

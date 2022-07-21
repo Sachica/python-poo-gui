@@ -196,7 +196,7 @@ public class ArbolDinamico implements IPanelView {
         this.resetTree();
         this.load = true;
         for (ArchivoPython file : directorioTrabajo.getArchivos()) {
-            this.addObject(this.rootNode, file.getArchivo().getName());
+            this.addObject(this.rootNode, file.getFichero().getName());
         }
         for (Directorio subdir : directorioTrabajo.getDirectorios()) {
             this.populate(subdir, this.rootNode);
@@ -212,9 +212,9 @@ public class ArbolDinamico implements IPanelView {
      */
     private void populate(Directorio directorio, DefaultMutableTreeNode parent) {
 
-        DefaultMutableTreeNode node = this.addObject(parent, directorio.getDirectorio().getName());
+        DefaultMutableTreeNode node = this.addObject(parent, directorio.getFichero().getName());
         for (ArchivoPython file : directorio.getArchivos()) {
-            this.addObject(node, file.getArchivo().getName());
+            this.addObject(node, file.getFichero().getName());
         }
         for (Directorio subdir : directorio.getDirectorios()) {
             this.populate(subdir, node);

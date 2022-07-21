@@ -43,7 +43,7 @@ class ArchivoPython:
 
     def to_json(self):
         return {
-            "archivoStr": self.file,
+            "ficheroStr": self.file,
             "module": self.name,
             "clases": self.__get_list_classes_json()
         }
@@ -103,7 +103,7 @@ class Directorio:
 
     def to_json(self):
         return {
-            "directorioStr": self.directorio,
+            "ficheroStr": self.directorio,
             "archivos": self.__get_list_files_json(),
             "directorios": self.__get_list_folders_json()
         }
