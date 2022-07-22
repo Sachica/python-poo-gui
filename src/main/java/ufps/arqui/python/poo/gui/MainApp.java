@@ -45,9 +45,6 @@ public class MainApp extends Application {
         FXMLMenuController menuController = BluePyUtilities.get(FXMLMenuController.class, objMenu);
         Parent menuView = BluePyUtilities.get(Parent.class, objMenu);
         
-//        menuController.setModalOpenProject(modalOpenProject);
-//        menuController.setModalCreateProject(modalCreateProject);
-        
         //View Fichero
         Object objFichero[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_FICHERO, baseController.getControllerFactory(), resources);
         FXMLFicheroController ficheroController = BluePyUtilities.get(FXMLFicheroController.class, objFichero);

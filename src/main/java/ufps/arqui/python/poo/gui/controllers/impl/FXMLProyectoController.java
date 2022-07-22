@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.layout.GridPane;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.models.ClasePython;
 import ufps.arqui.python.poo.gui.models.Proyecto;
@@ -16,7 +19,12 @@ import ufps.arqui.python.poo.gui.views.impl.ViewProject;
  *
  * @author Sachikia
  */
-public class FXMLProyectoController extends FXMLBaseController<GridPane, ViewProject> implements Initializable{
+public class FXMLProyectoController extends FXMLBaseController<ScrollPane, ViewProject> implements Initializable{
+    @FXML
+    private Pane gridpane;
+    
+    @FXML
+    private Canvas canvas;
     
     public FXMLProyectoController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
@@ -27,8 +35,9 @@ public class FXMLProyectoController extends FXMLBaseController<GridPane, ViewPro
         super.resources = resources;
         super.init(ViewProject.class);
         
-        this.view.setResources(resources);
         this.view.setControllerFactory(super.getControllerFactory());
+        this.view.setGridpane(this.gridpane);
+        this.view.setCanvas(this.canvas);
         
         this.proyecto.getCurrentListClassesProperty().addListener(new ChangeListener<List<ClasePython>>() {
             @Override

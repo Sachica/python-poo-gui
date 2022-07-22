@@ -1,5 +1,9 @@
 package ufps.arqui.python.poo.gui.models;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleDoubleProperty;
+
 /**
  * Representa los puntos cardinales de un panel.
  *
@@ -10,34 +14,58 @@ public class Posicion {
     /**
      * Posición en el plano horizontal.
      */
-    private int x;
+    private final DoubleProperty x = new SimpleDoubleProperty();
 
     /**
      * Posición en el plano vertical.
      */
-    private int y;
+    private final DoubleProperty y = new SimpleDoubleProperty();
 
     public Posicion() {
     }
 
     public Posicion(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.x.setValue(x);
+        this.y.setValue(y);
     }
 
-    public int getX() {
+    public DoubleProperty getX() {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
+    public DoubleProperty getY() {
         return y;
     }
-
-    public void setY(int y) {
-        this.y = y;
+    
+    public void setPosicion(double x, double y){
+        this.setX(x);
+        this.setY(y);
+    }
+    
+    public void setX(double x){
+        this.x.setValue(x);
+    }
+    
+    public void setY(double y){
+        this.y.setValue(y);
+    }
+    
+    public void unbind(){
+        this.x.unbind();
+        this.y.unbind();
+    }
+    
+    public void bindBidirectional(Property<Number> x, Property<Number> y){
+        this.x.bindBidirectional(x);
+        this.y.bindBidirectional(y);
+    }
+    
+    public void unbindBidirectional(Property<Number> x, Property<Number> y){
+        this.x.unbindBidirectional(x);
+        this.y.unbindBidirectional(y);
+    }
+    
+    public boolean isUnassigned(){
+        return this.x.get() == 0 && this.y.get() == 0;
     }
 }

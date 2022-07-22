@@ -25,7 +25,7 @@ public class ClasePython {
     /**
      * Posición en la cual la clase SERA o FUE dibujada en la vista 
      */
-    private Posicion posicion;
+    private final Posicion posicion = new Posicion();
 
     public String getNombre() {
         return nombre;
@@ -49,10 +49,6 @@ public class ClasePython {
 
     public Posicion getPosicion() {
         return posicion;
-    }
-
-    public void setPosicion(Posicion posicion) {
-        this.posicion = posicion;
     }
 
     public String getPathModule() {

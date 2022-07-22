@@ -3,13 +3,24 @@
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane   fx:id="root"
-            xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            hgap="10" vgap="10"
-            alignment="CENTER"
-            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLProyectoController">
-</GridPane>
+<ScrollPane  fx:id="root"
+             xmlns="http://javafx.com/javafx"
+             xmlns:fx="http://javafx.com/fxml"
+             fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLProyectoController">
+<StackPane>
+    <BorderPane>
+        <center>
+            <Canvas fx:id="canvas"
+                    GridPane.rowIndex="0"
+                    GridPane.columnIndex="0"/>
+        </center>
+    </BorderPane>
+
+    <Pane   fx:id="gridpane"
+                style="-fx-background-color: rgba(255, 0, 255, 0);"/>
+</StackPane>
+</ScrollPane>
