@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -23,6 +24,7 @@ import ufps.arqui.python.poo.gui.views.impl.ViewBase;
  */
 public class ViewPanelClass extends ViewBase<BorderPane, ClasePython>implements IViewPanelClass{
     private Label lblName;
+    private ContextMenu contextMenu;
     
     private double mouseAnchorX;
     private double mouseAnchorY;
@@ -42,6 +44,13 @@ public class ViewPanelClass extends ViewBase<BorderPane, ClasePython>implements 
     public void setLblName(Label lblName) {
         this.lblName = lblName;
     }
+    
+    public void setContextMenu(ContextMenu contextMenu) {
+        this.contextMenu = contextMenu;
+        super.root.setOnContextMenuRequested(event -> {
+            this.contextMenu.show(super.root, event.getScreenX(), event.getScreenY());
+        });
+    }
 
     public List<ViewPanelClass> getHerencia() {
         return herencia;
@@ -57,13 +66,13 @@ public class ViewPanelClass extends ViewBase<BorderPane, ClasePython>implements 
                 
         this.lblName.setText(this.clasePython.getNombre());
         
-            this.initialTranslateX = this.clasePython.getPosicion().getX().get();
-            this.initialTranslateY = this.clasePython.getPosicion().getY().get();
-            this.currentTranslateX.setValue(this.initialTranslateX);
-            this.currentTranslateY.setValue(this.initialTranslateY);
+        this.initialTranslateX = this.clasePython.getPosicion().getX().get();
+        this.initialTranslateY = this.clasePython.getPosicion().getY().get();
+        this.currentTranslateX.setValue(this.initialTranslateX);
+        this.currentTranslateY.setValue(this.initialTranslateY);
             
-            super.root.setTranslateX(this.initialTranslateX);
-            super.root.setTranslateY(this.initialTranslateY);
+        super.root.setTranslateX(this.initialTranslateX);
+        super.root.setTranslateY(this.initialTranslateY);
         
         this.clasePython.getPosicion().bindBidirectional(this.currentTranslateX, this.currentTranslateY);
     }

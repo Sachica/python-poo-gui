@@ -18,4 +18,13 @@
                 alignment="CENTER"
                 maxWidth="Infinity"/>
     </top>
+    
+    <fx:define>
+        <ContextMenu fx:id="contextMenu">
+            <items>
+                <MenuItem text="%PanelClass.deleteClass" onAction="#handleDeleteClass" />
+                <MenuItem text="%PanelClass.editClass" onAction="#handleEditClass" />
+            </items>
+        </ContextMenu>
+    </fx:define>
 </BorderPane>

@@ -2,6 +2,7 @@ package ufps.arqui.python.poo.gui.views.impl;
 
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -28,7 +29,9 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
     }
     
     public void populateTreeView(Directorio directorio) {
-        this.populate(directorio, null);
+        Platform.runLater(() -> {
+            this.populate(directorio, null);
+        });
     }
     
     private void populate(Directorio dir, TreeItem<Fichero> parent){
@@ -36,7 +39,6 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
         child.setExpanded(true);
         if(parent == null){
             this.treeView.setRoot(child);
-            
         }else{
             parent.getChildren().add(child);
         }
