@@ -7,7 +7,8 @@ import traceback
 
 
 class ClasePython:
-    def __init__(self, nombre, path_module):
+    def __init__(self, id, nombre, path_module):
+        self.id = id
         self.nombre = nombre
         self.path_module = path_module
         self.herencia = []
@@ -15,18 +16,19 @@ class ClasePython:
     def __get_list_herencia_json(self):
         list_herencia_json = []
         for herencia in self.herencia:
-            list_herencia_json.append(herencia.to_json())
+            list_herencia_json.append(str(herencia))
         return list_herencia_json
 
     def to_json(self):
         return {
+            "id": self.id,
             "nombre": self.nombre,
             "pathModule": self.path_module,
-            "herencia": self.__get_list_herencia_json()
+            "herenciaJSON": self.__get_list_herencia_json()
         }
     
     def __str__(self) -> str:
-        return str(self.to_json())
+        return str(self.id)
 
 
 class ArchivoPython:
@@ -38,14 +40,14 @@ class ArchivoPython:
     def __get_list_classes_json(self):
         list_classes_json = []
         for clase in self.clases:
-            list_classes_json.append(clase.to_json())
+            list_classes_json.append(str(clase))
         return list_classes_json
 
     def to_json(self):
         return {
             "ficheroStr": self.file,
             "module": self.name,
-            "clases": self.__get_list_classes_json()
+            "clasesJSON": self.__get_list_classes_json()
         }
     
     def __str__(self) -> str:
@@ -112,8 +114,8 @@ class Directorio:
     def to_json(self):
         return {
             "ficheroStr": self.directorio,
-            "archivos": self.__get_list_files_json(),
-            "directorios": self.__get_list_folders_json()
+            "archivosJSON": self.__get_list_files_json(),
+            "directoriosJSON": self.__get_list_folders_json()
         }
 
     def __str__(self) -> str:
@@ -180,10 +182,10 @@ def list_all_python_class_with_hierarchy(list_of_files_folder):
     list_errores = []
     #Almacena las rutas de los directorios[str]
     list_folders_str = []
-    #Almacena las rutas de las clases[str]
-    list_class_path = []
     #Almacena los directorios[Directorio]
     dict_folders_class = {}
+    id_auto = 1
+    dict_class_classpython = {}
     for file in list_of_files:
         ## Eliminar modulos previamente importados.
         exec('if "{0}" in sys.modules.keys():del sys.modules["{0}"]'.format(file[:-3].replace(os.sep, ".")))
@@ -206,41 +208,68 @@ def list_all_python_class_with_hierarchy(list_of_files_folder):
                 #Verifica que la clase sea del mismo archivo y no de otro debido al import
                 if(path_module_file == path_module_class):
                     clase_path = path_module_class + "." + class_name
-                    if clase_path not in list_class_path:
-                        list_class_path.append(clase_path)
-                        clase_python = ClasePython(class_name, path_module_class)
+                    if clase_path not in dict_class_classpython:
+                        dict_class_classpython[clase_path] = ClasePython(id_auto, class_name, path_module_class)
+                        id_auto += 1
+                        archivo.clases.append(dict_class_classpython[clase_path])
+                    clase_python = dict_class_classpython[clase_path]
 
-                        #Verifica que la clase tenga mas de una clase base, debido a que por default cuando no hay clase base se lista ka object class
-                        class_bases = class_type.__bases__
-                        if len(class_bases) != 1 or class_bases[0].__name__ != "object":
-                            for type_class in class_bases:
-                                class_split = str(type_class).split("'")[1].split(".")
-                                path_mod_herencia, class_name_herencia = ".".join(class_split[:-1]), class_split[-1]
+                    #Verifica que la clase tenga mas de una clase base, debido a que por default cuando no hay clase base se lista ka object class
+                    class_bases = class_type.__bases__
+                    if len(class_bases) != 1 or class_bases[0].__name__ != "object":
+                        for type_class in class_bases:
+                            class_split = str(type_class).split("'")[1].split(".")
+                            path_mod_herencia, class_name_herencia = ".".join(class_split[:-1]), class_split[-1]
 
-                                clase_python.herencia.append(ClasePython(class_name_herencia, path_mod_herencia))
-                        archivo.clases.append(clase_python)
+                            class_path_base = '.'.join([path_mod_herencia, class_name_herencia])
+                            if class_path_base not in dict_class_classpython:
+                                dict_class_classpython[class_path_base] = ClasePython(id_auto, class_name_herencia, path_mod_herencia)
+                                id_auto += 1
+
+                            clase_python.herencia.append(dict_class_classpython[class_path_base])
         except Exception as err:
             list_errores.append(str(err))
-    return [dict_folders_class, list_errores]
+    return [dict_folders_class, list_errores, dict_class_classpython.values()]
 
 def scanner_project():
     dict_folders_class = list_all_python_class_with_hierarchy(list_files("src"))
     errores = dict_folders_class[1]
+    classes_obj = dict_folders_class[2]
+
     if errores:
         for error in errores:
             print("errores_importacion:{}".format(error))
+
+    #Obtiene el folder base y lo elimina del dictionario
     dict_folders_class = dict_folders_class[0]
     src = dict_folders_class["src"]
     del dict_folders_class["src"]
+
+    #Recorre todos los folders e insertar los subfolder donde correspondan
     for val in dict_folders_class.values():
         src.push_folder(val, val.directorio.split(os.sep)[1:])
+
+    #Cambia la ruta relativa a absoluta
     src.set_absolute_path(os.getcwd())
+
+    #Preparar imports modulos para print
     module_names = src.get_names_modules()
     import_modules = []
     for module in module_names:
         import_modules.append("from {} import *".format(module))
-    #print("get_directorio_trabajo:"+json.dumps(json.loads(str(src).replace("'", '"')), indent=4))
-    print("get_directorio_trabajo:"+json.dumps(json.loads(str(src).replace("'", '"'))))
+
+    #Clases python objetos a json
+    classes_str = {}
+    for clazz in classes_obj:
+        classes_str[str(clazz.id)] = clazz.to_json()
+    
+    #Preparar data de directorios y clases para print
+    directory_json = str(src).replace("'", '"')
+    classes_json = str(classes_str).replace("'", '"')
+    data_json = {"directory": json.loads(directory_json), "classes": json.loads(classes_json)}
+    
+    #print(json.dumps(json.loads(str(data_json).replace("'", '"')), indent=4))
+    print('get_directorio_trabajo:'+json.dumps(json.loads(str(data_json).replace("'", '"'))))
     print("import_modules:"+json.dumps(json.loads(str(import_modules).replace("'", '"'))))
 
 def compile_file(pathfile):

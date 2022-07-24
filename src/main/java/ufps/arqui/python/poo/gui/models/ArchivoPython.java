@@ -15,17 +15,17 @@ import java.util.Objects;
  */
 public class ArchivoPython extends Fichero{
     
-    private ExcepcionCompilar excepcionCompilar;
+    protected ExcepcionCompilar excepcionCompilar;
     
     /**
      * Contenido del archivo
      */
-    private final StringBuilder contenido = new StringBuilder();
+    protected final StringBuilder contenido = new StringBuilder();
 
     /**
      * Listado de clases que contiene el archivo.
      */
-    private List<ClasePython> clases = new ArrayList<>();
+    protected List<ClasePython> clases = new ArrayList<>();
 
     public ArchivoPython() {
     }

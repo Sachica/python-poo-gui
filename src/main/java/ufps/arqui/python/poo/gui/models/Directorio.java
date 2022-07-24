@@ -14,12 +14,12 @@ public class Directorio extends Fichero{
     /**
      * Listado de directorios dentro del directorio actual.
      */
-    private List<Directorio> directorios = new ArrayList<>();
+    protected List<Directorio> directorios = new ArrayList<>();
 
     /**
      * Listado de archivos python dentro del directorio actual.
      */
-    private List<ArchivoPython> archivos = new ArrayList<>();
+    protected List<ArchivoPython> archivos = new ArrayList<>();
 
     public Directorio() {
     }

@@ -15,6 +15,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import ufps.arqui.python.poo.gui.utils.ScannerProject;
 
 /**
  * Modelo para la gestión del proyecto del usuario.
@@ -336,7 +337,8 @@ public class Proyecto extends Observable implements Observer {
             Gson gson = new Gson();
             if (m.getTipo().esDirectorio()) {
                 try {
-                    this.directorioTrabajo.setValue(gson.fromJson(m.getLinea(), Directorio.class));
+                    ScannerProject scan = gson.fromJson(m.getLinea(), ScannerProject.class);
+                    this.directorioTrabajo.setValue(scan.getRelationalData());
                     this.currentListClasses.setValue(this.obtenerClasesDesde(this.directorioTrabajo.get()));
                     this.update("directoriosTrabajo");
                 } catch (Exception e) {

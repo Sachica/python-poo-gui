@@ -10,22 +10,22 @@ import java.util.List;
  */
 public class ClasePython {
     
-    private String pathModule;
+    protected String pathModule;
     
     /**
      * Nombre de la clase Python.
      */
-    private String nombre;
+    protected String nombre;
 
     /**
      * Listado de clases de las cuales hereda la clase actual.
      */
-    List<ClasePython> herencia = new ArrayList<>();
+    protected List<ClasePython> herencia = new ArrayList<>();
     
     /**
      * Posición en la cual la clase SERA o FUE dibujada en la vista 
      */
-    private final Posicion posicion = new Posicion();
+    protected Posicion posicion = new Posicion();
 
     public String getNombre() {
         return nombre;
@@ -63,5 +63,5 @@ public class ClasePython {
     public String toString() {
         return "ClasePython{" + "nombre=" + nombre + '}';
     }
-
+    
 }
