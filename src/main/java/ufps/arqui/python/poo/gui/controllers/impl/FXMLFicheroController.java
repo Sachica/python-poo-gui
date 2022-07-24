@@ -5,17 +5,14 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.PickResult;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
+import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.models.Proyecto;
@@ -29,6 +26,15 @@ public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFi
     
     @FXML
     private TreeView<Fichero> treeView;
+    
+    @FXML
+    private ContextMenu contextMenu;
+    
+    @FXML
+    private MenuItem menuItemCreate; 
+   
+    @FXML
+    private MenuItem menuItemDelete;
     
     public FXMLFicheroController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
@@ -47,6 +53,7 @@ public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFi
             }
         };
         this.view.setTreeView(this.treeView, consume);
+        this.view.configContextMenu(this.contextMenu, this.menuItemCreate, this.menuItemDelete);
         
         this.proyecto.getDirectorioTrabajoProperty().addListener(new ChangeListener<Directorio>() {
             @Override
@@ -54,5 +61,22 @@ public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFi
                 view.populateTreeView(newValue);
             }
         });
+    }
+    
+    @FXML
+    private void handleCreate(){
+        
+    }
+    
+    @FXML
+    private void handleDelete(){
+        Fichero fichero = this.view.getCurrentFicheroSelected();
+        if(fichero!=null){
+            try{
+                this.proyecto.eliminarArchivoV2(fichero);
+            }catch(Exceptions e){
+                //
+            }
+        }
     }
 }

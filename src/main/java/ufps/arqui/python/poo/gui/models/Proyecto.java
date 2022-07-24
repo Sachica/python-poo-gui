@@ -395,6 +395,16 @@ public class Proyecto extends Observable implements Observer {
         this.setChanged();
         this.update("archivoBorrado");
     }
+    
+    public void eliminarArchivoV2(Fichero fichero) throws Exceptions {
+        if (fichero == this.directorioTrabajo.get()) {
+            //Son la misma referencia
+            throw new Exceptions("No se puede eliminar el Directorio de Trabajo", null);
+        }
+        AdministrarArchivo.eliminarArchivo(fichero.getFichero());
+
+        this.escanearProyecto();
+    }
 
     /**
      * Abre un <code>ArchivoPython</code> que corresponda a la ruta relativa pasada como

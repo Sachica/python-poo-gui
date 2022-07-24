@@ -12,6 +12,15 @@
             fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLFicheroController">
     <center>
         <TreeView fx:id="treeView">
+            
+            <fx:define>
+                <ContextMenu fx:id="contextMenu">
+                    <items>
+                        <MenuItem fx:id="menuItemCreate" text="-" onAction="#handleCreate" />
+                        <MenuItem fx:id="menuItemDelete" text="-" onAction="#handleDelete" />
+                    </items>
+                </ContextMenu>
+            </fx:define>
         </TreeView>
     </center>
 </BorderPane>
