@@ -3,15 +3,17 @@ package ufps.arqui.python.poo.gui.controllers.impl;
 import java.lang.reflect.Constructor;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.models.Proyecto;
+import ufps.arqui.python.poo.gui.views.impl.ViewBase;
 
-public class FXMLBaseController<T, K> {
-
+public class FXMLBaseController<T extends Parent, K extends ViewBase> {
+    
     protected final Stage stage;
     protected final Proyecto proyecto;
-
+    
     @FXML
     protected T root;
     protected K view;
@@ -42,7 +44,14 @@ public class FXMLBaseController<T, K> {
     public K getView() {
         return view;
     }
-
+    
+    /**
+     * Fabrica de controladores personalizada <br>
+     * Con el fin poder inicializar cualquier controlador que extienda de
+     * {@link FXMLBaseController} con parametros de manera mas sencilla
+     * @return callback - Este callback es usado por JavaFX para instanciar el controlador
+     * que se va asociar a la vista FXML correspondiente
+     */
     public Callback<Class<?>, Object> getControllerFactory() {
         return type -> {
             try {
@@ -50,7 +59,7 @@ public class FXMLBaseController<T, K> {
                     if (c.getParameterCount() == 2 && c.getParameterTypes()[0] == Stage.class
                             && c.getParameterTypes()[1] == Proyecto.class) {
                         return c.newInstance(this.stage, this.proyecto);
-                    }
+    }
                 }
                 return type.newInstance();
             } catch (Exception e) {
@@ -59,6 +68,10 @@ public class FXMLBaseController<T, K> {
         };
     }
 
+    /**
+     * Inicializa la implementacion de vista correspondiente a este controlador
+     * @param view 
+     */
     public void init(Class<K> view) {
         try {
             for (Constructor c : view.getConstructors()) {

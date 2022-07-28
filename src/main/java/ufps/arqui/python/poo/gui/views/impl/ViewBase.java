@@ -1,13 +1,16 @@
 package ufps.arqui.python.poo.gui.views.impl;
 
 import java.util.ResourceBundle;
+import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 /**
  *
  * @author Sachikia
+ * @param <T>
+ * @param <K>
  */
-public class ViewBase<T, K> {
+public class ViewBase<T extends Parent, K extends Object> {
     protected Stage stage;
     protected ResourceBundle resources;
     protected T root;
