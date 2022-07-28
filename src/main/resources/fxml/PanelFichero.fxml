@@ -14,10 +14,26 @@
         <TreeView fx:id="treeView">
             
             <fx:define>
-                <ContextMenu fx:id="contextMenu">
+                <ContextMenu fx:id="contextMenuFolder">
                     <items>
-                        <MenuItem fx:id="menuItemCreate" text="-" onAction="#handleCreate" />
-                        <MenuItem fx:id="menuItemDelete" text="-" onAction="#handleDelete" />
+                        <MenuItem fx:id="menuItemCreateFolder" text="%PanelFichero.createFolder" onAction="#handleCreate" />
+                        <MenuItem fx:id="menuItemCreateFile" text="%PanelFichero.createFile" onAction="#handleCreate" />
+                        <SeparatorMenuItem />
+                        <MenuItem fx:id="menuItemRename" text="%PanelFichero.rename" onAction="#handleRename" />
+                        <MenuItem fx:id="menuItemDelete" text="%PanelFichero.delete" onAction="#handleDelete" />
+                        <SeparatorMenuItem />
+                        <MenuItem text="%PanelFichero.findUsages" onAction="#handleFindUsages" />
+                    </items>
+                </ContextMenu>
+
+                <ContextMenu fx:id="contextMenuFile">
+                    <items>
+                        <MenuItem fx:id="menuItemOpenFile" text="%PanelFichero.open" onAction="#handleOpenFile" />
+                        <SeparatorMenuItem />
+                        <MenuItem text="%PanelFichero.rename" onAction="#handleRename" />
+                        <MenuItem text="%PanelFichero.delete" onAction="#handleDelete" />
+                        <SeparatorMenuItem />
+                        <MenuItem text="%PanelFichero.findUsages" onAction="#handleFindUsages" />
                     </items>
                 </ContextMenu>
             </fx:define>

@@ -25,11 +25,9 @@ import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
 public class ViewFichero extends ViewBase<BorderPane, Object>{
     private TreeView<Fichero> treeView;
 
-    private ContextMenu contextMenu;
+    private ContextMenu contextMenuFolder;
     
-    private MenuItem menuItemCreate;
-    
-    private MenuItem menuItemDelete;
+    private ContextMenu contextMenuFile;
 
     public ViewFichero(BorderPane view, Stage stage, ResourceBundle resources) {
         super(view, stage, resources);
@@ -75,27 +73,33 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
         
         this.treeView.setOnContextMenuRequested(event -> {
             if(!this.treeView.getSelectionModel().isEmpty()){
-                switchTextContextMenu();
-                this.contextMenu.show(this.treeView, event.getScreenX(), event.getScreenY());
+//                switchTextContextMenu();
+                Fichero selected = treeView.getSelectionModel().getSelectedItem().getValue();
+                if(selected.isDirectory()){
+                    this.contextMenuFolder.show(this.treeView, event.getScreenX(), event.getScreenY());
+                    this.contextMenuFile.hide();
+                }else{
+                    this.contextMenuFile.show(this.treeView, event.getScreenX(), event.getScreenY());
+                    this.contextMenuFolder.hide();
+                }
             }
         });
     }
 
-    private void switchTextContextMenu(){
-        String createPrefixProp = "PanelFichero.create";
-        String deletePrefixProp = "PanelFichero.delete";
-        String file = "File", folder = "Folder";
-        
-        Fichero selected = treeView.getSelectionModel().getSelectedItem().getValue();
-        String property = selected.isDirectory() ? folder : file;
-        this.menuItemCreate.setText(super.resources.getString(createPrefixProp+property));
-        this.menuItemDelete.setText(super.resources.getString(deletePrefixProp+property));
-    }
+//    private void switchTextContextMenu(){
+//        String createPrefixProp = "PanelFichero.create";
+//        String deletePrefixProp = "PanelFichero.delete";
+//        String file = "File", folder = "Folder";
+//        
+//        Fichero selected = treeView.getSelectionModel().getSelectedItem().getValue();
+//        String property = selected.isDirectory() ? folder : file;
+//        this.menuItemCreate.setText(super.resources.getString(createPrefixProp+property));
+//        this.menuItemDelete.setText(super.resources.getString(deletePrefixProp+property));
+//    }
     
-    public void configContextMenu(ContextMenu contextMenu, MenuItem menuItemCreate, MenuItem menuItemDelete) {
-        this.contextMenu = contextMenu;
-        this.menuItemCreate = menuItemCreate;
-        this.menuItemDelete = menuItemDelete;
+    public void configContextMenu(ContextMenu contextMenuFolder, ContextMenu contextMenuFile) {
+        this.contextMenuFolder = contextMenuFolder;
+        this.contextMenuFile = contextMenuFile;
     }
     
     public Fichero getCurrentFicheroSelected(){

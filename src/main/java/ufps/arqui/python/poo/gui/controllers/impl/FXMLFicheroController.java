@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
@@ -28,13 +29,10 @@ public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFi
     private TreeView<Fichero> treeView;
     
     @FXML
-    private ContextMenu contextMenu;
+    private ContextMenu contextMenuFolder;
     
     @FXML
-    private MenuItem menuItemCreate; 
-   
-    @FXML
-    private MenuItem menuItemDelete;
+    private ContextMenu contextMenuFile;
     
     public FXMLFicheroController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
@@ -53,7 +51,7 @@ public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFi
             }
         };
         this.view.setTreeView(this.treeView, consume);
-        this.view.configContextMenu(this.contextMenu, this.menuItemCreate, this.menuItemDelete);
+        this.view.configContextMenu(this.contextMenuFolder, this.contextMenuFile);
         
         this.proyecto.getDirectorioTrabajoProperty().addListener(new ChangeListener<Directorio>() {
             @Override
@@ -78,5 +76,14 @@ public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFi
                 //
             }
         }
+    }
+
+    public void handleRename(ActionEvent actionEvent) {
+    }
+
+    public void handleFindUsages(ActionEvent actionEvent) {
+    }
+
+    public void handleOpenFile(ActionEvent actionEvent) {
     }
 }
