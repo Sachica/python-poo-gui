@@ -3,9 +3,7 @@ package ufps.arqui.python.poo.gui.views.impl;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -67,13 +65,12 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
         this.treeView.setOnMouseClicked((MouseEvent event) -> {
             if(!this.treeView.getSelectionModel().isEmpty()){
                 Fichero selected = treeView.getSelectionModel().getSelectedItem().getValue();
-                if (selected.isDirectory()) consume.accept(selected);
+                consume.accept(selected);
             }
         });
         
         this.treeView.setOnContextMenuRequested(event -> {
             if(!this.treeView.getSelectionModel().isEmpty()){
-//                switchTextContextMenu();
                 Fichero selected = treeView.getSelectionModel().getSelectedItem().getValue();
                 if(selected.isDirectory()){
                     this.contextMenuFolder.show(this.treeView, event.getScreenX(), event.getScreenY());
@@ -85,17 +82,6 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
             }
         });
     }
-
-//    private void switchTextContextMenu(){
-//        String createPrefixProp = "PanelFichero.create";
-//        String deletePrefixProp = "PanelFichero.delete";
-//        String file = "File", folder = "Folder";
-//        
-//        Fichero selected = treeView.getSelectionModel().getSelectedItem().getValue();
-//        String property = selected.isDirectory() ? folder : file;
-//        this.menuItemCreate.setText(super.resources.getString(createPrefixProp+property));
-//        this.menuItemDelete.setText(super.resources.getString(deletePrefixProp+property));
-//    }
     
     public void configContextMenu(ContextMenu contextMenuFolder, ContextMenu contextMenuFile) {
         this.contextMenuFolder = contextMenuFolder;

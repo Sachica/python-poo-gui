@@ -47,7 +47,7 @@ public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFi
         Consumer<Fichero> consume = new Consumer<Fichero>() {
             @Override
             public void accept(Fichero t) {
-                proyecto.obtenerClasesDesde(t);
+                proyecto.obtenerClases(t);
             }
         };
         this.view.setTreeView(this.treeView, consume);

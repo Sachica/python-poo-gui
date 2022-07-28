@@ -121,9 +121,8 @@ public class Proyecto extends Observable implements Observer {
      *
      * @param fichero
      */
-    public void obtenerClasesDesde(Fichero fichero) {
-        List<ClasePython> classes = this.obtenerClasesDesde(
-                this.obtenerDirectorio(directorioTrabajo.get(), fichero.getFichero().getAbsolutePath()));
+    public void obtenerClases(Fichero fichero) {
+        List<ClasePython> classes = this.obtenerClasesDesde(fichero);
         
         this.currentListClasses.setValue(classes);
         this.setChanged();
@@ -136,9 +135,11 @@ public class Proyecto extends Observable implements Observer {
      * @param directorio
      * @return listado de clases de python de un directivo dado.
      */
-    private List<ClasePython> obtenerClasesDesde(Directorio directorio) {
+    private List<ClasePython> obtenerClasesDesde(Fichero fichero) {
+        if(fichero.isFile()) return ((ArchivoPython)fichero).getClases();
+        
         List<ClasePython> clases = new ArrayList<>();
-        this.obtenerClasesDesde(directorio, clases);
+        this.obtenerClasesFolder((Directorio)fichero, clases);
         return clases;
     }
 
@@ -148,34 +149,13 @@ public class Proyecto extends Observable implements Observer {
      * @param directorio
      * @param clases
      */
-    private void obtenerClasesDesde(Directorio directorio, List<ClasePython> clases) {
+    private void obtenerClasesFolder(Directorio directorio, List<ClasePython> clases) {
         for (ArchivoPython archivo : directorio.getArchivos()) {
             clases.addAll(archivo.getClases());
         }
         for (Directorio subdir : directorio.getDirectorios()) {
-            this.obtenerClasesDesde(subdir, clases);
+            this.obtenerClasesFolder(subdir, clases);
         }
-    }
-
-    /**
-     * Obtiene un directorio mediante una ruta absoluta de forma recursiva.
-     *
-     * @param dir
-     * @param absolutePath
-     * @return
-     */
-    private Directorio obtenerDirectorio(Directorio dir, String absolutePath) {
-        if (dir.getFichero().getAbsolutePath().equals(absolutePath)) {
-            return dir;
-        }
-        Directorio directorio = null;
-        for (Directorio subdir : dir.getDirectorios()) {
-            directorio = this.obtenerDirectorio(subdir, absolutePath);
-            if (directorio != null) {
-                break;
-            }
-        }
-        return directorio;
     }
 
     public String getNombre() {
