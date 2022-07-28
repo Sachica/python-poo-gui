@@ -107,9 +107,7 @@ public class Proyecto extends Observable implements Observer {
         } catch (IOException e) {
             throw new Exceptions("No se ha podido actualizar el archivo scan", e);
         }
-        this.directorioTrabajo.setValue(new Directorio(file));
         this.terminalInteractiva.ingresarComando("scanner_project()");
-//        this.terminalInteractiva.inicializarTerminal(this.directorioRaiz, new String[]{"scan.py"});
     }
 
     /**
@@ -192,7 +190,6 @@ public class Proyecto extends Observable implements Observer {
 
     public void setDirectorioRaiz(File directorioRaiz){
         this.directorioRaiz = directorioRaiz;
-        this.directorioTrabajo.setValue(new Directorio(new File(this.directorioRaiz.getAbsolutePath() + File.separator + "src")));
     }
     
     /**

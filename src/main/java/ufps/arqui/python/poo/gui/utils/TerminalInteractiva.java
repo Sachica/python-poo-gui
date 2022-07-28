@@ -54,7 +54,7 @@ public class TerminalInteractiva extends Observable {
                 this.process.destroyForcibly();
                 this.bufferedReader.close();
                 this.bufferedWriter.close();
-                this.bufferedWriter.close();
+                this.bufferedReaderError.close();
             }
 
             this.process = new ProcessBuilder(this.parameters).directory(this.directorio).start();
