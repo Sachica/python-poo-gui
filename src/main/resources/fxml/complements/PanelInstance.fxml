@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane id="root"
+            fx:id="root"
+            prefHeight="60.0"
+            prefWidth="120.0"
+            xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@../../styles/panel_instance.css"
+            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.complements.FXMLPanelInstanceController">
+    <top>
+        <Label  id="lblName"
+                fx:id="lblName"
+                alignment="CENTER"
+                maxWidth="Infinity"
+                styleClass="lblText"/>
+    </top>
+    <center>
+        <Label  id="lblClass"
+                fx:id="lblClass"
+                alignment="CENTER"
+                maxWidth="Infinity"
+                styleClass="lblText"/>
+    </center>
+    
+    <fx:define>
+        <ContextMenu fx:id="contextMenu">
+            <items>
+                <MenuItem text="%PanelInstance.delete" onAction="#handleDeleteInstance" />
+            </items>
+        </ContextMenu>
+    </fx:define>
+</BorderPane>

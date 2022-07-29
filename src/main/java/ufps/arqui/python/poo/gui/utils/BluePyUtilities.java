@@ -4,11 +4,7 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.Pair;
 
 /**
  *
@@ -36,6 +32,7 @@ public class BluePyUtilities {
     public final static String MODAL_CREATE_PROJECT = FXML_MODAL_LOCATION + "CreateProject.fxml";
     
     public final static String COMPLEMENT_PANEL_CLASS = FXML_COMPLEMENTS_LOCATION + "PanelClass.fxml";
+    public final static String COMPLEMENT_PANEL_INSTANCE = FXML_COMPLEMENTS_LOCATION + "PanelInstance.fxml";
     
     public final static String PYTHON_FILE_LOGO = "/python_logo.png";
     

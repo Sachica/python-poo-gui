@@ -6,10 +6,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane   fx:id="root"
+<ScrollPane fx:id="root"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            style="-fx-background-color: #000"
             fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLMundoController">
 
-</GridPane>
+    <FlowPane   fx:id="paneInstances"
+                vgap="5" hgap="5"
+                style="-fx-padding: 5px">
+        
+    </FlowPane>
+</ScrollPane>

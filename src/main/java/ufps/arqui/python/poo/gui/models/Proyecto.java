@@ -57,6 +57,8 @@ public class Proyecto extends Observable implements Observer {
     private final ObjectProperty<Directorio> directorioTrabajo = new SimpleObjectProperty<>();
     
     private final ObjectProperty<List<ClasePython>> currentListClasses = new SimpleObjectProperty<>();
+            
+    private final ObjectProperty<MundoInstancia[]> currentInstances = new SimpleObjectProperty<>();
 
     /**
      * Editor de texto, encargado de administrar las operaciones sobre los archivos <br>
@@ -295,6 +297,10 @@ public class Proyecto extends Observable implements Observer {
         return this.currentListClasses;
     }
 
+    public ObjectProperty<MundoInstancia[]> getCurrentInstancesProperty() {
+        return currentInstances;
+    }
+
     /**
      * Actualiza el modelo y notifica a los observaciones del Mundo a que se a
      * realizado un cambio
@@ -358,6 +364,10 @@ public class Proyecto extends Observable implements Observer {
                 }catch(Exceptions e){
                     e.printStackTrace();
                 }
+            }
+            
+            if (m.getTipo().esInstancia()) {
+                this.currentInstances.setValue(gson.fromJson(m.getLinea(), MundoInstancia[].class));
             }
         }
     }
@@ -509,5 +519,8 @@ public class Proyecto extends Observable implements Observer {
 
     public void ingresarComandoTerminal(String command) throws Exceptions{
         this.terminalInteractiva.ingresarComando(command);
+        
+        //Luego de enviar comando verificar si el usuario ha creado instancias
+        this.terminalInteractiva.ingresarComando("list_all_instancias(locals()) if 'list_all_instancias' in dir() else [].clear()");
     }
 }

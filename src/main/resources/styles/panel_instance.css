@@ -1,6 +1,8 @@
 #root{
-    -fx-background-color: rgb(243, 215, 174);
+    -fx-background-color: #E34747;
     -fx-border-radius: 10px;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 2;
     -fx-background-radius: 10px;
 }
 
@@ -10,4 +12,9 @@
     -fx-border-color: #000;
     -fx-border-radius: 10px 10px 0 0;
     -fx-background-radius: 10px 10px 0 0;
+}
+
+.lblText{
+    -fx-text-fill: #fff;
+    -fx-font-size: 14px;
 }
