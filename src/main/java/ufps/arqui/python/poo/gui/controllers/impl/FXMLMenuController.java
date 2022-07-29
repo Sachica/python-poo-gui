@@ -22,9 +22,6 @@ public class FXMLMenuController extends FXMLBaseController<ViewMenu> {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        
-        super.view.setControllerFactory(super.getControllerFactory());
-        super.view.preload(null);
     }
        
     @FXML

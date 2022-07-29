@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
+import ufps.arqui.python.poo.gui.annotations.SharedView;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
@@ -31,22 +32,20 @@ public class FXMLFicheroController extends FXMLBaseController<ViewFichero>{
     @FXML
     private ContextMenu contextMenuFile;
     
+    @SharedView
+    private Consumer<Fichero> onClickItem;
+    
     public FXMLFicheroController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
+        
+        this.onClickItem = (Fichero t) -> {
+            proyecto.obtenerClases(t);
+        };
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        
-        Consumer<Fichero> consume = new Consumer<Fichero>() {
-            @Override
-            public void accept(Fichero t) {
-                proyecto.obtenerClases(t);
-            }
-        };
-        this.view.setTreeView(this.treeView, consume);
-        this.view.configContextMenu(this.contextMenuFolder, this.contextMenuFile);
         
         this.proyecto.getDirectorioTrabajoProperty().addListener(new ChangeListener<Directorio>() {
             @Override

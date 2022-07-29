@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -13,7 +12,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLBaseController;
 import ufps.arqui.python.poo.gui.models.ClasePython;
@@ -33,8 +31,8 @@ public class ViewProject extends ViewBase<ScrollPane, Object>{
     
     private final Map<String, ViewPanelClass> panels = new HashMap<>();
 
-    public ViewProject(ScrollPane view, Stage stage, ResourceBundle resources) {
-        super(view, stage, resources);
+    public ViewProject() {
+        super();
     }
 
     public void drawClasses(List<ClasePython> classes){
@@ -161,16 +159,10 @@ public class ViewProject extends ViewBase<ScrollPane, Object>{
         gc.fillPolygon(xpoints, ypoints, 3);
     }
     
-    public void setControllerFactory(Callback<Class<?>, Object> controllerFactory) {
-        this.controllerFactory = controllerFactory;
-    }
-
-    public void setGridpane(Pane gridpane) {
-        this.gridpane = gridpane;
-    }
-
-    public void setCanvas(Canvas canvas) {
-        this.canvas = canvas;
+    @Override
+    public void initialize() {
+        super.initialize();
+        
         this.canvas.widthProperty().bind(this.gridpane.widthProperty());
         this.canvas.heightProperty().bind(this.gridpane.heightProperty());
     }

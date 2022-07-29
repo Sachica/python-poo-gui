@@ -33,10 +33,6 @@ public class FXMLControllerCreateProject extends FXMLBaseController<ViewModalCre
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        
-        super.view.setTxtName(this.txtName);
-        super.view.setTxtPathFolder(this.txtPathFolder);
-        super.view.setTxtPython(this.txtPython);
     }
     
     @FXML

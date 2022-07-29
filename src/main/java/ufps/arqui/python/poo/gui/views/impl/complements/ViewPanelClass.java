@@ -2,7 +2,6 @@ package ufps.arqui.python.poo.gui.views.impl.complements;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -13,7 +12,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.models.ClasePython;
 import ufps.arqui.python.poo.gui.views.IViewPanelClass;
 import ufps.arqui.python.poo.gui.views.impl.ViewBase;
@@ -37,21 +35,10 @@ public class ViewPanelClass extends ViewBase<BorderPane, ClasePython>implements 
     
     private final List<ViewPanelClass> herencia = new ArrayList<>();
     
-    public ViewPanelClass(BorderPane view, Stage stage, ResourceBundle resources) {
-        super(view, stage, resources);
+    public ViewPanelClass() {
+        super();
     }
     
-    public void setLblName(Label lblName) {
-        this.lblName = lblName;
-    }
-    
-    public void setContextMenu(ContextMenu contextMenu) {
-        this.contextMenu = contextMenu;
-        super.root.setOnContextMenuRequested(event -> {
-            this.contextMenu.show(super.root, event.getScreenX(), event.getScreenY());
-        });
-    }
-
     public List<ViewPanelClass> getHerencia() {
         return herencia;
     }
@@ -124,5 +111,14 @@ public class ViewPanelClass extends ViewBase<BorderPane, ClasePython>implements 
     
     public void unbind(){
         this.clasePython.getPosicion().unbindBidirectional(this.currentTranslateX, this.currentTranslateY);
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        
+        super.root.setOnContextMenuRequested(event -> {
+            this.contextMenu.show(super.root, event.getScreenX(), event.getScreenY());
+        });
     }
 }

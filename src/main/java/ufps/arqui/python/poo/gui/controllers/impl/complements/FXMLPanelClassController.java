@@ -32,9 +32,6 @@ public class FXMLPanelClassController extends FXMLBaseController<ViewPanelClass>
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        
-        super.view.setLblName(this.lblName);
-        super.view.setContextMenu(this.contextMenu);
     }    
     
     @FXML

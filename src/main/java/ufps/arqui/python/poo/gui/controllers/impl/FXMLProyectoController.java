@@ -31,11 +31,7 @@ public class FXMLProyectoController extends FXMLBaseController<ViewProject> {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        
-        this.view.setControllerFactory(super.getControllerFactory());
-        this.view.setGridpane(this.gridpane);
-        this.view.setCanvas(this.canvas);
-        
+                
         this.proyecto.getCurrentListClassesProperty().addListener(new ChangeListener<List<ClasePython>>() {
             @Override
             public void changed(ObservableValue<? extends List<ClasePython>> observable, List<ClasePython> oldValue, List<ClasePython> newValue) {

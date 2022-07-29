@@ -1,7 +1,6 @@
 package ufps.arqui.python.poo.gui.views.impl;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -27,12 +26,14 @@ public class ViewMenu extends ViewBase<BorderPane, Object>{
      */
     private final Stage modalCreateProject = new Stage();
 
-    public ViewMenu(BorderPane view, Stage stage, ResourceBundle resources) {
-        super(view, stage, resources);
+    public ViewMenu() {
+        super();
     }
 
     @Override
-    public void preload(Object object) {
+    public void initialize() {
+        super.initialize();
+        
         try{
             Object objModalOpenProject[] = BluePyUtilities.loadView(BluePyUtilities.MODAL_OPEN_PROJECT, this.controllerFactory, resources);
             Parent modalOpenProject = BluePyUtilities.get(Parent.class, objModalOpenProject);
@@ -59,13 +60,5 @@ public class ViewMenu extends ViewBase<BorderPane, Object>{
         modal.setTitle(title);
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.initOwner(this.stage);
-    }
-
-    public Callback<Class<?>, Object> getControllerFactory() {
-        return controllerFactory;
-    }
-
-    public void setControllerFactory(Callback<Class<?>, Object> controllerFactory) {
-        this.controllerFactory = controllerFactory;
     }
 }

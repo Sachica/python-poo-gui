@@ -1,6 +1,5 @@
 package ufps.arqui.python.poo.gui.views.impl;
 
-import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.scene.control.ContextMenu;
@@ -10,7 +9,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
@@ -26,9 +24,15 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
     private ContextMenu contextMenuFolder;
     
     private ContextMenu contextMenuFile;
+    
+    private Consumer<Fichero> onClickItem;
+    
+    private Image image;
 
-    public ViewFichero(BorderPane view, Stage stage, ResourceBundle resources) {
-        super(view, stage, resources);
+    public ViewFichero() {
+        super();
+        
+        this.image = new Image(getClass().getResourceAsStream(BluePyUtilities.PYTHON_FILE_LOGO));
     }
     
     public void populateTreeView(Directorio directorio) {
@@ -47,7 +51,7 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
         }
         
         for(ArchivoPython archivoPython: dir.getArchivos()){
-            ImageView imgView = new ImageView(new Image(getClass().getResourceAsStream(BluePyUtilities.PYTHON_FILE_LOGO)));
+            ImageView imgView = new ImageView(this.image);
             imgView.setFitHeight(15);
             imgView.setFitWidth(15);
             
@@ -59,13 +63,22 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
             this.populate(subDir, child);
         }
     }
+    
+    public Fichero getCurrentFicheroSelected(){
+        if(!this.treeView.getSelectionModel().isEmpty()){
+            return treeView.getSelectionModel().getSelectedItem().getValue();
+        }
+        return null;
+    }
 
-    public void setTreeView(TreeView<Fichero> treeView, Consumer<Fichero> consume) {
-        this.treeView = treeView;
+    @Override
+    public void initialize() {
+        super.initialize();
+        
         this.treeView.setOnMouseClicked((MouseEvent event) -> {
             if(!this.treeView.getSelectionModel().isEmpty()){
                 Fichero selected = treeView.getSelectionModel().getSelectedItem().getValue();
-                consume.accept(selected);
+                this.onClickItem.accept(selected);
             }
         });
         
@@ -81,17 +94,5 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
                 }
             }
         });
-    }
-    
-    public void configContextMenu(ContextMenu contextMenuFolder, ContextMenu contextMenuFile) {
-        this.contextMenuFolder = contextMenuFolder;
-        this.contextMenuFile = contextMenuFile;
-    }
-    
-    public Fichero getCurrentFicheroSelected(){
-        if(!this.treeView.getSelectionModel().isEmpty()){
-            return treeView.getSelectionModel().getSelectedItem().getValue();
-        }
-        return null;
     }
 }

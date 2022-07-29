@@ -1,12 +1,10 @@
 package ufps.arqui.python.poo.gui.views.impl.modals;
 
 import java.io.File;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.views.impl.ViewBase;
 
 /**
@@ -27,8 +25,8 @@ public class ViewModalCreateProject extends ViewBase<BorderPane, Object>{
     
     private File currentFolder;
 
-    public ViewModalCreateProject(BorderPane view, Stage stage, ResourceBundle resources) {
-        super(view, stage, resources);
+    public ViewModalCreateProject() {
+        super();
     }
 
     public void showSearchFolder() {
@@ -48,23 +46,11 @@ public class ViewModalCreateProject extends ViewBase<BorderPane, Object>{
         return txtPathFolder;
     }
 
-    public void setTxtPathFolder(TextField txtPathFolder) {
-        this.txtPathFolder = txtPathFolder;
-    }
-
     public TextField getTxtName() {
         return txtName;
     }
-
-    public void setTxtName(TextField txtName) {
-        this.txtName = txtName;
-    }
-
+    
     public TextField getTxtPython() {
         return txtPython;
-    }
-
-    public void setTxtPython(TextField txtPython) {
-        this.txtPython = txtPython;
     }
 }
