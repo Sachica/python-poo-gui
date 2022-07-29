@@ -6,8 +6,6 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.BorderPane;
 import ufps.arqui.python.poo.gui.models.Proyecto;
 import ufps.arqui.python.poo.gui.views.impl.ViewMenu;
 
@@ -15,7 +13,7 @@ import ufps.arqui.python.poo.gui.views.impl.ViewMenu;
  *
  * @author Sachikia
  */
-public class FXMLMenuController extends FXMLBaseController<BorderPane, ViewMenu> implements Initializable{
+public class FXMLMenuController extends FXMLBaseController<ViewMenu> {
 
     public FXMLMenuController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
@@ -23,9 +21,7 @@ public class FXMLMenuController extends FXMLBaseController<BorderPane, ViewMenu>
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        super.resources = resources;
-        
-        super.init(ViewMenu.class);
+        super.initialize(location, resources);
         
         super.view.setControllerFactory(super.getControllerFactory());
         super.view.preload(null);

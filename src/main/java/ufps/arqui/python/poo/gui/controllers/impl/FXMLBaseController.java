@@ -1,21 +1,24 @@
 package ufps.arqui.python.poo.gui.controllers.impl;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
+import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.models.Proyecto;
 import ufps.arqui.python.poo.gui.views.impl.ViewBase;
 
-public class FXMLBaseController<T extends Parent, K extends ViewBase> {
+public class FXMLBaseController<K extends ViewBase> implements Initializable {
     
     protected final Stage stage;
     protected final Proyecto proyecto;
     
     @FXML
-    protected T root;
+    protected Object root;
     protected K view;
 
     protected ResourceBundle resources;
@@ -45,6 +48,12 @@ public class FXMLBaseController<T extends Parent, K extends ViewBase> {
         return view;
     }
     
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        this.resources = resources;
+        this.init();
+    }
+    
     /**
      * Fabrica de controladores personalizada <br>
      * Con el fin poder inicializar cualquier controlador que extienda de
@@ -72,9 +81,10 @@ public class FXMLBaseController<T extends Parent, K extends ViewBase> {
      * Inicializa la implementacion de vista correspondiente a este controlador
      * @param view 
      */
-    public void init(Class<K> view) {
+    public void init() {
         try {
-            for (Constructor c : view.getConstructors()) {
+            Type genericKType = ((ParameterizedType)this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            for(Constructor c : ((Class)genericKType).getConstructors()){
                 if (c.getParameterCount() == 3) {
                     this.view = (K) c.newInstance(this.root, this.stage, this.resources);
                 }

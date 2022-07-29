@@ -7,11 +7,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.models.Directorio;
@@ -23,7 +20,7 @@ import ufps.arqui.python.poo.gui.views.impl.ViewFichero;
  *
  * @author Sachikia
  */
-public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFichero>  implements Initializable{
+public class FXMLFicheroController extends FXMLBaseController<ViewFichero>{
     
     @FXML
     private TreeView<Fichero> treeView;
@@ -40,9 +37,7 @@ public class FXMLFicheroController extends FXMLBaseController<BorderPane, ViewFi
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        super.resources = resources;
-        
-        super.init(ViewFichero.class);
+        super.initialize(location, resources);
         
         Consumer<Fichero> consume = new Consumer<Fichero>() {
             @Override

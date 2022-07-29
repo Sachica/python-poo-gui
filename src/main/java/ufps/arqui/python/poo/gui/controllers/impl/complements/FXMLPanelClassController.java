@@ -4,10 +4,8 @@ package ufps.arqui.python.poo.gui.controllers.impl.complements;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLBaseController;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
@@ -19,7 +17,7 @@ import ufps.arqui.python.poo.gui.views.impl.complements.ViewPanelClass;
  *
  * @author Sachikia
  */
-public class FXMLPanelClassController extends FXMLBaseController<BorderPane, ViewPanelClass> implements Initializable {
+public class FXMLPanelClassController extends FXMLBaseController<ViewPanelClass> {
 
     @FXML
     private Label lblName;
@@ -32,10 +30,8 @@ public class FXMLPanelClassController extends FXMLBaseController<BorderPane, Vie
     }
     
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        super.resources = resources;
-        
-        super.init(ViewPanelClass.class);
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
         
         super.view.setLblName(this.lblName);
         super.view.setContextMenu(this.contextMenu);

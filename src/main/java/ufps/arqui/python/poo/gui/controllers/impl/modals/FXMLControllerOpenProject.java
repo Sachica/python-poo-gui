@@ -5,9 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.controllers.impl.FXMLBaseController;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
@@ -18,7 +16,7 @@ import ufps.arqui.python.poo.gui.views.impl.modals.ViewModalOpenProject;
  *
  * @author Sachikia
  */
-public class FXMLControllerOpenProject extends FXMLBaseController<BorderPane, ViewModalOpenProject> implements Initializable{
+public class FXMLControllerOpenProject extends FXMLBaseController<ViewModalOpenProject>{
     @FXML
     private TextField txtPathProject; 
 
@@ -28,9 +26,7 @@ public class FXMLControllerOpenProject extends FXMLBaseController<BorderPane, Vi
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        super.resources = resources;
-        
-        super.init(ViewModalOpenProject.class);
+        super.initialize(location, resources);
         
         super.view.setTxtPathProject(this.txtPathProject);
     }
