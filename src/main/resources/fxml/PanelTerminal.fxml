@@ -11,11 +11,10 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLTerminalController">
     <center>
-        <VBox fx:id="paneOutput">
-            <Label text="One"/>
-            <Label text="Two"/>
-            <Label text="Three"/>
-        </VBox>
+        <ScrollPane fx:id="scrollPaneOutput">
+            <VBox fx:id="paneOutput">
+            </VBox>
+        </ScrollPane>
     </center>
     <bottom>
         <TextField text="Hi!" fx:id="textInput"/>

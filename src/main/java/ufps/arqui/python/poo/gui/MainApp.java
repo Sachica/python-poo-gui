@@ -69,10 +69,10 @@ public class MainApp extends Application {
         ficheroProyecto.setDividerPositions(0.2);
         
         SplitPane mundoTerminal = new SplitPane(mundoView, terminalView);
-        mundoTerminal.setDividerPositions(0.7);
+        mundoTerminal.setDividerPositions(0.6);
         
         SplitPane mainSplitPane = new SplitPane(ficheroProyecto, mundoTerminal);
-        mainSplitPane.setDividerPositions(0.7);
+        mainSplitPane.setDividerPositions(0.65);
         mainSplitPane.setOrientation(Orientation.VERTICAL);
         
         BorderPane root = new BorderPane();

@@ -502,4 +502,12 @@ public class Proyecto extends Observable implements Observer {
         
         this.escanearProyecto();
     }
+
+    public TerminalInteractiva getTerminalInteractiva() {
+        return terminalInteractiva;
+    }
+
+    public void ingresarComandoTerminal(String command) throws Exceptions{
+        this.terminalInteractiva.ingresarComando(command);
+    }
 }
