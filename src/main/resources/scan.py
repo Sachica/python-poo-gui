@@ -150,12 +150,19 @@ def list_files_and_get_root_directory(path):
                 dict_directory[dir_path] = sub_dir
     return dict_directory["src"]
 
-def list_all_instancias(local_val: dict):
+def list_all_instancias():
+    local_val = globals()
+
+    #Lista todas las clases pertenecientes al proyecto
     classes = [cls for cls in inspect.getmembers(sys.modules[__name__], inspect.isclass) if cls[1].__module__ != '__main__']
+
     classes_values = []
     for key, value in local_val.items():
         for cls in classes:
-            if isinstance(value, cls[1]):
+            #Valida si el objeto es una instancia de alguna de las clases listadas
+            #ademas valida que pertenezcan a la misma clase ya que por ejemplo:
+            #si la instancia[value] es subclase de [cls[1]] retornara True
+            if isinstance(value, cls[1]) and value.__class__ == cls[1]:
                 attr_value = {'attrs': [], 'methods': [], 'name_class': cls[0], 'name': key}
                 # attribute is a string representing the attribute name
                 for attribute in dir(local_val[key]):

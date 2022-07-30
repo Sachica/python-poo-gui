@@ -521,6 +521,6 @@ public class Proyecto extends Observable implements Observer {
         this.terminalInteractiva.ingresarComando(command);
         
         //Luego de enviar comando verificar si el usuario ha creado instancias
-        this.terminalInteractiva.ingresarComando("list_all_instancias(locals()) if 'list_all_instancias' in dir() else [].clear()");
+        this.terminalInteractiva.ingresarComando("list_all_instancias() if 'list_all_instancias' in dir() else [].clear()");
     }
 }
