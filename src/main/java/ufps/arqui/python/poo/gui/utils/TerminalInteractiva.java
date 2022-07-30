@@ -46,10 +46,12 @@ public class TerminalInteractiva extends Observable {
     }
 
     /**
-     * Reinicia el proceso siempre y cuando el proceso este activo.
+     * Inicializa la terminal siempre y cuando este activa,
+     * de lo contrario hara un reset
      */
     public void inicializarTerminal() throws Exceptions {
         try {
+            //Si la terminal esta activa se hara un reset
             if (terminalActiva()) {
                 this.process.destroyForcibly();
                 this.bufferedReader.close();

@@ -6,12 +6,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
 <VBox fx:id="root"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
+      spacing="5"
       fx:controller="ufps.arqui.python.poo.gui.controllers.impl.modals.FXMLControllerInfoInstance"
       prefHeight="400.0" prefWidth="400.0">
-    <GridPane>
+    <GridPane hgap="5" vgap="5">
+        <rowConstraints>
+            <RowConstraints percentHeight="50"/>
+            <RowConstraints percentHeight="50"/>
+        </rowConstraints>
+
         <columnConstraints>
             <ColumnConstraints percentWidth="20.0"/>
             <ColumnConstraints percentWidth="80.0"/>
@@ -52,4 +59,8 @@
                             text="%ModalInfoInstance.tableParameters"/>
         </columns>
     </TableView>
+
+    <padding>
+        <Insets top="5" bottom="5" right="5" left="5"/>
+    </padding>
 </VBox>

@@ -109,6 +109,11 @@ public class Proyecto extends Observable implements Observer {
         } catch (IOException e) {
             throw new Exceptions("No se ha podido actualizar el archivo scan", e);
         }
+        
+        //Es necesario resetear la terminal debido a que este metodo es llamado de
+        //diferentes lugares luego de realizar una accion sobre el proyecto
+        this.terminalInteractiva.inicializarTerminal();
+        
         this.terminalInteractiva.ingresarComando("scanner_project()");
     }
 
