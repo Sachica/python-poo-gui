@@ -36,6 +36,11 @@ public class FXMLPanelInstanceController extends FXMLBaseController<ViewPanelIns
     }
     
     @FXML
+    private void handleInspectInstance(ActionEvent evt){
+        this.view.showModalInfoInstance();
+    }
+    
+    @FXML
     private void handleDeleteInstance(ActionEvent evt){
     }
 }
