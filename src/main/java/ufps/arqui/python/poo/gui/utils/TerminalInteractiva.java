@@ -6,8 +6,6 @@ import ufps.arqui.python.poo.gui.models.TipoMensaje;
 
 import java.io.*;
 import java.util.Observable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
@@ -17,8 +15,6 @@ import javafx.beans.property.SimpleObjectProperty;
  * @author Omar Ramón Montes
  */
 public class TerminalInteractiva extends Observable {
-
-    private final Logger logger = Logger.getLogger(TerminalInteractiva.class.getName());
 
     private File directorio;
     private String parameters[];
@@ -107,7 +103,6 @@ public class TerminalInteractiva extends Observable {
                     this.currentMessage.setValue(new Mensaje(linea, error ? TipoMensaje.ERROR : TipoMensaje.SALIDA));
                 }
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Error al leer el archivo: " + e.getMessage() + ": " + e.getLocalizedMessage());
             }
         }).start();
     }

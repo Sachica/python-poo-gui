@@ -11,7 +11,7 @@
             prefWidth="140.0"
             xmlns:fx="http://javafx.com/fxml/1"
             stylesheets="@../../styles/panel_class.css"
-            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.complements.FXMLPanelClassController">
+            fx:controller="ufps.arqui.python.poo.gui.controllers.complements.FXMLPanelClassController">
     <top>
         <Label  id="lblName"
                 fx:id="lblName"

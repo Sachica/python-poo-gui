@@ -9,7 +9,7 @@
 <BorderPane fx:id="root"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLFicheroController">
+            fx:controller="ufps.arqui.python.poo.gui.controllers.FXMLFicheroController">
     <center>
         <TreeView fx:id="treeView">
             

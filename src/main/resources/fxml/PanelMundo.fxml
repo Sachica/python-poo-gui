@@ -9,7 +9,7 @@
 <ScrollPane fx:id="root"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="ufps.arqui.python.poo.gui.controllers.impl.FXMLMundoController">
+            fx:controller="ufps.arqui.python.poo.gui.controllers.FXMLMundoController">
 
     <FlowPane   fx:id="paneInstances"
                 vgap="5" hgap="5"
