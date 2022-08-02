@@ -2,8 +2,12 @@ module ufps.arqui.python.poo.gui {
     requires javafx.controls;
     requires javafx.fxml;
     requires com.google.gson;
+    requires org.fxmisc.richtext;
+    requires org.fxmisc.flowless;
+    requires org.fxmisc.undo;
+    requires reactfx;
 
-    opens ufps.arqui.python.poo.gui to javafx.fxml;
+    opens ufps.arqui.python.poo.gui to javafx.controls, javafx.fxml, reactfx, org.fxmisc.undo, org.fxmisc.richtext, org.fxmisc.flowless;
     opens ufps.arqui.python.poo.gui.models to javafx.base;
     opens ufps.arqui.python.poo.gui.controllers to javafx.fxml;
     opens ufps.arqui.python.poo.gui.controllers.modals to javafx.fxml;

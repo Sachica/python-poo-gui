@@ -1,35 +1,35 @@
 package ufps.arqui.python.poo.gui;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.geometry.Orientation;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.controllers.FXMLBaseController;
-import ufps.arqui.python.poo.gui.controllers.FXMLFicheroController;
-import ufps.arqui.python.poo.gui.controllers.FXMLMenuController;
-import ufps.arqui.python.poo.gui.controllers.FXMLMundoController;
-import ufps.arqui.python.poo.gui.controllers.FXMLProyectoController;
-import ufps.arqui.python.poo.gui.controllers.FXMLTerminalController;
 import ufps.arqui.python.poo.gui.models.Editor;
 import ufps.arqui.python.poo.gui.models.Proyecto;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
 import ufps.arqui.python.poo.gui.utils.TerminalInteractiva;
+import ufps.arqui.python.poo.gui.views.ViewBase;
 
 
 public class MainApp extends Application {
+    private static final Map<String, ViewBase> VIEWS = new HashMap<>();
 
     @Override
     public void start(Stage stage) throws Exception {
         Scene mainScene = this.getMainScene(stage);
         
-        stage.setTitle("JavaFX and Maven");
+        stage.setTitle("Blue Py");
         stage.setScene(mainScene);
+        stage.setMaximized(true);
         stage.show();
     }
     
@@ -39,50 +39,64 @@ public class MainApp extends Application {
         Proyecto proyecto = new Proyecto(new TerminalInteractiva(), new Editor());
         
         FXMLBaseController baseController = new FXMLBaseController(stage, proyecto);
+        Callback controllerFactory = baseController.getControllerFactory();
         
+        //-----------------------------MODALS-------------------------------------
+        //Modal Open Project
+        this.loadView(BluePyUtilities.MODAL_OPEN_PROJECT, controllerFactory, resources);
+        
+        //Modal Create Project
+        this.loadView(BluePyUtilities.MODAL_CREATE_PROJECT, controllerFactory, resources);
+
+        //-----------------------------VIEWS-------------------------------------
         //View Menu
-        Object objMenu[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_MENU, baseController.getControllerFactory(), resources);
-        FXMLMenuController menuController = BluePyUtilities.get(FXMLMenuController.class, objMenu);
-        Parent menuView = BluePyUtilities.get(Parent.class, objMenu);
+        ViewBase viewMenu = this.loadView(BluePyUtilities.VIEW_MENU, controllerFactory, resources);
         
         //View Fichero
-        Object objFichero[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_FICHERO, baseController.getControllerFactory(), resources);
-        FXMLFicheroController ficheroController = BluePyUtilities.get(FXMLFicheroController.class, objFichero);
-        Parent ficheroView = BluePyUtilities.get(Parent.class, objFichero);
+        ViewBase viewFichero = this.loadView(BluePyUtilities.VIEW_FICHERO, controllerFactory, resources);
         
         //View Project
-        Object objProject[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_PROYECTO, baseController.getControllerFactory(), resources);
-        FXMLProyectoController proyectoController = BluePyUtilities.get(FXMLProyectoController.class, objProject);
-        Parent proyectoView = BluePyUtilities.get(Parent.class, objProject);
+        ViewBase viewProyecto = this.loadView(BluePyUtilities.VIEW_PROYECTO, controllerFactory, resources);
         
         //View Mundo
-        Object objMundo[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_MUNDO, baseController.getControllerFactory(), resources);
-        FXMLMundoController mundoController = BluePyUtilities.get(FXMLMundoController.class, objMundo);
-        Parent mundoView = BluePyUtilities.get(Parent.class, objMundo);
+        ViewBase viewMundo = this.loadView(BluePyUtilities.VIEW_MUNDO, controllerFactory, resources);
         
         //View Terminal
-        Object objTerminal[] = BluePyUtilities.loadView(BluePyUtilities.VIEW_TERMINAL, baseController.getControllerFactory(), resources);
-        FXMLTerminalController terminalController = BluePyUtilities.get(FXMLTerminalController.class, objTerminal);
-        Parent terminalView = BluePyUtilities.get(Parent.class, objTerminal);
+        ViewBase viewTerminal = this.loadView(BluePyUtilities.VIEW_TERMINAL, controllerFactory, resources);
         
-        SplitPane ficheroProyecto = new SplitPane(ficheroView, proyectoView);
-        ficheroProyecto.setDividerPositions(0.2);
+        SplitPane ficheroProyecto = new SplitPane(viewFichero.getRoot(), viewProyecto.getRoot());
+        ficheroProyecto.setDividerPositions(0);
         
-        SplitPane mundoTerminal = new SplitPane(mundoView, terminalView);
-        mundoTerminal.setDividerPositions(0.6);
+        SplitPane mundoTerminal = new SplitPane(viewMundo.getRoot(), viewTerminal.getRoot());
+        mundoTerminal.setDividerPositions(0.7);
         
         SplitPane mainSplitPane = new SplitPane(ficheroProyecto, mundoTerminal);
-        mainSplitPane.setDividerPositions(0.65);
+        mainSplitPane.setDividerPositions(0.8);
         mainSplitPane.setOrientation(Orientation.VERTICAL);
         
         BorderPane root = new BorderPane();
-        root.setPrefSize(1110, 650);
-        root.setTop(menuView);
+        root.setTop(viewMenu.getRoot());
         root.setCenter(mainSplitPane);
         
         return new Scene(root);
     }
-
+    
+    private ViewBase loadView(String view, Callback controllerFactory, ResourceBundle resources) throws IOException{
+        Object objMenu[] = BluePyUtilities.loadView(view, controllerFactory, resources);
+        FXMLBaseController controller = BluePyUtilities.get(FXMLBaseController.class, objMenu);
+        this.addView(view, controller.getView());
+        
+        return controller.getView();
+    }
+    
+    private void addView(String viewKey, ViewBase view){
+        VIEWS.put(viewKey, view);
+    }
+    
+    public static ViewBase getView(String viewKey){
+        return VIEWS.get(viewKey);
+    }
+    
     /**
      * The main() method is ignored in correctly deployed JavaFX application.
      * main() serves only as fallback in case the application can not be
