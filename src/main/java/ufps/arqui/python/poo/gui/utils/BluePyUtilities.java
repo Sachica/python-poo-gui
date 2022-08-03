@@ -27,6 +27,7 @@ public class BluePyUtilities {
     public static final String VIEW_PROYECTO = FXML_LOCATION + "PanelProyecto.fxml";
     public static final String VIEW_MUNDO = FXML_LOCATION + "PanelMundo.fxml";
     public static final String VIEW_TERMINAL = FXML_LOCATION + "PanelTerminal.fxml";
+    public static final String VIEW_EDITOR_TEXTO = FXML_LOCATION + "PanelEditorTexto.fxml";
     
     public final static String MODAL_OPEN_PROJECT = FXML_MODAL_LOCATION + "OpenProject.fxml";
     public final static String MODAL_CREATE_PROJECT = FXML_MODAL_LOCATION + "CreateProject.fxml";

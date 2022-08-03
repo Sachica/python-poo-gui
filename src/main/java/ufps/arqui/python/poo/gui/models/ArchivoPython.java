@@ -20,7 +20,7 @@ public class ArchivoPython extends Fichero{
     /**
      * Contenido del archivo
      */
-    protected final StringBuilder contenido = new StringBuilder();
+    protected String contenido;
 
     /**
      * Listado de clases que contiene el archivo.
@@ -66,8 +66,7 @@ public class ArchivoPython extends Fichero{
      * @throws Exceptions 
      */
     public void leerContenido() throws Exceptions{
-        this.contenido.setLength(0);
-        AdministrarArchivo.abrirArchivo(this.fichero, this.contenido);
+        this.contenido = AdministrarArchivo.abrirArchivo(this.fichero);
     }
     
     @Override
@@ -100,9 +99,8 @@ public class ArchivoPython extends Fichero{
     }
 
     public String getContenido() throws Exceptions {
-        this.contenido.setLength(0);
-        AdministrarArchivo.abrirArchivo(super.fichero, this.contenido);
-        return this.contenido.toString();
+        this.contenido = AdministrarArchivo.abrirArchivo(super.fichero);
+        return this.contenido;
     }
 
     public ExcepcionCompilar getExcepcionCompilar() {

@@ -6,6 +6,8 @@ import ufps.arqui.python.poo.gui.utils.AdministrarArchivo;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * Clase del modelo encargada de gestionar los archivos abiertos en el editor de
@@ -15,7 +17,7 @@ import java.util.Set;
  */
 public class Editor extends Observable{
     private final Set<ArchivoPython> archivosAbiertos = new HashSet<>();
-    private ArchivoPython ultimoArchivoAbierto;
+    private SimpleObjectProperty<ArchivoPython> ultimoArchivoAbierto = new SimpleObjectProperty<>();
 
     public Editor() {
     }
@@ -23,21 +25,13 @@ public class Editor extends Observable{
     /**
      * Abre un <code>ArchivoPython</code>
      * Si actualmente ya estaba abierto, no lo vuelve a leer
-     * @param archivo
+     * @param archivoPython
      * @throws Exceptions 
      */
-    public void abrirArchivo() throws Exceptions{
-        if(this.estaAbierto(this.ultimoArchivoAbierto)){
-            this.update("estaAbierto");
-        }else{
-            this.archivosAbiertos.add(this.ultimoArchivoAbierto);
-            this.update("archivoAbierto");
-        }
-    }
-    
-    private void update(String type){
-        this.setChanged();
-        this.notifyObservers(type);
+    public void abrirArchivo(ArchivoPython archivoPython) throws Exceptions{
+        archivoPython.leerContenido();
+        this.setUltimoArchivoAbierto(archivoPython);
+        this.archivosAbiertos.add(this.ultimoArchivoAbierto.get());
     }
     
     /**
@@ -54,13 +48,17 @@ public class Editor extends Observable{
     }
 
     public void setUltimoArchivoAbierto(ArchivoPython ultimoArchivoAbierto) {
-        this.ultimoArchivoAbierto = ultimoArchivoAbierto;
+        this.ultimoArchivoAbierto.set(ultimoArchivoAbierto);
     }
     
     public ArchivoPython getUltimoArchivoAbierto() {
-        return ultimoArchivoAbierto;
+        return this.ultimoArchivoAbierto.get();
     }
-
+    
+    public SimpleObjectProperty<ArchivoPython> getUltimoArchivoAbiertoProperty() {
+        return this.ultimoArchivoAbierto;
+    }
+    
     /**
      * Cierra el archivo python
      * @param archivoPython 
@@ -74,11 +72,11 @@ public class Editor extends Observable{
 
     public void guardarArchivo(ArchivoPython archivoPython, String contenido) throws Exceptions {
         AdministrarArchivo.escribirArchivo(archivoPython.getFichero(), contenido, false);
-        this.ultimoArchivoAbierto = archivoPython;
+        this.setUltimoArchivoAbierto(archivoPython);
     }
     
     public void crearClase(ArchivoPython archivoPython, String modulo, String nombre) throws Exceptions{
         archivoPython.crearClase(modulo, nombre);
-        this.ultimoArchivoAbierto = archivoPython;
+        this.setUltimoArchivoAbierto(archivoPython);
     }
 }

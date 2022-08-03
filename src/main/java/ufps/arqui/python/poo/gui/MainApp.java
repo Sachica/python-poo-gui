@@ -22,6 +22,7 @@ import ufps.arqui.python.poo.gui.views.ViewBase;
 
 public class MainApp extends Application {
     private static final Map<String, ViewBase> VIEWS = new HashMap<>();
+    private static final Map<String, Stage> VIEWS_STAGES = new HashMap<>();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -43,10 +44,12 @@ public class MainApp extends Application {
         
         //-----------------------------MODALS-------------------------------------
         //Modal Open Project
-        this.loadView(BluePyUtilities.MODAL_OPEN_PROJECT, controllerFactory, resources);
+        ViewBase viewModalOpenProject = this.loadView(BluePyUtilities.MODAL_OPEN_PROJECT, controllerFactory, resources);
+        this.loadStage(BluePyUtilities.MODAL_OPEN_PROJECT, viewModalOpenProject);
         
         //Modal Create Project
-        this.loadView(BluePyUtilities.MODAL_CREATE_PROJECT, controllerFactory, resources);
+        ViewBase viewModalCreateProject = this.loadView(BluePyUtilities.MODAL_CREATE_PROJECT, controllerFactory, resources);
+        this.loadStage(BluePyUtilities.MODAL_CREATE_PROJECT, viewModalCreateProject);
 
         //-----------------------------VIEWS-------------------------------------
         //View Menu
@@ -63,6 +66,11 @@ public class MainApp extends Application {
         
         //View Terminal
         ViewBase viewTerminal = this.loadView(BluePyUtilities.VIEW_TERMINAL, controllerFactory, resources);
+        
+        //View Editor Texto
+        ViewBase viewEditorTexto = this.loadView(BluePyUtilities.VIEW_EDITOR_TEXTO, controllerFactory, resources);
+        this.loadStage(BluePyUtilities.VIEW_EDITOR_TEXTO, viewEditorTexto);
+        getStageView(BluePyUtilities.VIEW_EDITOR_TEXTO).getScene().getStylesheets().add(getClass().getResource("/java-keywords.css").toExternalForm());
         
         SplitPane ficheroProyecto = new SplitPane(viewFichero.getRoot(), viewProyecto.getRoot());
         ficheroProyecto.setDividerPositions(0);
@@ -89,12 +97,22 @@ public class MainApp extends Application {
         return controller.getView();
     }
     
+    private void loadStage(String viewKey, ViewBase view){
+        Stage stageModalOpenProject = new Stage();
+        stageModalOpenProject.setScene(new Scene(view.getRoot()));
+        VIEWS_STAGES.put(viewKey, stageModalOpenProject);
+    }
+    
     private void addView(String viewKey, ViewBase view){
         VIEWS.put(viewKey, view);
     }
     
     public static ViewBase getView(String viewKey){
         return VIEWS.get(viewKey);
+    }
+    
+    public static Stage getStageView(String viewKey){
+        return VIEWS_STAGES.get(viewKey);
     }
     
     /**
