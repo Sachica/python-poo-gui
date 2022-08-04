@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
+import ufps.arqui.python.poo.gui.models.Editor;
 import ufps.arqui.python.poo.gui.utils.ScannerProject;
 
 /**
@@ -331,9 +332,9 @@ public class Proyecto {
                 try {
                     LineasClase lineasClase = gson.fromJson(m.getLinea(), LineasClase.class);
                     File file = new File(lineasClase.getArchivo());
-                    StringBuilder contenido =  new StringBuilder();
-                    AdministrarArchivo.abrirArchivo(file, contenido);
-                    String[] lineas = contenido.toString().split("\n");
+                    
+                    String contenido = AdministrarArchivo.abrirArchivo(file);
+                    String[] lineas = contenido.split("\n");
                     String inicio = "";
                     for (int i = 0; i<lineas.length; i++) {
                         if (i <= lineasClase.getInicio()-1 || i >= lineasClase.getFin()+1) {
@@ -347,14 +348,14 @@ public class Proyecto {
             }
             
             if(m.getTipo().esErrorCompilacion()){
-                try{
-                    ExcepcionCompilar excepcionCompilar = gson.fromJson(m.getLinea(), ExcepcionCompilar.class);
-                    this.editor.getUltimoArchivoAbierto().setExcepcionCompilar(excepcionCompilar);
-                    this.editor.abrirArchivo();
-                    this.escanearProyecto();
-                }catch(Exceptions e){
-                    e.printStackTrace();
-                }
+//                try{
+//                    ExcepcionCompilar excepcionCompilar = gson.fromJson(m.getLinea(), ExcepcionCompilar.class);
+//                    this.editor.getUltimoArchivoAbierto().setExcepcionCompilar(excepcionCompilar);
+//                    this.editor.abrirArchivo();
+//                    this.escanearProyecto();
+//                }catch(Exceptions e){
+//                    e.printStackTrace();
+//                }
             }
             
             if (m.getTipo().esInstancia()) {
@@ -386,6 +387,10 @@ public class Proyecto {
 //        this.editor.setUltimoArchivoAbierto(archivoPython);
 //        
 //        this.compilarArchivo(relativaPathFile);
+    }
+    
+    public void abrirArchivoV2(ArchivoPython archivoPython) throws Exceptions {
+        this.editor.abrirArchivo(archivoPython);
     }
 
     /**
@@ -489,6 +494,10 @@ public class Proyecto {
 
     public ScannerProject getScan() {
         return scan;
+    }
+    
+    public Editor getEditor() {
+        return editor;
     }
 
     public void ingresarComandoTerminal(String command) throws Exceptions{

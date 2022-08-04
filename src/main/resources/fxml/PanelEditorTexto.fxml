@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ufps.arqui.python.poo.gui.controllers.FXMLEditorTextoController"
+            prefHeight="600.0" prefWidth="800.0">
+    <top>
+        <MenuBar>
+            <Menu text="%PanelEditorTexto.file">
+                <MenuItem   text="%PanelEditorTexto.file.save"
+                            onAction="#handleSaveFile"/>
+                <MenuItem   text="%PanelEditorTexto.file.saveAll"
+                            onAction="#handleSaveAllFiles"/>
+                <SeparatorMenuItem />
+                <MenuItem   text="%PanelEditorTexto.file.close"
+                            onAction="#handleCloseTab"/>
+            </Menu>
+            <Menu text="%PanelEditorTexto.tools">
+                <MenuItem   text="%PanelEditorTexto.tools.newClass"
+                            onAction="#handleNewClass"/>
+                <MenuItem   text="%PanelEditorTexto.tools.DeleteClass"
+                            onAction="#handleDeleteClass"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <TabPane fx:id="tabPane">
+        </TabPane>
+    </center>
+</BorderPane>

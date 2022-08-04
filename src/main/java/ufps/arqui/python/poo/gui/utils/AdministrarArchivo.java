@@ -31,14 +31,14 @@ public class AdministrarArchivo {
     /**
      * Abre un <code>File</code> y obtiene su contenido
      * @param archivo Archivo a abrir y leer
-     * @param stringBuilder Contenido del archivo abierto
+     * @return 
      * @throws Exceptions 
      */
-    public static void abrirArchivo(File archivo, StringBuilder stringBuilder) throws Exceptions{
+    public static String abrirArchivo(File archivo) throws Exceptions{
         if (!archivo.exists()) {
             throw new Exceptions(archivo.getAbsolutePath() + " No existe", null);
         }
-        
+        StringBuilder stringBuilder = new StringBuilder();
         try (BufferedReader buffer = new BufferedReader(new FileReader(archivo))) {
             String line = "";
             while((line = buffer.readLine()) != null){
@@ -48,6 +48,8 @@ public class AdministrarArchivo {
         }catch(IOException e){
             throw new Exceptions("Ocurrio un problema al momento de leer el archivo.", null);
         }
+        
+        return stringBuilder.toString();
     }
     
     /**

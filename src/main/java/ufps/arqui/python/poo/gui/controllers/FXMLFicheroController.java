@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.MainApp;
 import ufps.arqui.python.poo.gui.annotations.SharedView;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
+import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.models.Proyecto;
@@ -36,13 +37,23 @@ public class FXMLFicheroController extends FXMLBaseController<ViewFichero>{
     private ContextMenu contextMenuFile;
     
     @SharedView
-    private Consumer<Fichero> onClickItem;
+    private Consumer<Fichero> onRequestPaintClass;
+    
+    @SharedView
+    private Consumer<Fichero> onRequestEditor;
     
     public FXMLFicheroController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
         
-        this.onClickItem = (Fichero t) -> {
+        this.onRequestPaintClass = (Fichero t) -> {
             proyecto.obtenerClases(t);
+        };
+        
+        this.onRequestEditor = (Fichero t) -> {
+            try{
+                proyecto.abrirArchivoV2((ArchivoPython)t);
+            }catch(Exceptions e){
+            }
         };
     }
 

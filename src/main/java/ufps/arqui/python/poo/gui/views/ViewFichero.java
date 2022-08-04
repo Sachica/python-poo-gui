@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
+import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -15,6 +16,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import ufps.arqui.python.poo.gui.MainApp;
+import javafx.stage.Stage;
+import ufps.arqui.python.poo.gui.MainApp;
+import ufps.arqui.python.poo.gui.annotations.SharedView;
+import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
@@ -30,7 +35,11 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
     
     private ContextMenu contextMenuFile;
     
-    private Consumer<Fichero> onClickItem;
+    @SharedView
+    private Consumer<Fichero> onRequestPaintClass;
+    
+    @SharedView
+    private Consumer<Fichero> onRequestEditor;
     
     private final Map<String, TreeItem> treeItems = new HashMap<>();
     
@@ -155,7 +164,14 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
         this.treeView.setOnMouseClicked((MouseEvent event) -> {
             if(!this.treeView.getSelectionModel().isEmpty()){
                 Fichero selected = treeView.getSelectionModel().getSelectedItem().getValue();
-                this.onClickItem.accept(selected);
+                if (event.getClickCount() > 1) {
+                    if(selected.isFile()){
+                        this.onRequestEditor.accept(selected);
+                        MainApp.getView(BluePyUtilities.VIEW_EDITOR_TEXTO).showModal(true);
+                    }
+                }else{
+                    this.onRequestPaintClass.accept(selected);
+                }
             }
         });
         

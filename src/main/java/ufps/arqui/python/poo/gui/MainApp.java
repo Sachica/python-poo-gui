@@ -20,6 +20,7 @@ import ufps.arqui.python.poo.gui.models.Proyecto;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
 import ufps.arqui.python.poo.gui.utils.TerminalInteractiva;
 import ufps.arqui.python.poo.gui.views.ViewBase;
+import ufps.arqui.python.poo.gui.views.ViewEditorTexto;
 
 
 public class MainApp extends Application {
@@ -46,19 +47,6 @@ public class MainApp extends Application {
         ResourceBundle resources = BluePyUtilities.getDefaultResources();
         
         Proyecto proyecto = new Proyecto(new TerminalInteractiva(), new Editor());
-        
-        this.stop = new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                try{
-                    //Añdir acciones que se necesiten realizar antes de cerrar el IDE
-                    proyecto.getTerminalInteractiva().stop();
-                }catch(Exceptions e){
-                    return false;
-                }
-                return true;
-            }
-        };
         
         FXMLBaseController baseController = new FXMLBaseController(stage, proyecto);
         Callback controllerFactory = baseController.getControllerFactory();
@@ -88,6 +76,24 @@ public class MainApp extends Application {
         
         //View Terminal
         ViewBase viewTerminal = this.loadView(BluePyUtilities.VIEW_TERMINAL, controllerFactory, resources);
+        
+        //View Editor Texto
+        ViewBase viewEditorTexto = this.loadView(BluePyUtilities.VIEW_EDITOR_TEXTO, controllerFactory, resources);
+        
+        
+        this.stop = new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                try{
+                    //Añdir acciones que se necesiten realizar antes de cerrar el IDE
+                    proyecto.getTerminalInteractiva().stop();
+                    ((ViewEditorTexto)viewEditorTexto).stop();
+                }catch(Exceptions e){
+                    return false;
+                }
+                return true;
+            }
+        };
         
         SplitPane ficheroProyecto = new SplitPane(viewFichero.getRoot(), viewProyecto.getRoot());
         ficheroProyecto.setDividerPositions(0);
