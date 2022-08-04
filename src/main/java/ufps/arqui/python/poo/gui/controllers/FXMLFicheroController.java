@@ -8,6 +8,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.MapChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
@@ -71,7 +73,11 @@ public class FXMLFicheroController extends FXMLBaseController<ViewFichero>{
         MapChangeListener<String, Fichero> mapChange = new MapChangeListener<String, Fichero>() {
             @Override
             public void onChanged(MapChangeListener.Change<? extends String, ? extends Fichero> event) {
-                view.updateTreeItem(event);
+                if(event.wasAdded()){
+                    view.onAddedItem(event.getValueAdded());
+                }else{
+                    view.onRemovedItem(event.getValueRemoved());
+                }
             }
         };
         
@@ -86,7 +92,7 @@ public class FXMLFicheroController extends FXMLBaseController<ViewFichero>{
     
     @FXML
     private void handleDelete(ActionEvent actionEvent){
-        Fichero fichero = this.view.getCurrentFicheroSelected();
+        Fichero fichero = this.view.getFileForDelete();
         if(fichero!=null){
             try{
                 this.proyecto.eliminarArchivo(fichero);
