@@ -11,11 +11,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
+import ufps.arqui.python.poo.gui.MainApp;
 import ufps.arqui.python.poo.gui.annotations.SharedView;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.models.Proyecto;
+import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
 import ufps.arqui.python.poo.gui.views.ViewFichero;
 
 /**
@@ -67,16 +69,16 @@ public class FXMLFicheroController extends FXMLBaseController<ViewFichero>{
     }
     
     @FXML
-    private void handleCreate(){
-        
+    private void handleCreate(ActionEvent actionEvent){
+        MainApp.getView(BluePyUtilities.MODAL_CREATE_FILE).showModal(true);
     }
     
     @FXML
-    private void handleDelete(){
+    private void handleDelete(ActionEvent actionEvent){
         Fichero fichero = this.view.getCurrentFicheroSelected();
         if(fichero!=null){
             try{
-                this.proyecto.eliminarArchivoV2(fichero);
+                this.proyecto.eliminarArchivo(fichero);
             }catch(Exceptions e){
                 //
             }

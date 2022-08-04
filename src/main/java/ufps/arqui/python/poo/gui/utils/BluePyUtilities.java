@@ -31,6 +31,7 @@ public class BluePyUtilities {
     public final static String MODAL_OPEN_PROJECT = FXML_MODAL_LOCATION + "OpenProject.fxml";
     public final static String MODAL_CREATE_PROJECT = FXML_MODAL_LOCATION + "CreateProject.fxml";
     public final static String MODAL_INFO_INSTANCE = FXML_MODAL_LOCATION + "InfoInstance.fxml";
+    public final static String MODAL_CREATE_FILE = FXML_MODAL_LOCATION + "CreateFile.fxml";
     
     public final static String COMPLEMENT_PANEL_CLASS = FXML_COMPLEMENTS_LOCATION + "PanelClass.fxml";
     public final static String COMPLEMENT_PANEL_INSTANCE = FXML_COMPLEMENTS_LOCATION + "PanelInstance.fxml";

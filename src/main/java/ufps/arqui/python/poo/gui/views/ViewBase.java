@@ -13,6 +13,7 @@ import ufps.arqui.python.poo.gui.controllers.FXMLBaseController;
  */
 public class ViewBase<T extends Parent, K extends Object> {
     protected Stage stage;
+    protected Stage modal;
     protected ResourceBundle resources;
     protected T root;
 
@@ -45,6 +46,16 @@ public class ViewBase<T extends Parent, K extends Object> {
 
     public Stage getStage() {
         return stage;
+    }
+
+    public Stage getModal() {
+        return modal;
+    }
+    
+    public void showModal(boolean show){
+        if(this.modal != null){
+            this.modal.show();
+        }
     }
 
     public T getRoot() {

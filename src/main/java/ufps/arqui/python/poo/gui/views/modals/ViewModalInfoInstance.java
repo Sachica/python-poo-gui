@@ -2,11 +2,14 @@ package ufps.arqui.python.poo.gui.views.modals;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.models.AttrInstancia;
 import ufps.arqui.python.poo.gui.models.MethodInstancia;
@@ -62,6 +65,11 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
                 return new SimpleObjectProperty<>(params);
             }
         });
+        
+        super.modal = new Stage();
+        super.modal.setScene(new Scene(super.root));
+        super.modal.initModality(Modality.WINDOW_MODAL);
+        super.modal.initOwner(this.stage);
     }
     
     @Override
@@ -71,5 +79,6 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
         
         this.tableAttributes.getItems().addAll(object.getAttrs());
         this.tableMethods.getItems().addAll(object.getMethods());
+        super.modal.setTitle(object.getName());
     }
 }

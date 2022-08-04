@@ -47,6 +47,9 @@ public class MainApp extends Application {
         
         //Modal Create Project
         this.loadView(BluePyUtilities.MODAL_CREATE_PROJECT, controllerFactory, resources);
+        
+        //Modal Create Project
+        this.loadView(BluePyUtilities.MODAL_CREATE_FILE, controllerFactory, resources);
 
         //-----------------------------VIEWS-------------------------------------
         //View Menu

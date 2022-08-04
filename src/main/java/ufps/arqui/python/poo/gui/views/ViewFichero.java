@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import ufps.arqui.python.poo.gui.MainApp;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
@@ -38,7 +39,7 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
     private final Image imageFile;
     
     private final Image imageFolder;
-
+    
     public ViewFichero() {
         super();
 
@@ -164,6 +165,7 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
                 if(selected.isDirectory()){
                     this.contextMenuFolder.show(this.treeView, event.getScreenX(), event.getScreenY());
                     this.contextMenuFile.hide();
+                    MainApp.getView(BluePyUtilities.MODAL_CREATE_FILE).preload(selected);
                 }else{
                     this.contextMenuFile.show(this.treeView, event.getScreenX(), event.getScreenY());
                     this.contextMenuFolder.hide();

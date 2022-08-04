@@ -1,13 +1,10 @@
 package ufps.arqui.python.poo.gui.utils;
 
 import com.google.gson.Gson;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import javafx.beans.property.SimpleMapProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.ClasePython;
@@ -70,6 +67,11 @@ public class ScannerProject {
 
     public ObservableMap<String, Directorio> getDirectorys() {
         return directorys;
+    }
+    
+    public Directorio getDirectorioTrabajo(File root){
+        String directorioTrabajo = root.getAbsolutePath() + File.separator + "src";
+        return this.directorys.get(directorioTrabajo);
     }
     
     

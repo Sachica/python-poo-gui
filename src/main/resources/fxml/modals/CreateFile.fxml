@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane fx:id="root"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="100.0" prefWidth="500.0"
+            fx:controller="ufps.arqui.python.poo.gui.controllers.modals.FXMLControllerCreateFile">
+    <center>
+        <GridPane hgap="10" vgap="10"
+                  alignment="CENTER">
+
+            <columnConstraints>
+                <ColumnConstraints percentWidth="15.0"/>
+                <ColumnConstraints percentWidth="65.0"/>
+                <ColumnConstraints percentWidth="20.0"/>
+            </columnConstraints>
+
+            <Label  GridPane.rowIndex="0"
+                    GridPane.columnIndex="0"
+                    text="%ModalCreateFile.nameFile"/>
+
+            <TextField  fx:id="txtNameFile"
+                        GridPane.rowIndex="0"
+                        GridPane.columnIndex="1"/>
+
+            <Label  fx:id="lblParentName"
+                    GridPane.rowIndex="1"
+                    GridPane.columnIndex="1"
+                    maxWidth="Infinity"/>
+
+            <Button GridPane.rowIndex="1"
+                    GridPane.columnIndex="2"
+                    text="%ModalCreateFile.create"
+                    maxWidth="Infinity"
+                    onAction="#handleCreateFile">
+            </Button>
+        </GridPane>
+    </center>
+
+    <padding>
+        <Insets left="10" bottom="10" right="10" top="10"/>
+    </padding>
+</BorderPane>

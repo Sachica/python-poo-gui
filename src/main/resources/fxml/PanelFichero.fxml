@@ -16,8 +16,7 @@
             <fx:define>
                 <ContextMenu fx:id="contextMenuFolder">
                     <items>
-                        <MenuItem fx:id="menuItemCreateFolder" text="%PanelFichero.createFolder" onAction="#handleCreate" />
-                        <MenuItem fx:id="menuItemCreateFile" text="%PanelFichero.createFile" onAction="#handleCreate" />
+                        <MenuItem fx:id="menuItemCreate" text="%PanelFichero.create" onAction="#handleCreate" />
                         <SeparatorMenuItem />
                         <MenuItem fx:id="menuItemRename" text="%PanelFichero.rename" onAction="#handleRename" />
                         <MenuItem fx:id="menuItemDelete" text="%PanelFichero.delete" onAction="#handleDelete" />

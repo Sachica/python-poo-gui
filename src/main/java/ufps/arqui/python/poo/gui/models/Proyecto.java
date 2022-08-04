@@ -15,6 +15,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.utils.ScannerProject;
 
 /**
@@ -27,7 +28,7 @@ import ufps.arqui.python.poo.gui.utils.ScannerProject;
  *
  * @author Omar Ramón Montes
  */
-public class Proyecto extends Observable implements Observer {
+public class Proyecto {
 
     /**
      * Nombre del proyecto.
@@ -132,8 +133,6 @@ public class Proyecto extends Observable implements Observer {
         List<ClasePython> classes = this.obtenerClasesDesde(fichero);
         
         this.currentListClasses.setValue(classes);
-        this.setChanged();
-        this.notifyObservers(classes);
     }
 
     /**
@@ -179,7 +178,6 @@ public class Proyecto extends Observable implements Observer {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-        this.update("nombre");
     }
 
     /**
@@ -194,7 +192,6 @@ public class Proyecto extends Observable implements Observer {
 
     public void setComandoPython(String comandoPython) {
         this.comandoPython = comandoPython;
-        this.update("comandoPython");
     }
 
     public void setDirectorioRaiz(File directorioRaiz){
@@ -220,7 +217,6 @@ public class Proyecto extends Observable implements Observer {
         
         this.inicializarProyecto();
         
-        this.update("directorio");
         this.escanearProyecto();
     }
     
@@ -308,18 +304,6 @@ public class Proyecto extends Observable implements Observer {
         return currentInstances;
     }
 
-    /**
-     * Actualiza el modelo y notifica a los observaciones del Mundo a que se a
-     * realizado un cambio
-     *
-     * @param type representa el tipo de cambio realizado.
-     */
-    private void update(String type) {
-        super.setChanged();
-        super.notifyObservers(type);
-    }
-
-    @Override
     public void update(Observable o, Object arg) {
         //Proyecto solo esta pendiente de la terminal, por lo tanto solo va ser notificado por esta misma
         if (arg instanceof Mensaje) {
@@ -328,10 +312,8 @@ public class Proyecto extends Observable implements Observer {
             if (m.getTipo().esDirectorio()) {
                 try {
                     this.scan.load(m.getLinea());
-                    String directorioTrabajoStr = this.directorioRaiz.getAbsolutePath() + File.separator +"src";
-                    this.directorioTrabajo.setValue(scan.getDirectorys().get(directorioTrabajoStr));
-//                    this.currentListClasses.setValue(this.obtenerClasesDesde(this.directorioTrabajo.get()));
-//                    this.update("directoriosTrabajo");
+                    this.directorioTrabajo.setValue(scan.getDirectorioTrabajo(this.directorioRaiz));
+                    this.currentListClasses.setValue(this.obtenerClasesDesde(this.directorioTrabajo.get()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -380,19 +362,8 @@ public class Proyecto extends Observable implements Observer {
             }
         }
     }
-
-    public void eliminarArchivo(String relativePath) throws Exceptions {
-        File file = new File(this.directorioTrabajo.get().getFichero().getAbsolutePath() + File.separator + relativePath);
-        if (file.getAbsolutePath().equals(this.directorioTrabajo.get().getFichero().getAbsolutePath())) {
-            throw new Exceptions("No se puede eliminar el Directorio de Trabajo", null);
-        }
-        AdministrarArchivo.eliminarArchivo(file);
-
-        this.setChanged();
-        this.update("archivoBorrado");
-    }
     
-    public void eliminarArchivoV2(Fichero fichero) throws Exceptions {
+    public void eliminarArchivo(Fichero fichero) throws Exceptions {
         if (fichero == this.directorioTrabajo.get()) {
             //Son la misma referencia
             throw new Exceptions("No se puede eliminar el Directorio de Trabajo", null);
@@ -465,43 +436,33 @@ public class Proyecto extends Observable implements Observer {
     }
 
     /**
-     * Crear un nuevo archivo
+     * Crear un nuevo directorio u archivo
      *
-     * @param relativeUrl directorio relativo
-     * @param nombre      nombre del archivo
+     * @param parent    directorio padre
+     * @param nombre    nombre del directorio u archivo
      * @throws Exceptions en caso del que el archivo exista.
      */
-    public void crearArchivo(String relativeUrl, String nombre) throws Exceptions {
-        File file = new File(this.directorioRaiz.getAbsolutePath() + File.separator + relativeUrl + File.separator + nombre);
+    public void crearFichero(Fichero parent, String nombre) throws Exceptions {
+        File file = new File(parent.getFichero().getAbsolutePath() + File.separator + nombre);
         if (file.exists()) {
             throw new Exceptions("El archivo ya existe en el directorio indicado", null);
         }
-        if (!nombre.toUpperCase().endsWith(".PY")) {
+        if (!nombre.toLowerCase().endsWith(".py")) {
             file.mkdir();
-            File fileInit = new File(file.getAbsolutePath()+ File.separator+"__init__.py");
-            try {
-                fileInit.createNewFile();
-            } catch (IOException e) {
-                throw new Exceptions("El archivo inicial no puede ser creado", e);
-            }
-            this.escanearProyecto();
-            return;
+            File fileInit = new File(file.getAbsolutePath() + File.separator + "__init__.py");
+            this.createFile(fileInit);
+        }else{
+            this.createFile(file);
         }
-        String nombre_clase = nombre.replaceAll(".py", "");
+        this.escanearProyecto();
+    }
+    
+    private void createFile(File file) throws Exceptions{
         try {
             file.createNewFile();
-            String contenidoClase = "class "+nombre_clase+"(object):\n" +
-                    "    def __init__(self):\n" +
-                    "        self.a = 1\n" +
-                    "        self.b = 3";
-            AdministrarArchivo.escribirArchivo(file, contenidoClase, false);
         } catch (IOException e) {
-            throw new Exceptions("El archivo no puede ser creado", e);
+            throw new Exceptions("El archivo no puede ser creado", null);
         }
-        ArchivoPython archivo = new ArchivoPython();
-        archivo.setFichero(file);
-//        this.directorioTrabajo.get().addArchivo(archivo);
-        this.escanearProyecto();
     }
     
     /**

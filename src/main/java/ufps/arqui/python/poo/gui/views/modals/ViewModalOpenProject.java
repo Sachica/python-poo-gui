@@ -1,10 +1,11 @@
 package ufps.arqui.python.poo.gui.views.modals;
 
 import java.io.File;
-import java.util.ResourceBundle;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.views.ViewBase;
@@ -20,6 +21,15 @@ public class ViewModalOpenProject  extends ViewBase<BorderPane, Object>{
     
     public ViewModalOpenProject() {
         super();
+    }
+
+    @Override
+    public void initialize() {
+        super.modal = new Stage();
+        super.modal.setScene(new Scene(super.root));
+        super.modal.setTitle(super.resources.getString("Modal.openProject"));
+        super.modal.initModality(Modality.APPLICATION_MODAL);
+        super.modal.initOwner(this.stage);
     }
     
     public void showSearchFolder(){

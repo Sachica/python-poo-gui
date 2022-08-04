@@ -1,12 +1,9 @@
 package ufps.arqui.python.poo.gui.views.complements;
 
 import java.io.IOException;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.controllers.FXMLBaseController;
 import ufps.arqui.python.poo.gui.models.MundoInstancia;
@@ -24,10 +21,10 @@ public class ViewPanelInstance extends ViewBase<BorderPane, MundoInstancia>{
     private Label lblClass;
     
     private ContextMenu contextMenu;
-    
-    private final Stage modalInfoInstance = new Stage();
-    
+        
     private Callback<Class<?>, Object> controllerFactory;
+    
+    private ViewModalInfoInstance modalInfoInstance;
     
     public ViewPanelInstance(){
         super();
@@ -53,19 +50,14 @@ public class ViewPanelInstance extends ViewBase<BorderPane, MundoInstancia>{
             Object objInfoInstance[] = BluePyUtilities.loadView(BluePyUtilities.MODAL_INFO_INSTANCE, this.controllerFactory, resources);
             
             FXMLBaseController controller = BluePyUtilities.get(FXMLBaseController.class, objInfoInstance);
-            ViewModalInfoInstance view = (ViewModalInfoInstance)controller.getView();
-            view.preload(object);
-            
-            this.modalInfoInstance.setScene(new Scene(view.getRoot()));
-            this.modalInfoInstance.setTitle("");
-            this.modalInfoInstance.initModality(Modality.APPLICATION_MODAL);
-            this.modalInfoInstance.initOwner(this.stage);
+            this.modalInfoInstance = (ViewModalInfoInstance)controller.getView();
+            this.modalInfoInstance.preload(object);
         }catch(IOException e){
             e.printStackTrace();
         }
     }
     
     public void showModalInfoInstance(){
-        this.modalInfoInstance.show();
+        this.modalInfoInstance.showModal(true);
     }
 }
