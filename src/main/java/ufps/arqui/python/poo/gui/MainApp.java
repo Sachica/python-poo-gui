@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.geometry.Orientation;
@@ -13,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.controllers.FXMLBaseController;
+import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.models.Editor;
 import ufps.arqui.python.poo.gui.models.Proyecto;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
@@ -22,6 +24,13 @@ import ufps.arqui.python.poo.gui.views.ViewBase;
 
 public class MainApp extends Application {
     private static final Map<String, ViewBase> VIEWS = new HashMap<>();
+    private Callable<Boolean> stop;
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        this.stop.call();
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -37,6 +46,19 @@ public class MainApp extends Application {
         ResourceBundle resources = BluePyUtilities.getDefaultResources();
         
         Proyecto proyecto = new Proyecto(new TerminalInteractiva(), new Editor());
+        
+        this.stop = new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                try{
+                    //Añdir acciones que se necesiten realizar antes de cerrar el IDE
+                    proyecto.getTerminalInteractiva().stop();
+                }catch(Exceptions e){
+                    return false;
+                }
+                return true;
+            }
+        };
         
         FXMLBaseController baseController = new FXMLBaseController(stage, proyecto);
         Callback controllerFactory = baseController.getControllerFactory();

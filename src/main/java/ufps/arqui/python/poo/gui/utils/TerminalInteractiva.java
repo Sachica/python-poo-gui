@@ -118,4 +118,17 @@ public class TerminalInteractiva extends Observable {
     public ObjectProperty<Mensaje> getCurrentMessage() {
         return currentMessage;
     }
+
+    public void stop() throws Exceptions {
+        if (terminalActiva()) {
+            try{
+                this.process.destroyForcibly();
+                this.bufferedReader.close();
+                this.bufferedWriter.close();
+                this.bufferedReaderError.close();
+            }catch(IOException e){
+                throw new Exceptions("La terminal interactiva no logro finalizar correctamente");
+            }
+        }
+    }
 }
