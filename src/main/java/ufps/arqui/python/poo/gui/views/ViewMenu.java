@@ -1,8 +1,6 @@
 package ufps.arqui.python.poo.gui.views;
 
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import ufps.arqui.python.poo.gui.MainApp;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
 

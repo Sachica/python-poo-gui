@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
-import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -16,10 +15,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import ufps.arqui.python.poo.gui.MainApp;
-import javafx.stage.Stage;
-import ufps.arqui.python.poo.gui.MainApp;
-import ufps.arqui.python.poo.gui.annotations.SharedView;
-import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
@@ -35,10 +30,8 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
     
     private ContextMenu contextMenuFile;
     
-    @SharedView
     private Consumer<Fichero> onRequestPaintClass;
     
-    @SharedView
     private Consumer<Fichero> onRequestEditor;
     
     private final Map<String, TreeItem> treeItems = new HashMap<>();

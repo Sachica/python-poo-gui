@@ -1,6 +1,5 @@
 package ufps.arqui.python.poo.gui.views;
 
-import ufps.arqui.python.poo.gui.views.ViewBase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
