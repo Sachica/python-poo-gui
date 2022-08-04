@@ -3,6 +3,9 @@ package ufps.arqui.python.poo.gui.models;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import ufps.arqui.python.poo.gui.models.ArchivoPython;
 
 /**
  * Clase para representar el paquete de los ficheros de python.
@@ -14,94 +17,89 @@ public class Directorio extends Fichero{
     /**
      * Listado de directorios dentro del directorio actual.
      */
-    protected List<Directorio> directorios = new ArrayList<>();
+    private List<String> directorys;
 
     /**
      * Listado de archivos python dentro del directorio actual.
      */
-    protected List<ArchivoPython> archivos = new ArrayList<>();
-
+    private List<String> files;
+    
+    private Map<String, ArchivoPython> allFiles;
+    
+    private Map<String, Directorio> allDirectorys;
+    
     public Directorio() {
     }
 
     public Directorio(File fichero) {
         super(fichero);
     }
-
-    /**
-     * Crea un archivo .py tomando como ruta el directorio en el que se
-     * encuentra.
-     *
-     * @param nombreArchivo
-     */
-    public void crearArchivo(String nombreArchivo) {
-        File file = new File(super.fichero.getAbsolutePath() + "/" + nombreArchivo + ".py");
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-                ArchivoPython ap = new ArchivoPython();
-                ap.setFichero(file);
-                addArchivo(ap);
-            } else {
-                //..
-            }
-        } catch (Exception e) {
-            //..
+    
+    public boolean isMyChild(String filename){
+        for(String file: this.files){
+            if(filename.equals(file)) return true;
         }
+        
+        for(String file: this.directorys){
+            if(filename.equals(file)) return true;
+        }
+        
+        return false;
     }
 
-    public List<Directorio> getDirectorios() {
-        return directorios;
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.directorys);
+        hash = 97 * hash + Objects.hashCode(this.files);
+        return hash;
     }
 
-    public void setDirectorios(List<Directorio> directorios) {
-        this.directorios = directorios;
-    }
-
-    public void addDirectorio(Directorio directorio) {
-        this.directorios.add(directorio);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if(!super.equals(obj)){
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Directorio other = (Directorio) obj;
+        if (!Objects.equals(this.directorys, other.directorys)) {
+            return false;
+        }
+        if (!Objects.equals(this.files, other.files)) {
+            return false;
+        }
+        return true;
     }
     
-    public ArchivoPython getArchivoPorNombre(String nombre){
-        return this.getArchivos().stream()
-                .filter(archivo -> nombre.equals(archivo.getFichero().getName().split("\\.")[0]))
-                .findAny()
-                .orElse(null);
+    public List<Directorio> getDirectorios() {
+        List<Directorio> res = new ArrayList<>();
+        for(String key: this.directorys){
+            res.add(this.allDirectorys.get(key));
+        }
+        return res;
     }
 
     public List<ArchivoPython> getArchivos() {
-        return archivos;
-    }
-
-    public void setArchivos(List<ArchivoPython> archivos) {
-        this.archivos = archivos;
-    }
-
-    public void addArchivo(ArchivoPython archivo) {
-        this.archivos.add(archivo);
-    }
-    
-    /**
-     * Busca un <code>ArchivoPython</code> que corresponda con la ruta absoluta
-     * @param absolutePath Ruta absoluta del archivo a buscar
-     * @return <code>ArchivoPython</code>
-     */
-    public ArchivoPython getArchivo(String absolutePath){
-        ArchivoPython res = null;
-        for(ArchivoPython archivoPython: this.archivos){
-            if(archivoPython.getFichero().getAbsolutePath().equals(absolutePath)){
-                res = archivoPython;
-                break;
-            }
+        List<ArchivoPython> res = new ArrayList<>();
+        for(String key: this.files){
+            res.add(this.allFiles.get(key));
         }
-        
-        if(res == null){
-            for(Directorio subDirectorio: this.directorios){
-                res = subDirectorio.getArchivo(absolutePath);
-                if (res != null) break;
-            }
-        }
-        
         return res;
+    }
+
+    public void setAllFiles(Map<String, ArchivoPython> allFiles) {
+        this.allFiles = allFiles;
+    }
+
+    public void setAllDirectorys(Map<String, Directorio> allDirectorys) {
+        this.allDirectorys = allDirectorys;
     }
 }

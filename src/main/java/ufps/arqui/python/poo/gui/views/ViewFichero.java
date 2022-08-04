@@ -1,7 +1,12 @@
 package ufps.arqui.python.poo.gui.views;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import javafx.application.Platform;
+import javafx.collections.MapChangeListener;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -9,7 +14,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.Directorio;
 import ufps.arqui.python.poo.gui.models.Fichero;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
@@ -27,40 +31,112 @@ public class ViewFichero extends ViewBase<BorderPane, Object>{
     
     private Consumer<Fichero> onClickItem;
     
-    private Image image;
+    private final Map<String, TreeItem> treeItems = new HashMap<>();
+    
+    private final List<TreeItem<Fichero>> waitingForParent = new ArrayList<>();
+    
+    private final Image imageFile;
+    
+    private final Image imageFolder;
 
     public ViewFichero() {
         super();
-        
-        this.image = new Image(getClass().getResourceAsStream(BluePyUtilities.PYTHON_FILE_LOGO));
+
+        this.imageFile = new Image(getClass().getResourceAsStream(BluePyUtilities.PYTHON_FILE_LOGO));
+        this.imageFolder = new Image(getClass().getResourceAsStream(BluePyUtilities.FOLDER_ICON));
     }
     
-    public void populateTreeView(Directorio directorio) {
+    //treeItem si o si sera directorio
+    private void searchForChilds(TreeItem<Fichero> parent){
+        parent.setExpanded(true);
+        List<TreeItem<Fichero>> wfpTemp = new ArrayList<>(this.waitingForParent);
+        for(TreeItem<Fichero> child: wfpTemp){
+            if(((Directorio)parent.getValue()).isMyChild(child.getValue().getFichero().getAbsolutePath())){
+                parent.getChildren().add(child);
+                this.treeItems.put(child.getValue().getFichero().getAbsolutePath(), child);
+                
+                this.waitingForParent.remove(child);
+                if(child.getValue().isDirectory()){
+                    this.searchForChilds(child);
+                }
+            }
+        }
+    }
+    
+    private void searchForParent(TreeItem<Fichero> child){
+        boolean found = false;
+        for(TreeItem<Fichero> parent: this.treeItems.values()){
+            if(parent.getValue().isDirectory() &&
+                    ((Directorio)parent.getValue()).isMyChild(child.getValue().getFichero().getAbsolutePath())){
+                
+                parent.getChildren().add(child);
+                this.waitingForParent.remove(child);
+                found = true;
+                break;
+            }
+        }
+        
+        if(found){
+            this.treeItems.put(child.getValue().getFichero().getAbsolutePath(), child);
+            if(child.getValue().isDirectory()){
+                this.searchForChilds(child);
+            }
+        }
+    }
+    
+    public void setRootTreeView(Fichero fichero){
         Platform.runLater(() -> {
-            this.populate(directorio, null);
+            TreeItem<Fichero> rootItem = this.getTreeItem(fichero);
+            this.treeView.setRoot(rootItem);
+            this.treeItems.put(fichero.getFichero().getAbsolutePath(), rootItem);
+            searchForChilds(rootItem);
         });
     }
     
-    private void populate(Directorio dir, TreeItem<Fichero> parent){
-        TreeItem<Fichero> child = new TreeItem<>(dir);
-        child.setExpanded(true);
-        if(parent == null){
-            this.treeView.setRoot(child);
+    private void onAddedItem(Fichero fichero) {
+        Platform.runLater(() -> {
+            TreeItem<Fichero> treeItem = this.getTreeItem(fichero);
+            this.waitingForParent.add(treeItem);
+            this.searchForParent(treeItem);
+        });
+    }
+    
+    private void onRemovedItem(Fichero fichero) {
+        Platform.runLater(() -> {
+            TreeItem<Fichero> removed = this.treeItems.get(fichero.getFichero().getAbsolutePath());
+            removed.getParent().getChildren().remove(removed);
+            this.treeItems.remove(removed.getValue().getFichero().getAbsolutePath());
+        });
+    }
+    
+    private TreeItem<Fichero> getTreeItem(Fichero fichero){
+        Image img = (fichero.isFile()) ? this.imageFile : this.imageFolder;
+        
+        ImageView imgView = new ImageView(img);
+        imgView.setFitHeight(15);
+        imgView.setFitWidth(15);
+        
+        return new TreeItem<>(fichero, imgView){
+            @Override
+            public boolean isLeaf() {
+                return fichero.isFile();
+            }
+        };
+    }
+    
+    public void updateTreeItem(MapChangeListener.Change<? extends String, ? extends Fichero> event){
+        if(event.wasAdded()){
+            String key = event.getValueAdded().getFichero().getAbsolutePath();
+            //El fichero ya esta en el arbol? Si es asi fue una actualizacion
+            if(this.treeItems.containsKey(key)){
+                this.treeItems.get(key).setValue(event.getValueAdded());
+            }else{
+                //Es un fichero nuevo
+                this.onAddedItem(event.getValueAdded());
+            }
         }else{
-            parent.getChildren().add(child);
-        }
-        
-        for(ArchivoPython archivoPython: dir.getArchivos()){
-            ImageView imgView = new ImageView(this.image);
-            imgView.setFitHeight(15);
-            imgView.setFitWidth(15);
-            
-            TreeItem<Fichero> treeFile = new TreeItem<>(archivoPython, imgView);
-            child.getChildren().add(treeFile);
-        }
-        
-        for(Directorio subDir: dir.getDirectorios()){
-            this.populate(subDir, child);
+            //El fichero fue removido
+            this.onRemovedItem(event.getValueRemoved());
         }
     }
     

@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.MapChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
@@ -50,9 +51,19 @@ public class FXMLFicheroController extends FXMLBaseController<ViewFichero>{
         this.proyecto.getDirectorioTrabajoProperty().addListener(new ChangeListener<Directorio>() {
             @Override
             public void changed(ObservableValue<? extends Directorio> observable, Directorio oldValue, Directorio newValue) {
-                view.populateTreeView(newValue);
+                view.setRootTreeView(newValue);
             }
         });
+        
+        MapChangeListener<String, Fichero> mapChange = new MapChangeListener<String, Fichero>() {
+            @Override
+            public void onChanged(MapChangeListener.Change<? extends String, ? extends Fichero> event) {
+                view.updateTreeItem(event);
+            }
+        };
+        
+        this.proyecto.getScan().getDirectorys().addListener(mapChange);
+        this.proyecto.getScan().getFiles().addListener(mapChange);
     }
     
     @FXML

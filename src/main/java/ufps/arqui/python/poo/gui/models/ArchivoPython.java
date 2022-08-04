@@ -6,6 +6,7 @@ import ufps.arqui.python.poo.gui.utils.AdministrarArchivo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -15,17 +16,19 @@ import java.util.Objects;
  */
 public class ArchivoPython extends Fichero{
     
-    protected ExcepcionCompilar excepcionCompilar;
+    private ExcepcionCompilar excepcionCompilar;
     
     /**
      * Contenido del archivo
      */
-    protected final StringBuilder contenido = new StringBuilder();
+    private final StringBuilder contenido = new StringBuilder();
 
     /**
      * Listado de clases que contiene el archivo.
      */
-    protected List<ClasePython> clases = new ArrayList<>();
+    private List<String> classes;
+    
+    private Map<String, ClasePython> allClass;
 
     public ArchivoPython() {
     }
@@ -40,25 +43,25 @@ public class ArchivoPython extends Fichero{
      * @param nombre 
      */
     public void crearClase(String modulo, String nombre) throws Exceptions{
-        boolean existe = false;
-        for (int i = 0; i < this.clases.size(); i++) {
-            if (this.clases.get(i).getNombre().equals(nombre)) {
-                existe = true;
-                break;
-            }
-        }
-        if (!existe) {
-            ClasePython clasePython = new ClasePython();
-            clasePython.setNombre(nombre);
-            clasePython.setPathModule(modulo);
-            addClase(clasePython);
-                
-            String contenidoClase = "\nclass " + nombre + "(object):\n\tpass\n";
-                
-            AdministrarArchivo.escribirArchivo(super.getFichero(), contenidoClase, true);
-        }else{
-            throw new Exceptions("Ya existe una clase con el mismo nombre en el archivo");
-        }
+//        boolean existe = false;
+//        for (int i = 0; i < this.clases.size(); i++) {
+//            if (this.clases.get(i).getNombre().equals(nombre)) {
+//                existe = true;
+//                break;
+//            }
+//        }
+//        if (!existe) {
+//            ClasePython clasePython = new ClasePython();
+//            clasePython.setNombre(nombre);
+//            clasePython.setPathModule(modulo);
+//            addClase(clasePython);
+//                
+//            String contenidoClase = "\nclass " + nombre + "(object):\n\tpass\n";
+//                
+//            AdministrarArchivo.escribirArchivo(super.getFichero(), contenidoClase, true);
+//        }else{
+//            throw new Exceptions("Ya existe una clase con el mismo nombre en el archivo");
+//        }
     }
     
     /**
@@ -69,36 +72,50 @@ public class ArchivoPython extends Fichero{
         this.contenido.setLength(0);
         AdministrarArchivo.abrirArchivo(this.fichero, this.contenido);
     }
-    
-    @Override
-    public boolean equals(Object o){
-        if(o == null || !(o instanceof ArchivoPython)){
-            return false;
-        }
-        
-        ArchivoPython other = (ArchivoPython)o;
-        return this.fichero.getAbsolutePath().equals(other.getFichero().getAbsolutePath());
-    }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 67 * hash + Objects.hashCode(super.fichero);
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.classes);
         return hash;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        
+        if(!super.equals(obj)){
+            return false;
+        }
+        
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ArchivoPython other = (ArchivoPython) obj;
+        if (!Objects.equals(this.classes, other.classes)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     public List<ClasePython> getClases() {
-        return clases;
+        List<ClasePython> res = new ArrayList<>();
+        for(String key: this.classes){
+            res.add(this.allClass.get(key));
+        }
+        return res;
     }
 
-    public void setClases(List<ClasePython> clases) {
-        this.clases = clases;
+    public void setAllClass(Map<String, ClasePython> allClass) {
+        this.allClass = allClass;
     }
-
-    public void addClase(ClasePython clase) {
-        this.clases.add(clase);
-    }
-
+    
     public String getContenido() throws Exceptions {
         this.contenido.setLength(0);
         AdministrarArchivo.abrirArchivo(super.fichero, this.contenido);

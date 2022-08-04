@@ -52,7 +52,7 @@ public class ViewProject extends ViewBase<ScrollPane, Object>{
                 double sumWidth = 0.0, sumHeight = 0.0, gap;
                 String key = "";
                 for(ClasePython clasePythonBase: classes){
-                    key = clasePythonBase.getPathModule()+clasePythonBase.getNombre();
+                    key = clasePythonBase.getPathModule()+clasePythonBase.getName();
                     
                     gap = !this.panels.containsKey(key) ? dGap : 0;
                     ViewPanelClass base = this.loadPanelClass(clasePythonBase, onDraggable, key, sumWidth, sumHeight);
@@ -63,8 +63,8 @@ public class ViewProject extends ViewBase<ScrollPane, Object>{
                         sumHeight += height + dGap;
                     }
                     
-                    for(ClasePython clasePythonHerencia: clasePythonBase.getHerencia()){
-                        key = clasePythonHerencia.getPathModule()+clasePythonHerencia.getNombre();
+                    for(ClasePython clasePythonHerencia: clasePythonBase.getBases()){
+                        key = clasePythonHerencia.getPathModule()+clasePythonHerencia.getName();
                         
                         gap = !this.panels.containsKey(key) ? dGap : 0;
                         ViewPanelClass herencia = this.loadPanelClass(clasePythonHerencia, onDraggable, key, sumWidth, sumHeight);

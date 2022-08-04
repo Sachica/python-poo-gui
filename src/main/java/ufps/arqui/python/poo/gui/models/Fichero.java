@@ -1,6 +1,7 @@
 package ufps.arqui.python.poo.gui.models;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  *
@@ -25,6 +26,31 @@ public class Fichero {
         this.fichero = fichero;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.ficheroStr);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Fichero other = (Fichero) obj;
+        if (!Objects.equals(this.ficheroStr, other.ficheroStr)) {
+            return false;
+        }
+        return true;
+    }
+    
     public File getFichero() {
         if (this.fichero == null && this.ficheroStr != null) {
             this.fichero = new File(this.ficheroStr);

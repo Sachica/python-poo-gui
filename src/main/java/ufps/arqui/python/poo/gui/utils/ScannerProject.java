@@ -1,105 +1,81 @@
 package ufps.arqui.python.poo.gui.utils;
 
-import java.util.ArrayList;
+import com.google.gson.Gson;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Stack;
+import javafx.beans.property.SimpleMapProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.ClasePython;
 import ufps.arqui.python.poo.gui.models.Directorio;
-import ufps.arqui.python.poo.gui.models.Posicion;
 
 /**
  *
  * @author Sachikia
  */
 public class ScannerProject {
-    private class DirectorioJSON extends Directorio{
-        private List<ArchivoJSON> archivosJSON = new ArrayList<>();
-        private List<DirectorioJSON> directoriosJSON = new ArrayList<>();
-
-        public List<ArchivoJSON> getArchivosJSON() {
-            return archivosJSON;
-        }
-
-        public List<DirectorioJSON> getDirectoriosJSON() {
-            return directoriosJSON;
-        }
-        
-        public void loadInSuperClass(){
-            this.initAfterJSONParse();
-            super.archivos = new ArrayList<>(this.archivosJSON);
-            super.directorios = new ArrayList<>(this.directoriosJSON);
-        }
-        
-        public void initAfterJSONParse(){
-            super.directorios = new ArrayList<>();
-            super.archivos = new ArrayList<>();
-        }
+    private final ObservableMap<String, ClasePython> classes = FXCollections.observableMap(new HashMap<>());
+    private final ObservableMap<String, ArchivoPython> files = FXCollections.observableMap(new HashMap<>());
+    private final ObservableMap<String, Directorio> directorys = FXCollections.observableMap(new HashMap<>());
+    
+    public ScannerProject() {
     }
     
-    private class ArchivoJSON extends ArchivoPython{
-        private List<Integer> clasesJSON = new ArrayList<>();
-
-        public List<Integer> getClasesJson() {
-            return this.clasesJSON;
-        }
+    public void load(String res){
+        Gson gson = new Gson();
+        ResultJSON resJson = gson.fromJson(res, ResultJSON.class);
         
-        public void convertToObject(Map<Integer, ClasePythonJSON> classesObj){
-            this.initAfterJSONParse();
-            for(Integer id: this.clasesJSON){
-                super.clases.add(classesObj.get(id));
-            }
-        }
+        this.directorys.keySet().retainAll(resJson.directorys.keySet());
+        this.files.keySet().retainAll(resJson.files.keySet());
+        this.classes.keySet().retainAll(resJson.classes.keySet());
         
-        public void initAfterJSONParse(){
-            super.clases = new ArrayList<>();
-        }
+        //Acutaliza los maps
+        this.updateMaps(this.classes, resJson.classes);
+        this.updateMaps(this.files, resJson.files);
+        this.updateMaps(this.directorys, resJson.directorys);
     }
     
-    private class ClasePythonJSON extends ClasePython{
-        private Integer id;
-        private List<Integer> herenciaJSON = new ArrayList<>();
-
-        public List<Integer> getClassBasesIds() {
-            return this.herenciaJSON;
-        }
-        
-        public void convertToObject(Map<Integer, ClasePythonJSON> classesObj){
-            this.initAfterJSONParse();
-            for(Integer id: this.herenciaJSON){
-                super.herencia.add(classesObj.get(id));
+    private void updateMaps(Map currentClass, Map entryClasses){
+        for(Object keyOldClasses: entryClasses.keySet()){
+            Object c1 = currentClass.get(keyOldClasses);
+            Object c2 = entryClasses.get(keyOldClasses);
+            
+            //Es un nuevo objeto o existe diferencia entre el objeto actual y el que llega?
+            if(c1 == null) currentClass.put(keyOldClasses, c2);
+            else if(!c1.equals(c2)) currentClass.replace(keyOldClasses, c1, c2);
+            
+            c1 = c2;
+            if(c1 instanceof ClasePython){
+                ((ClasePython)c1).setAllClass(this.classes);
+            }else if(c1 instanceof ArchivoPython){
+                ((ArchivoPython)c1).setAllClass(this.classes);
+            }else{
+                ((Directorio)c1).setAllFiles(this.files);
+                ((Directorio)c1).setAllDirectorys(this.directorys);
             }
-        }
-        
-        public void initAfterJSONParse(){
-            super.herencia = new ArrayList<>();
-            super.posicion = new Posicion();
         }
     }
+
+    public ObservableMap<String, ClasePython> getClasses() {
+        return classes;
+    }
+
+    public ObservableMap<String, ArchivoPython> getFiles() {
+        return files;
+    }
+
+    public ObservableMap<String, Directorio> getDirectorys() {
+        return directorys;
+    }
     
-    private DirectorioJSON directory;
     
-    private HashMap<Integer, ClasePythonJSON> classes = new HashMap<>();
-    
-    public Directorio getRelationalData(){
-        for(ClasePythonJSON clasePythonJSON: this.classes.values()){
-            clasePythonJSON.convertToObject(this.classes);
-        }
-        
-        Stack<DirectorioJSON> stack = new Stack<>();
-        stack.push(this.directory);
-        while(!stack.isEmpty()){
-            DirectorioJSON directorio = stack.pop();
-            directorio.loadInSuperClass();
-            for(ArchivoJSON archivoJSON: directorio.getArchivosJSON()){
-                archivoJSON.convertToObject(this.classes);
-            }
-            for(DirectorioJSON directorioJSON: directorio.getDirectoriosJSON()){
-                stack.push(directorioJSON);
-            }
-        }
-        return this.directory;
+    private class ResultJSON{
+        Map<String, ClasePython> classes;
+        Map<String, ArchivoPython> files;
+        Map<String, Directorio> directorys;
     }
 }

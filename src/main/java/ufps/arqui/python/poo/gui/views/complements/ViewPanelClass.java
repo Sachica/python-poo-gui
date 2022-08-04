@@ -50,7 +50,7 @@ public class ViewPanelClass extends ViewBase<BorderPane, ClasePython>{
     public void preload(ClasePython object) {
         this.clasePython = object;
                 
-        this.lblName.setText(this.clasePython.getNombre());
+        this.lblName.setText(this.clasePython.getName());
         
         this.initialTranslateX = this.clasePython.getPosicion().getX().get();
         this.initialTranslateY = this.clasePython.getPosicion().getY().get();

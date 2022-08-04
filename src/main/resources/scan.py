@@ -7,8 +7,7 @@ import traceback
 
 
 class ClasePython:
-    def __init__(self, id, nombre, path_module):
-        self.id = id
+    def __init__(self, nombre, path_module):
         self.nombre = nombre
         self.path_module = path_module
         self.herencia = []
@@ -21,14 +20,13 @@ class ClasePython:
 
     def to_json(self):
         return {
-            "id": self.id,
-            "nombre": self.nombre,
+            "name": self.nombre,
             "pathModule": self.path_module,
-            "herenciaJSON": self.__get_list_herencia_json()
+            "bases": self.__get_list_herencia_json()
         }
     
     def __str__(self) -> str:
-        return str(self.id)
+        return self.path_module +'.'+ self.nombre
 
 
 class ArchivoPython:
@@ -47,11 +45,11 @@ class ArchivoPython:
         return {
             "ficheroStr": self.file,
             "module": self.name,
-            "clasesJSON": self.__get_list_classes_json()
+            "classes": self.__get_list_classes_json()
         }
-    
+
     def __str__(self) -> str:
-        return str(self.to_json())
+        return self.file
 
 class Directorio:
     def __init__(self, directorio):
@@ -96,24 +94,24 @@ class Directorio:
     def __get_list_files_json(self):
         list_files = []
         for archivo in self.archivos:
-            list_files.append(archivo.to_json())
+            list_files.append(str(archivo))
         return list_files
 
     def __get_list_folders_json(self):
         list_folders = []
         for directorio in self.directorios:
-            list_folders.append(directorio.to_json())
+            list_folders.append(str(directorio))
         return list_folders
 
     def to_json(self):
         return {
             "ficheroStr": self.directorio,
-            "archivosJSON": self.__get_list_files_json(),
-            "directoriosJSON": self.__get_list_folders_json()
+            "files": self.__get_list_files_json(),
+            "directorys": self.__get_list_folders_json()
         }
 
     def __str__(self) -> str:
-        return str(self.to_json())
+        return self.directorio
 
 #Obtiene el archivo las lineas de inicio y fin de una clase
 def get_lines_class(class_name):
@@ -129,26 +127,29 @@ def get_lines_class(class_name):
 
 def list_files_and_get_root_directory(path):
     dict_directory = {}
+    dict_files = {}
     for root, dirs, filenames in os.walk(path):
-        if root not in dict_directory:
-            dict_directory[root] = Directorio(root)
-        directory = dict_directory[root]
+        if not "__pycache__" in root:
+            if root not in dict_directory:
+                dict_directory[root] = Directorio(root)
+            directory = dict_directory[root]
 
-        for filename in filenames:
-            if filename.endswith(".py") and filename != "__init__.py" and filename != "scan.py":
-                module = filename.split('.')[0]
-                path_module = '.'.join([root.replace(os.sep, '.'), module])
+            for filename in filenames:
+                if filename.endswith(".py") and filename != "__init__.py" and filename != "scan.py":
+                    module = filename.split('.')[0]
+                    path_module = '.'.join([root.replace(os.sep, '.'), module])
 
-                directory.get_file_or_create(module, path_module)
-        
-        for dir_name in dirs:
-            if dir_name != "__pycache__":
-                dir_path = os.path.join(root, dir_name)
+                    dict_files[path_module] = directory.get_file_or_create(module, path_module)
 
-                sub_dir = Directorio(dir_path)
-                directory.append_folder(sub_dir)
-                dict_directory[dir_path] = sub_dir
-    return dict_directory["src"]
+            
+            for dir_name in dirs:
+                if dir_name != "__pycache__":
+                    dir_path = os.path.join(root, dir_name)
+
+                    sub_dir = Directorio(dir_path)
+                    directory.append_folder(sub_dir)
+                    dict_directory[dir_path] = sub_dir
+    return [dict_directory, dict_files]
 
 def list_all_instancias():
     local_val = globals()
@@ -192,9 +193,6 @@ def list_all_python_class_and_errors(folder_root: Directorio):
     #Almacena errores que se encuentren al importar un modulo[str]
     list_errores = []
 
-    #Identificador de archivo
-    id_auto = 1
-
     #Almacena los objetos ClasePython para guardar para en caso de herencia 
     #se tenga referencia al mismo objeto/clase
     dict_class_classpython = {}
@@ -220,8 +218,7 @@ def list_all_python_class_and_errors(folder_root: Directorio):
                         #Valida si la clase ya se encuentra instanciada y la añade en el archivo correspondiente
                         clase_path = path_module_class + "." + class_name
                         if clase_path not in dict_class_classpython:
-                            dict_class_classpython[clase_path] = ClasePython(id_auto, class_name, path_module_class)
-                            id_auto += 1
+                            dict_class_classpython[clase_path] = ClasePython(class_name, path_module_class)
                             archivo.clases.append(dict_class_classpython[clase_path])
                         clase_python = dict_class_classpython[clase_path]
 
@@ -236,8 +233,7 @@ def list_all_python_class_and_errors(folder_root: Directorio):
                                 #Valida si la clase base ya se encuentra instanciada
                                 class_path_base = '.'.join([path_mod_herencia, class_name_herencia])
                                 if class_path_base not in dict_class_classpython:
-                                    dict_class_classpython[class_path_base] = ClasePython(id_auto, class_name_herencia, path_mod_herencia)
-                                    id_auto += 1
+                                    dict_class_classpython[class_path_base] = ClasePython(class_name_herencia, path_mod_herencia)
 
                                 clase_python.herencia.append(dict_class_classpython[class_path_base])
             except Exception as err:
@@ -247,7 +243,8 @@ def list_all_python_class_and_errors(folder_root: Directorio):
     return [dict_class_classpython.values(), list_errores]
 
 def scanner_project():
-    src = list_files_and_get_root_directory("src")
+    dict_directorys, dict_files = list_files_and_get_root_directory("src")
+    src = dict_directorys["src"]
     class_and_errors = list_all_python_class_and_errors(src)
 
     classes_obj = class_and_errors[0]
@@ -269,12 +266,27 @@ def scanner_project():
     #Clases python objetos a json
     classes_str = {}
     for clazz in classes_obj:
-        classes_str[str(clazz.id)] = clazz.to_json()
+        classes_str[str(clazz)] = clazz.to_json()
+
+    #Archivos python objetos a json
+    archivos_str = {}
+    for archivos in dict_files.values():
+        archivos_str[str(archivos)] = archivos.to_json()
+
+    #Directorios objetos a json
+    directorys_str = {}
+    for directorio in dict_directorys.values():
+        directorys_str[str(directorio)] = directorio.to_json()
     
     #Preparar data de directorios y clases para print
-    directory_json = str(src).replace("'", '"')
+    directory_json = str(directorys_str).replace("'", '"')
     classes_json = str(classes_str).replace("'", '"')
-    data_json = {"directory": json.loads(directory_json), "classes": json.loads(classes_json)}
+    archivos_json = str(archivos_str).replace("'", '"')
+    data_json = { 
+        "classes": json.loads(classes_json), 
+        "files": json.loads(archivos_json),
+        "directorys": json.loads(directory_json)
+    }
     
     #print(json.dumps(json.loads(str(data_json).replace("'", '"')), indent=4))
     print('get_directorio_trabajo:'+json.dumps(json.loads(str(data_json).replace("'", '"'))))

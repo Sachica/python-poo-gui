@@ -2,6 +2,8 @@ package ufps.arqui.python.poo.gui.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Modelado de clase de python en java.
@@ -10,58 +12,86 @@ import java.util.List;
  */
 public class ClasePython {
     
-    protected String pathModule;
+    private String pathModule;
     
     /**
      * Nombre de la clase Python.
      */
-    protected String nombre;
+    private String name;
 
     /**
      * Listado de clases de las cuales hereda la clase actual.
      */
-    protected List<ClasePython> herencia = new ArrayList<>();
+    private List<String> bases;
+    
+    private Map<String, ClasePython> allClass;
     
     /**
      * Posición en la cual la clase SERA o FUE dibujada en la vista 
      */
     protected Posicion posicion = new Posicion();
 
-    public String getNombre() {
-        return nombre;
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.pathModule);
+        hash = 83 * hash + Objects.hashCode(this.name);
+        return hash;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClasePython other = (ClasePython) obj;
+        if (!Objects.equals(this.pathModule, other.pathModule)) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.bases, other.bases)) {
+            return false;
+        }
+        return true;
     }
 
-    public List<ClasePython> getHerencia() {
-        return herencia;
+    public String getName() {
+        return name;
     }
 
-    public void setHerencia(List<ClasePython> herencia) {
-        this.herencia = herencia;
+    public List<ClasePython> getBases() {
+        List<ClasePython> classes = new ArrayList<>();
+        for(String key: this.bases){
+            classes.add(this.allClass.get(key));
+        }
+        return classes;
     }
 
-    public void addHerencia(ClasePython clase) {
-        this.herencia.add(clase);
+    public void setAllClass(Map<String, ClasePython> allClass) {
+        this.allClass = allClass;
     }
 
     public Posicion getPosicion() {
+        //Al parsear el JSON elimina cualquier previa instancia de la clase
+        if(this.posicion == null) this.posicion = new Posicion();
         return posicion;
     }
 
     public String getPathModule() {
         return pathModule;
     }
-
-    public void setPathModule(String pathModule) {
-        this.pathModule = pathModule;
-    }
-
+    
     @Override
     public String toString() {
-        return "ClasePython{" + "nombre=" + nombre + '}';
+        return "ClasePython{" + "nombre=" + name + '}';
     }
-    
+
 }
