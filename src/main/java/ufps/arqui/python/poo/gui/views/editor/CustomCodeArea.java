@@ -35,6 +35,7 @@ public class CustomCodeArea {
         this.tab = tab;
         
         this.codeArea = new CodeArea();
+        this.codeArea.setStyle("-fx-font-size: 12pt;");
         this.executor = ManageTextEditor.getExecutor();
 
         this.init();
