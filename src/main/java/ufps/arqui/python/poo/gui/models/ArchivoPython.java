@@ -16,17 +16,26 @@ import java.util.Objects;
  */
 public class ArchivoPython extends Fichero{
     
+    /**
+     * Almacena cualquiera excepción producida durante el escaneo del proyecto
+     * referente a este archivo
+     */
     private ExcepcionCompilar excepcionCompilar;
     
     /**
      * Contenido del archivo
      */
     protected String contenido;
+    
+    /**
+     * Representación de la ruta relativa de este archivo con formato de modulo python
+     */
+    protected String module;
 
     /**
      * Listado de clases que contiene el archivo.
      */
-    private List<String> classes;
+    private final List<String> classes = new ArrayList<>();
     
     private Map<String, ClasePython> allClass;
 
@@ -102,6 +111,9 @@ public class ArchivoPython extends Fichero{
         return true;
     }
     
+    public void addClass(String clazz){
+        this.classes.add(clazz);
+    }
     
     public List<ClasePython> getClases() {
         List<ClasePython> res = new ArrayList<>();
@@ -118,6 +130,14 @@ public class ArchivoPython extends Fichero{
     public String getContenido() throws Exceptions {
         this.contenido = AdministrarArchivo.abrirArchivo(super.fichero);
         return this.contenido;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
     }
 
     public ExcepcionCompilar getExcepcionCompilar() {

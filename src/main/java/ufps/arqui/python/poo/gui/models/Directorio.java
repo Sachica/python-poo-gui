@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import ufps.arqui.python.poo.gui.models.ArchivoPython;
 
 /**
  * Clase para representar el paquete de los ficheros de python.
@@ -17,12 +16,12 @@ public class Directorio extends Fichero{
     /**
      * Listado de directorios dentro del directorio actual.
      */
-    private List<String> directorys;
+    private final List<String> directorys = new ArrayList<>();
 
     /**
      * Listado de archivos python dentro del directorio actual.
      */
-    private List<String> files;
+    private final List<String> files = new ArrayList<>();
     
     private Map<String, ArchivoPython> allFiles;
     
@@ -93,6 +92,14 @@ public class Directorio extends Fichero{
             res.add(this.allFiles.get(key));
         }
         return res;
+    }
+    
+    public void addFile(String file){
+        this.files.add(file);
+    }
+    
+    public void addDirectory(String directory){
+        this.directorys.add(directory);
     }
 
     public void setAllFiles(Map<String, ArchivoPython> allFiles) {

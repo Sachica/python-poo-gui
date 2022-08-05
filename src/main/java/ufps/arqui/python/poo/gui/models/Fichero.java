@@ -9,12 +9,6 @@ import java.util.Objects;
  */
 public class Fichero {
     /**
-     * Representación de un directorio en String. Es necesario para parsear el
-     * json
-     */
-    protected String ficheroStr;
-
-    /**
      * Representación de un directorio.
      */
     protected File fichero;
@@ -29,7 +23,7 @@ public class Fichero {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.ficheroStr);
+        hash = 89 * hash + Objects.hashCode(this.fichero);
         return hash;
     }
 
@@ -45,16 +39,13 @@ public class Fichero {
             return false;
         }
         final Fichero other = (Fichero) obj;
-        if (!Objects.equals(this.ficheroStr, other.ficheroStr)) {
+        if (!Objects.equals(this.fichero, other.fichero)) {
             return false;
         }
         return true;
     }
     
     public File getFichero() {
-        if (this.fichero == null && this.ficheroStr != null) {
-            this.fichero = new File(this.ficheroStr);
-        }
         return this.fichero;
     }
 

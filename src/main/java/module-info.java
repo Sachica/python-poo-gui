@@ -13,6 +13,7 @@ module ufps.arqui.python.poo.gui {
     opens ufps.arqui.python.poo.gui.controllers.modals to javafx.fxml;
     opens ufps.arqui.python.poo.gui.controllers.complements to javafx.fxml;
     
+    opens ufps.arqui.python.poo.gui.adapters to com.google.gson;
     opens ufps.arqui.python.poo.gui.utils to com.google.gson;
     
     exports ufps.arqui.python.poo.gui;

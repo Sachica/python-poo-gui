@@ -1,11 +1,15 @@
 package ufps.arqui.python.poo.gui.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
+import ufps.arqui.python.poo.gui.adapters.ArchivoPythonAdapter;
+import ufps.arqui.python.poo.gui.adapters.ClasePythonAdapter;
+import ufps.arqui.python.poo.gui.adapters.DirectorioAdapter;
 import ufps.arqui.python.poo.gui.models.ArchivoPython;
 import ufps.arqui.python.poo.gui.models.ClasePython;
 import ufps.arqui.python.poo.gui.models.Directorio;
@@ -18,13 +22,19 @@ public class ScannerProject {
     private final ObservableMap<String, ClasePython> classes = FXCollections.observableMap(new HashMap<>());
     private final ObservableMap<String, ArchivoPython> files = FXCollections.observableMap(new HashMap<>());
     private final ObservableMap<String, Directorio> directorys = FXCollections.observableMap(new HashMap<>());
+    private final Gson gson;
     
     public ScannerProject() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Directorio.class, new DirectorioAdapter().nullSafe());
+        builder.registerTypeAdapter(ArchivoPython.class, new ArchivoPythonAdapter().nullSafe());
+        builder.registerTypeAdapter(ClasePython.class, new ClasePythonAdapter().nullSafe());
+        
+        this.gson = builder.create();
     }
     
     public void load(String res){
-        Gson gson = new Gson();
-        ResultJSON resJson = gson.fromJson(res, ResultJSON.class);
+        ResultJSON resJson = this.gson.fromJson(res, ResultJSON.class);
         
         this.directorys.keySet().retainAll(resJson.directorys.keySet());
         this.files.keySet().retainAll(resJson.files.keySet());

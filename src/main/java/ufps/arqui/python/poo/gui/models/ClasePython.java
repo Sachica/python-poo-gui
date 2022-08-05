@@ -12,6 +12,9 @@ import java.util.Objects;
  */
 public class ClasePython {
     
+    /**
+     * Modulo al cual pertenece esta clase
+     */
     private String pathModule;
     
     /**
@@ -22,7 +25,7 @@ public class ClasePython {
     /**
      * Listado de clases de las cuales hereda la clase actual.
      */
-    private List<String> bases;
+    private final List<String> bases = new ArrayList<>();
     
     private Map<String, ClasePython> allClass;
     
@@ -67,6 +70,10 @@ public class ClasePython {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public List<ClasePython> getBases() {
         List<ClasePython> classes = new ArrayList<>();
         for(String key: this.bases){
@@ -74,19 +81,29 @@ public class ClasePython {
         }
         return classes;
     }
+    
+    public void addBase(String base){
+        this.bases.add(base);
+    }
 
     public void setAllClass(Map<String, ClasePython> allClass) {
         this.allClass = allClass;
     }
 
     public Posicion getPosicion() {
-        //Al parsear el JSON elimina cualquier previa instancia de la clase
-        if(this.posicion == null) this.posicion = new Posicion();
         return posicion;
+    }
+
+    public void setPosicion(Posicion posicion) {
+        this.posicion = posicion;
     }
 
     public String getPathModule() {
         return pathModule;
+    }
+
+    public void setPathModule(String pathModule) {
+        this.pathModule = pathModule;
     }
     
     @Override
