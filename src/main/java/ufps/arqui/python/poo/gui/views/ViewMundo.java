@@ -1,15 +1,21 @@
 package ufps.arqui.python.poo.gui.views;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.util.Callback;
+import ufps.arqui.python.poo.gui.controllers.FXMLBaseController;
 import ufps.arqui.python.poo.gui.controllers.complements.FXMLPanelInstanceController;
 import ufps.arqui.python.poo.gui.models.MundoInstancia;
 import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
 import ufps.arqui.python.poo.gui.views.complements.ViewPanelInstance;
+import ufps.arqui.python.poo.gui.views.modals.ViewModalInfoInstance;
 
 /**
  *
@@ -19,10 +25,18 @@ public class ViewMundo extends ViewBase<ScrollPane, Object> {
     
     private FlowPane paneInstances;
     
+    private final Map<String, ViewModalInfoInstance> viewInstances = new HashMap<>();
+    
     private Callback<Class<?>, Object> controllerFactory;
+    
+    private Consumer<String> onClickObject;
 
     public ViewMundo() {
         super();
+        
+        this.onClickObject = (id) -> {
+            this.showModal(id);
+        };
     }
 
     @Override
@@ -43,23 +57,59 @@ public class ViewMundo extends ViewBase<ScrollPane, Object> {
      * y añadida al panel
      * @param instances 
      */
-    public void populateMundo(MundoInstancia[] instances) {
+    public void populateMundo(Map<String, MundoInstancia> instances) {
         Platform.runLater(() -> {
-            this.paneInstances.getChildren().clear();
+            this.clear();
 
-            for (MundoInstancia instance : instances) {
+            for (MundoInstancia instance : instances.values()) {
                 try{
-                    Object objsClassPanel[] = BluePyUtilities.loadView(BluePyUtilities.COMPLEMENT_PANEL_INSTANCE, this.controllerFactory, this.resources);
-
-                    FXMLPanelInstanceController controller = BluePyUtilities.get(FXMLPanelInstanceController.class, objsClassPanel);
-                    ViewPanelInstance view = (ViewPanelInstance)controller.getView();
-                    view.preload(instance);
-
-                    this.paneInstances.getChildren().add(view.getRoot());
+                    ViewModalInfoInstance modal;
+                    if(instance.getIsDeclared()){
+                        modal = this.forDeclaredInstance(instance);
+                    }else{
+                        modal = this.forNonDeclaredInstance(instance);
+                    }
+                    
+                    modal.setOnClickObject(this.onClickObject);
+                    this.viewInstances.put(instance.getId(), modal);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
             }
         });
+    }
+    
+    private void clear(){
+        for(ViewModalInfoInstance modal: this.viewInstances.values()){
+            modal.showModal(false);
+        }
+        this.viewInstances.clear();
+        this.paneInstances.getChildren().clear();
+    }
+    
+    private ViewModalInfoInstance forDeclaredInstance(MundoInstancia instance) throws IOException{
+        Object objsClassPanel[] = BluePyUtilities.loadView(BluePyUtilities.COMPLEMENT_PANEL_INSTANCE, this.controllerFactory, this.resources);
+
+        FXMLPanelInstanceController controller = BluePyUtilities.get(FXMLPanelInstanceController.class, objsClassPanel);
+        ViewPanelInstance view = (ViewPanelInstance)controller.getView();
+        view.preload(instance);
+
+        this.paneInstances.getChildren().add(view.getRoot());
+        return view.getModalInfoInstance();
+    }
+    
+    private ViewModalInfoInstance forNonDeclaredInstance(MundoInstancia instance) throws IOException{
+        Object objInfoInstance[] = BluePyUtilities.loadView(BluePyUtilities.MODAL_INFO_INSTANCE, this.controllerFactory, resources);
+            
+        FXMLBaseController controller = BluePyUtilities.get(FXMLBaseController.class, objInfoInstance);
+        ViewModalInfoInstance modalInfoInstance = (ViewModalInfoInstance)controller.getView();
+        modalInfoInstance.preload(instance);
+        
+        return modalInfoInstance;
+    }
+    
+    private void showModal(String id){
+        this.viewInstances.get(id).getModal().show();
+        this.viewInstances.get(id).getModal().requestFocus();
     }
 }

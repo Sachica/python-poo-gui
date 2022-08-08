@@ -99,24 +99,26 @@ class AttrInstancia:
     def to_json(self):
         return {
             "key": self.key,
-            "value": str(self.value).replace("'", ""),
+            "value": str(self.value),
             "type": self.type,
-            "rawtype": self.rawtype,
-            "to_reference": json.dumps(self.to_reference)
+            "rawType": self.rawtype,
+            "toReference": self.to_reference
         }
     
     def __str__(self):
         return str(self.key)
 
 class MethodInstancia:
-    def __init__(self, name, args):
+    def __init__(self, name, args, docs):
         self.name = name
         self.args = args
-    
+        self.docs = docs
+
     def to_json(self):
         return {
             "name": self.name,
-            "args": self.args
+            "args": self.args,
+            "docs": self.docs
         }
     
     def __str__(self):
@@ -144,14 +146,14 @@ class MundoInstancia:
 
     def to_json(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'name': self.name if self.name else "none",
             'name_class': self.name_class,
             'attrs': [x.to_json() for x in self.attrs], 
             'methods': [x.to_json() for x in self.methods],
-            'rawval': str(self.rawval).replace("'", "").replace('"', ""),
-            'isdeclared': json.dumps(self.isdeclared),
-            'iscollection': json.dumps(self.iscollection)
+            'rawValue': str(self.rawval),
+            'isDeclared': self.isdeclared,
+            'isCollection': self.iscollection
         }
     
     def __str__(self):
@@ -166,8 +168,8 @@ def get_lines_class(class_name):
         if codigo[ind_linea].startswith('class '):
             break
         index_last += 1
-    data = {'inicio': str(index), 'fin': str(index_last), 'archivo': str(file).replace("'", ""), 'clase': class_name.__name__}
-    print("get_lines_class:"+json.dumps(json.loads(str(data).replace("'", '"'))))
+    data = {'inicio': str(index), 'fin': str(index_last), 'archivo': str(file), 'clase': class_name.__name__}
+    print("get_lines_class:"+json.dumps(data))
 
 def list_files_and_get_root_directory(path):
     dict_directory = {}
@@ -218,25 +220,16 @@ def list_all_instancias():
                     dict_instances[id_str].isdeclared = True
                     dict_instances[id_str].name = key
                 break
-    list_instances = [{k: v.to_json()} for k, v in dict_instances.items()]
-    #print(json.dumps(json.loads(str(list_ids).replace("'", '"')), indent=4))
-    #print(json.dumps(json.loads(str(list_instances).replace("'", '"')), indent=4))
-    print("list_all_instancias:"+json.dumps(json.loads(str(list_instances).replace("'", '"'))))
+    list_instances = {k: v.to_json() for k, v in dict_instances.items()}
+    print("list_all_instancias:"+json.dumps(list_instances))
 
 def inspect_and_get_instance_from(name, obj, dict_instances, list_ids, classes):
     attr_value = MundoInstancia(id(obj), name, str(type(obj)), iscollection(obj))
-    # attribute is a string representing the attribute name
-    for attribute in dir(obj):
-        # Get the attribute value
-        attribute_value = getattr(obj, attribute)
-        # Check that it is callable
-        if callable(attribute_value):
-            # Filter all dunder (__ prefix) methods
-            if not attribute.startswith('__'):
-                attr_value.append_method(MethodInstancia(
-                    attribute,
-                    [arg for arg in inspect.getfullargspec(attribute_value).args if arg != 'self']
-                ))
+    
+    #Inspección de metodos
+    inspect_and_save_methods(obj, attr_value)
+
+    #Inspección de atributos
     for atkey in obj.__dict__.keys():
         value = obj.__dict__[atkey]
         typeval = type(value)
@@ -263,11 +256,32 @@ def inspect_and_get_instance_from(name, obj, dict_instances, list_ids, classes):
         attr_value.append_attr(AttrInstancia(
             atkey,
             value,
-            str(typeval).replace("'", ""),
+            str(typeval),
             isreference
         ))
 
     return attr_value
+
+def inspect_and_save_methods(obj, instance):
+    # attribute is a string representing the attribute name
+    for attribute in dir(obj):
+        # Get the attribute value
+        attribute_value = getattr(obj, attribute)
+        # Check that it is callable
+        if callable(attribute_value):
+            # Filter all dunder (__ prefix) methods
+            if not attribute.startswith('__'):
+                args = []
+                #Algunas funciones lanzan excepcion cuando se examinan sus atributos
+                try:
+                    args = [arg for arg in inspect.getfullargspec(attribute_value).args if arg != 'self']
+                except:
+                    pass
+                instance.append_method(MethodInstancia(
+                    attribute,
+                    args,
+                    attribute_value.__doc__
+                ))
 
 #Itera una python collection 'obj' en busca de instancias de clases del proyecto
 def inspect_for_collection(obj, dict_instances, list_ids, classes):
@@ -301,7 +315,8 @@ def strategy_for_classproject_or_collection(x, dict_instances, list_ids, classes
     list_ids.append(id(x))
 
     if iscollection(x):
-        attr_instance = MundoInstancia(id(x), None, str(type(x)).replace("'", ""), True)
+        attr_instance = MundoInstancia(id(x), None, str(type(x)), True)
+        inspect_and_save_methods(x, attr_instance)
         attr_instance.set_raw_val(str(inspect_for_collection(x, dict_instances, list_ids, classes)))
     else:
         attr_instance = inspect_and_get_instance_from(None, x, dict_instances, list_ids, classes)
@@ -408,19 +423,14 @@ def scanner_project():
     for directorio in dict_directorys.values():
         directorys_str[str(directorio)] = directorio.to_json()
     
-    #Preparar data de directorios y clases para print
-    directory_json = str(directorys_str).replace("'", '"')
-    classes_json = str(classes_str).replace("'", '"')
-    archivos_json = str(archivos_str).replace("'", '"')
     data_json = { 
-        "classes": json.loads(classes_json), 
-        "files": json.loads(archivos_json),
-        "directorys": json.loads(directory_json)
+        "classes": classes_str, 
+        "files": archivos_str,
+        "directorys": directorys_str
     }
     
-    #print(json.dumps(json.loads(str(data_json).replace("'", '"')), indent=4))
-    print('get_directorio_trabajo:'+json.dumps(json.loads(str(data_json).replace("'", '"'))))
-    print("import_modules:"+json.dumps(json.loads(str(import_modules).replace("'", '"'))))
+    print('get_directorio_trabajo:'+json.dumps(data_json))
+    print("import_modules:"+json.dumps(import_modules))
 
 def compile_file(pathfile):
     data = None

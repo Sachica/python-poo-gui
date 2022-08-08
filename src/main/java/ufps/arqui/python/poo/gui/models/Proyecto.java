@@ -1,6 +1,7 @@
 package ufps.arqui.python.poo.gui.models;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
 import ufps.arqui.python.poo.gui.utils.AdministrarArchivo;
 import ufps.arqui.python.poo.gui.utils.ConfScanFile;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -60,7 +62,7 @@ public class Proyecto {
     
     private final ObjectProperty<List<ClasePython>> currentListClasses = new SimpleObjectProperty<>();
             
-    private final ObjectProperty<MundoInstancia[]> currentInstances = new SimpleObjectProperty<>();
+    private final ObjectProperty<Map<String, MundoInstancia>> currentInstances = new SimpleObjectProperty<>();
 
     private final ScannerProject scan = new ScannerProject();
     
@@ -301,7 +303,7 @@ public class Proyecto {
         return this.currentListClasses;
     }
 
-    public ObjectProperty<MundoInstancia[]> getCurrentInstancesProperty() {
+    public ObjectProperty<Map<String, MundoInstancia>> getCurrentInstancesProperty() {
         return currentInstances;
     }
 
@@ -359,7 +361,8 @@ public class Proyecto {
             }
             
             if (m.getTipo().esInstancia()) {
-                this.currentInstances.setValue(gson.fromJson(m.getLinea(), MundoInstancia[].class));
+                Type t = new TypeToken<Map<String, MundoInstancia>>(){}.getType();
+                this.currentInstances.setValue(gson.fromJson(m.getLinea(), t));
             }
         }
     }

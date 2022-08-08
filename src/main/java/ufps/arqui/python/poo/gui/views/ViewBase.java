@@ -54,7 +54,8 @@ public class ViewBase<T extends Parent, K extends Object> {
     
     public void showModal(boolean show){
         if(this.modal != null){
-            this.modal.show();
+            if(show)this.modal.show();
+            else this.modal.hide();
         }
     }
 

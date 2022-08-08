@@ -16,6 +16,11 @@ public class MethodInstancia {
      * Listado de argumentos que requiere el método.
      */
     private String[] args;
+    
+    /**
+     * Documentación del metodo
+     */
+    private String docs;
 
     public String getName() {
         return name;
@@ -31,5 +36,13 @@ public class MethodInstancia {
 
     public void setArgs(String[] args) {
         this.args = args;
+    }
+
+    public String getDocs() {
+        return docs;
+    }
+
+    public void setDocs(String docs) {
+        this.docs = docs;
     }
 }

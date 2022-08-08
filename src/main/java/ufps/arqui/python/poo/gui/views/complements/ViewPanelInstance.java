@@ -60,4 +60,8 @@ public class ViewPanelInstance extends ViewBase<BorderPane, MundoInstancia>{
     public void showModalInfoInstance(){
         this.modalInfoInstance.showModal(true);
     }
+
+    public ViewModalInfoInstance getModalInfoInstance() {
+        return modalInfoInstance;
+    }
 }

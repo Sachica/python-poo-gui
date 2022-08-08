@@ -20,6 +20,16 @@ public class AttrInstancia {
      * Tipo de dato del atributo.
      */
     private String type;
+    
+    /**
+     * Tipo de dato puro del atributo.
+     */
+    private String rawType;
+    
+    /**
+     * Tipo de dato puro del atributo.
+     */
+    private boolean toReference;
 
     public String getKey() {
         return key;
@@ -43,5 +53,21 @@ public class AttrInstancia {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRawType() {
+        return rawType;
+    }
+
+    public void setRawType(String rawType) {
+        this.rawType = rawType;
+    }
+
+    public Boolean getToReference() {
+        return toReference;
+    }
+
+    public void setToReference(Boolean toReference) {
+        this.toReference = toReference;
     }
 }

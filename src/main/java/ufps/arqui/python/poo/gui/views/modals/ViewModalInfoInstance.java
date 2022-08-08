@@ -1,12 +1,15 @@
 package ufps.arqui.python.poo.gui.views.modals;
 
+import java.util.function.Consumer;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -20,23 +23,25 @@ import ufps.arqui.python.poo.gui.views.ViewBase;
  * @author Sachikia
  */
 public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
-    public Label lblName;
+    private Label lblName;
     
-    public Label lblClass;
+    private Label lblClass;
 
-    public TableView<AttrInstancia> tableAttributes;
+    private TableView<AttrInstancia> tableAttributes;
 
-    public TableColumn<AttrInstancia, String> colAttr;
+    private TableColumn<AttrInstancia, String> colAttr;
 
-    public TableColumn<AttrInstancia, String> colValue;
+    private TableColumn<AttrInstancia, String> colValue;
 
-    public TableColumn<AttrInstancia, String> colType;
+    private TableColumn<AttrInstancia, String> colType;
 
-    public TableView<MethodInstancia> tableMethods;
+    private TableView<MethodInstancia> tableMethods;
 
-    public TableColumn<MethodInstancia, String> colMethod;
+    private TableColumn<MethodInstancia, String> colMethod;
 
-    public TableColumn<MethodInstancia, String> coLParams;
+    private TableColumn<MethodInstancia, String> coLParams;
+    
+    private Consumer<String> onClickObject;
     
     public ViewModalInfoInstance() {
         super();
@@ -55,15 +60,12 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
         this.coLParams.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MethodInstancia, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<MethodInstancia, String> param) {
-                String params = "[", sep;
+                String params = "(";
                 for(int i = 0; i < param.getValue().getArgs().length; i++){
-                    sep = "";
-                    if(i+1 < param.getValue().getArgs().length){
-                        sep = ", ";
-                    }
-                    params += param.getValue().getArgs()[i] + sep;
+                    params += param.getValue().getArgs()[i];
+                    params += (i+1 < param.getValue().getArgs().length) ? ", " : "";
                 }
-                params += "]";
+                params += ")";
                 return new SimpleObjectProperty<>(params);
             }
         });
@@ -80,5 +82,20 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
         this.tableAttributes.getItems().addAll(object.getAttrs());
         this.tableMethods.getItems().addAll(object.getMethods());
         super.modal.setTitle(object.getName());
+    }
+    
+    public void setOnClickObject(Consumer<String> onClickObject) {
+        this.onClickObject = onClickObject;
+        this.tableAttributes.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent arg0) {
+                if(!tableAttributes.getSelectionModel().isEmpty()){
+                    AttrInstancia selected = tableAttributes.getSelectionModel().getSelectedItem();
+                    if(selected.getToReference()){
+                        onClickObject.accept(selected.getValue());
+                    }
+                }
+            }
+        });
     }
 }

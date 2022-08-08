@@ -1,6 +1,7 @@
 package ufps.arqui.python.poo.gui.controllers;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,10 +29,10 @@ public class FXMLMundoController extends FXMLBaseController<ViewMundo>{
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
         
-        super.proyecto.getCurrentInstancesProperty().addListener(new ChangeListener<MundoInstancia[]>() {
+        super.proyecto.getCurrentInstancesProperty().addListener(new ChangeListener<Map<String, MundoInstancia>>() {
             @Override
-            public void changed(ObservableValue<? extends MundoInstancia[]> observable, MundoInstancia[] oldValue, MundoInstancia[] newValue) {
-                view.populateMundo(newValue);
+            public void changed(ObservableValue<? extends Map<String, MundoInstancia>> arg0, Map<String, MundoInstancia> oldInstances, Map<String, MundoInstancia> newInstances) {
+                view.populateMundo(newInstances);
             }
         });
     }
