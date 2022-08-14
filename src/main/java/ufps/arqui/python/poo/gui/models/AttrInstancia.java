@@ -27,6 +27,11 @@ public class AttrInstancia {
     private String rawType;
     
     /**
+     * Clase propietaria del atributo.
+     */
+    private String owner;
+    
+    /**
      * Tipo de dato puro del atributo.
      */
     private boolean toReference;
@@ -69,5 +74,13 @@ public class AttrInstancia {
 
     public void setToReference(Boolean toReference) {
         this.toReference = toReference;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

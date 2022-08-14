@@ -1,5 +1,7 @@
 package ufps.arqui.python.poo.gui.models;
 
+import java.util.Map;
+
 /**
  * Clase que encapsula una instancia de una clase creada por el usuario.
  *
@@ -24,12 +26,12 @@ public class MundoInstancia {
     /**
      * Listado de atributos que contiene la instancia.
      */
-    private AttrInstancia[] attrs;
+    private Map<String, AttrInstancia[]> attrs;
 
     /**
      * Listado de metodos que contiene la instancia.
      */
-    private MethodInstancia[] methods;
+    private Map<String, MethodInstancia[]> methods;
     
     /**
      * Valor puro de la instancia, puede ser un valor primitivo o coleccion
@@ -66,19 +68,19 @@ public class MundoInstancia {
         this.name_class = name_class;
     }
 
-    public AttrInstancia[] getAttrs() {
+    public Map<String, AttrInstancia[]> getAttrs() {
         return attrs;
     }
 
-    public void setAttrs(AttrInstancia[] attrs) {
+    public void setAttrs(Map<String, AttrInstancia[]> attrs) {
         this.attrs = attrs;
     }
 
-    public MethodInstancia[] getMethods() {
+    public Map<String, MethodInstancia[]> getMethods() {
         return methods;
     }
 
-    public void setMethods(MethodInstancia[] methods) {
+    public void setMethods(Map<String, MethodInstancia[]> methods) {
         this.methods = methods;
     }
 

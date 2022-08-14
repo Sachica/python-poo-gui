@@ -20,23 +20,27 @@ import ufps.arqui.python.poo.gui.views.modals.ViewModalInfoInstance;
  */
 public class FXMLControllerInfoInstance extends FXMLBaseController<ViewModalInfoInstance>{
     @FXML
-    public Label lblName;
+    private Label lblName;
     @FXML
-    public Label lblClass;
+    private Label lblClass;
 
-    @FXML public TableView<AttrInstancia> tableAttributes;
+    @FXML private TableView<AttrInstancia> tableAttributes;
 
-    @FXML public TableColumn<AttrInstancia, String> colAttr;
+    @FXML private TableColumn<AttrInstancia, String> colAttr;
 
-    @FXML public TableColumn<AttrInstancia, String> colValue;
+    @FXML private TableColumn<AttrInstancia, String> colValue;
 
-    @FXML public TableColumn<AttrInstancia, String> colType;
+    @FXML private TableColumn<AttrInstancia, String> colType;
+    
+    @FXML private TableColumn<AttrInstancia, String> colOwnerAttr;
 
-    @FXML public TableView<MethodInstancia> tableMethods;
+    @FXML private TableView<MethodInstancia> tableMethods;
 
-    @FXML public TableColumn<MethodInstancia, String> colMethod;
+    @FXML private TableColumn<MethodInstancia, String> colMethod;
 
-    @FXML public TableColumn<MethodInstancia, String> coLParams;
+    @FXML private TableColumn<MethodInstancia, String> coLParams;
+    
+    @FXML private TableColumn<MethodInstancia, String> colOwnerMeth;
 
     public FXMLControllerInfoInstance(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);

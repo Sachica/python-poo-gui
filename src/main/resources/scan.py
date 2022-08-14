@@ -86,15 +86,19 @@ class Directorio:
         }
 
     def __str__(self) -> str:
-        return self.directorio
+        return self.directorio  
 
 class AttrInstancia:
     def __init__(self, key, value, type, to_reference):
         self.key = key
         self.value = value
         self.type = type
-        self.rawtype = type.split(" ")[1][:-1]
+        #<class 'clzz'> -> clzz
+        self.rawtype = type.split("'")[1].split(".")[-1]
         self.to_reference = to_reference
+
+    def update_owner(self, owner_class):
+        self.owner_class = owner_class
 
     def to_json(self):
         return {
@@ -102,7 +106,8 @@ class AttrInstancia:
             "value": str(self.value),
             "type": self.type,
             "rawType": self.rawtype,
-            "toReference": self.to_reference
+            "toReference": self.to_reference,
+            "owner": self.owner_class
         }
     
     def __str__(self):
@@ -114,43 +119,59 @@ class MethodInstancia:
         self.args = args
         self.docs = docs
 
+    def update_owner(self, owner_class):
+        self.owner_class = owner_class
+
     def to_json(self):
         return {
             "name": self.name,
             "args": self.args,
-            "docs": self.docs
+            "docs": self.docs,
+            "owner": self.owner_class
         }
-    
+
     def __str__(self):
         return str(self.name)
 
 class MundoInstancia:
-    def __init__(self, id, name_var, name_class, iscollection):
-        self.id = id
+    def __init__(self, obj, name_var, name_class, iscollection):
+        self.obj = obj
+        self.id = id(obj)
         self.name = name_var
         self.isdeclared = name_var != None
-        self.name_class = name_class.split(".")[-1].replace("'>", "")
+        #<class 'classes.A'> -> A
+        self.name_class = name_class.split("'")[1].split(".")[-1]
         self.attrs = []
         self.methods = []
         self.rawval = None
         self.iscollection = iscollection
 
     def append_attr(self, attr):
+        attr.update_owner(self.name_class)
         self.attrs.append(attr)
 
     def append_method(self, method):
+        method.update_owner(self.name_class)
         self.methods.append(method)
     
     def set_raw_val(self, rawval):
         self.rawval = rawval
+
+    def __get_members_by_class(self, list_members):
+        res = {}
+        for x in list_members:
+            if not x.owner_class in res:
+                res[x.owner_class] = []
+            res[x.owner_class].append(x.to_json())
+        return res
 
     def to_json(self):
         return {
             'id': str(self.id),
             'name': self.name if self.name else "none",
             'name_class': self.name_class,
-            'attrs': [x.to_json() for x in self.attrs], 
-            'methods': [x.to_json() for x in self.methods],
+            'attrs': self.__get_members_by_class(self.attrs),
+            'methods': self.__get_members_by_class(self.methods),
             'rawValue': str(self.rawval),
             'isDeclared': self.isdeclared,
             'isCollection': self.iscollection
@@ -220,11 +241,74 @@ def list_all_instancias():
                     dict_instances[id_str].isdeclared = True
                     dict_instances[id_str].name = key
                 break
+    apply_owner_base_classes(dict_instances)
     list_instances = {k: v.to_json() for k, v in dict_instances.items()}
+    #print(json.dumps(list_instances, indent=4))
     print("list_all_instancias:"+json.dumps(list_instances))
 
+#Aplica los propietarios a los atributos y metodos correspondientes
+#en caso de herencia
+def apply_owner_base_classes(dict_instances):
+    for instance in dict_instances.values():
+        dict_members = {}
+        get_members_by_class(instance.obj, dict_members)
+        for class_owner, info in dict_members.items():
+            #<class 'classes.A'> -> A
+            class_owner = class_owner.split("'")[1].split(".")[-1]
+            for attrib in instance.attrs:
+                if attrib.key in info["attribs"]:
+                    attrib.update_owner(class_owner)
+
+            for method in instance.methods:
+                if method.name in info["methods"]:
+                    method.update_owner(class_owner)
+
+#Obtiene los atributos y metodos por clase
+def get_members_by_class(obj, dict_members):
+    typecls = type(obj)
+    #Almecenara todos los metodos heredados
+    diff_methods = set()
+    #Almecenara todos los atributos heredados
+    diff_attribs = set()
+
+    dict_members[str(typecls)] = {}
+    dict_members[str(typecls)]["bases"] = set()
+
+    for base_class in typecls.__bases__:
+        ins_base_class = base_class()
+        diff_methods = diff_methods.union(set(dir(base_class)))
+
+        #Las colecciones de python y la clase object no cuentan con atributos        
+        if not iscollection(typecls) and base_class != object:
+            diff_attribs = diff_attribs.union(set(ins_base_class.__dict__.keys()))
+
+        dict_members[str(typecls)]["bases"].add(str(base_class))
+        #Llamada recuriva para obtener super clases de la clase base actual
+        get_members_by_class(ins_base_class, dict_members)
+
+    #Las colecciones de python y la clase object no cuentan con atributos        
+    if not iscollection(obj) and typecls != object:
+        raw_attribs = set(obj.__dict__.keys())
+        self_attribs = raw_attribs.difference(diff_attribs)
+        dict_members[str(typecls)]["attribs"] = list(self_attribs)
+
+        #Si una clase ya hereda de otra no se lista la clase object de la cual heradan todas
+        #las clases, por lo tanto se agrega de forma manual
+        dict_members[str(typecls)]["bases"].add(str(object))
+    else:
+        dict_members[str(typecls)]["attribs"] = []
+
+    raw_methods = set(dir(typecls))
+    obj_methods = set(dir(object))
+    self_methods = raw_methods.difference(diff_methods).difference(set(['__module__', '__weakref__']))
+
+    #Si la clase actual es 'object' sus metodos seran eliminados
+    #dado que, set(dir(object)).difference(set(dir(object))) = ()
+    members = list(self_methods.difference(obj_methods)) if typecls != object else list(obj_methods)
+    dict_members[str(typecls)]["methods"] = members
+
 def inspect_and_get_instance_from(name, obj, dict_instances, list_ids, classes):
-    attr_value = MundoInstancia(id(obj), name, str(type(obj)), iscollection(obj))
+    attr_value = MundoInstancia(obj, name, str(type(obj)), iscollection(obj))
     
     #Inspección de metodos
     inspect_and_save_methods(obj, attr_value)
@@ -237,16 +321,12 @@ def inspect_and_get_instance_from(name, obj, dict_instances, list_ids, classes):
         iscollect = iscollection(value)
         isfromproject = isinstance_from_class_project(value, classes)
         isregistered = id(value) in list_ids
-        isself = id(value) == id(obj)
         isreference = iscollect or isfromproject or isregistered
 
         if isfromproject:
             if not isregistered:
                 strategy_for_classproject_or_collection(value, dict_instances, list_ids, classes)
-                value = id(value)
-
-            elif isself:
-                value = id(value)
+            value = id(value)
 
         elif iscollect:
             if not isregistered:
@@ -269,19 +349,17 @@ def inspect_and_save_methods(obj, instance):
         attribute_value = getattr(obj, attribute)
         # Check that it is callable
         if callable(attribute_value):
-            # Filter all dunder (__ prefix) methods
-            if not attribute.startswith('__'):
-                args = []
-                #Algunas funciones lanzan excepcion cuando se examinan sus atributos
-                try:
-                    args = [arg for arg in inspect.getfullargspec(attribute_value).args if arg != 'self']
-                except:
-                    pass
-                instance.append_method(MethodInstancia(
-                    attribute,
-                    args,
-                    attribute_value.__doc__
-                ))
+            args = []
+            #Algunas funciones lanzan excepcion cuando se examinan sus atributos
+            try:
+                args = [arg for arg in inspect.getfullargspec(attribute_value).args if arg != 'self']
+            except:
+                pass
+            instance.append_method(MethodInstancia(
+                attribute,
+                args,
+                attribute_value.__doc__
+            ))
 
 #Itera una python collection 'obj' en busca de instancias de clases del proyecto
 def inspect_for_collection(obj, dict_instances, list_ids, classes):
@@ -315,7 +393,7 @@ def strategy_for_classproject_or_collection(x, dict_instances, list_ids, classes
     list_ids.append(id(x))
 
     if iscollection(x):
-        attr_instance = MundoInstancia(id(x), None, str(type(x)), True)
+        attr_instance = MundoInstancia(x, None, str(type(x)), True)
         inspect_and_save_methods(x, attr_instance)
         attr_instance.set_raw_val(str(inspect_for_collection(x, dict_instances, list_ids, classes)))
     else:

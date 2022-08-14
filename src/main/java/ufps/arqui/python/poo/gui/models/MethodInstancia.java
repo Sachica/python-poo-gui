@@ -21,6 +21,11 @@ public class MethodInstancia {
      * Documentación del metodo
      */
     private String docs;
+    
+    /**
+     * Clase propietaria del metodo.
+     */
+    private String owner;
 
     public String getName() {
         return name;
@@ -44,5 +49,13 @@ public class MethodInstancia {
 
     public void setDocs(String docs) {
         this.docs = docs;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

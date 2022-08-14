@@ -1,14 +1,20 @@
 package ufps.arqui.python.poo.gui.views.modals;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -16,6 +22,7 @@ import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.models.AttrInstancia;
 import ufps.arqui.python.poo.gui.models.MethodInstancia;
 import ufps.arqui.python.poo.gui.models.MundoInstancia;
+import ufps.arqui.python.poo.gui.utils.BluePyUtilities;
 import ufps.arqui.python.poo.gui.views.ViewBase;
 
 /**
@@ -34,40 +41,54 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
     private TableColumn<AttrInstancia, String> colValue;
 
     private TableColumn<AttrInstancia, String> colType;
+    
+    private TableColumn<AttrInstancia, String> colOwnerAttr;
 
     private TableView<MethodInstancia> tableMethods;
 
     private TableColumn<MethodInstancia, String> colMethod;
 
     private TableColumn<MethodInstancia, String> coLParams;
+
+    private TableColumn<MethodInstancia, String> colOwnerMeth;
     
     private Consumer<String> onClickObject;
     
+    private final Image imageRef;
+    
     public ViewModalInfoInstance() {
-        super();
+        this.imageRef = new Image(getClass().getResourceAsStream(BluePyUtilities.REF_ARROW));
     }
 
     @Override
     public void initialize() {
         this.colAttr.setCellValueFactory(new PropertyValueFactory("key"));
-        this.colValue.setCellValueFactory(new PropertyValueFactory("value"));
+        this.colValue.setCellValueFactory(new PropertyValueFactory<AttrInstancia, String>("value"){
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<AttrInstancia, String> param) {
+                if(param.getValue().getToReference()){
+                    return new SimpleObjectProperty(new ImageView(imageRef));
+                }
+                return new SimpleStringProperty(param.getValue().getValue());
+            }
+        });
         this.colType.setCellValueFactory(new PropertyValueFactory("type"));
+        this.colOwnerAttr.setCellValueFactory(new PropertyValueFactory("owner"));
         
         this.colMethod.setCellValueFactory(new PropertyValueFactory("name"));
-        
-        //Los parametros vienen en una lista por lo tanto se personaliza la 
-        //celda para mostrar los valores(String) dentro de la lista
-        this.coLParams.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<MethodInstancia, String>, ObservableValue<String>>() {
+        this.colOwnerMeth.setCellValueFactory(new PropertyValueFactory("owner"));
+        this.coLParams.setCellValueFactory(new PropertyValueFactory<MethodInstancia, String>("args"){
             @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<MethodInstancia, String> param) {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<MethodInstancia, String> value) {
                 String params = "(";
-                for(int i = 0; i < param.getValue().getArgs().length; i++){
-                    params += param.getValue().getArgs()[i];
-                    params += (i+1 < param.getValue().getArgs().length) ? ", " : "";
+                for(int i = 0; i < value.getValue().getArgs().length; i++){
+                    params += value.getValue().getArgs()[i];
+                    params += (i+1 < value.getValue().getArgs().length) ? ", " : "";
                 }
                 params += ")";
-                return new SimpleObjectProperty<>(params);
+                return new SimpleStringProperty(params);
             }
+            
         });
         
         super.modal = new Stage();
@@ -79,8 +100,8 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
         this.lblName.setText(object.getName());
         this.lblClass.setText(object.getName_class());
         
-        this.tableAttributes.getItems().addAll(object.getAttrs());
-        this.tableMethods.getItems().addAll(object.getMethods());
+        object.getAttrs().forEach((clazz, list) -> this.tableAttributes.getItems().addAll(list));
+        object.getMethods().forEach((clazz, list) -> this.tableMethods.getItems().addAll(list));
         super.modal.setTitle(object.getName());
     }
     
