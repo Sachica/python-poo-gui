@@ -2,7 +2,6 @@ package ufps.arqui.python.poo.gui.models;
 
 import java.util.List;
 import java.util.Map;
-import ufps.arqui.python.poo.gui.models.AttrInstancia;
 
 /**
  * Clase que encapsula una instancia de una clase creada por el usuario.
@@ -46,7 +45,12 @@ public class MundoInstancia {
     private boolean isCollection;
     
     /**
-     * Si la instancia actual es una colección, este atributo guardara en forma
+     * Si la instancia actual es una colección, almacena el tipo de colección
+     */
+    private String collectionType;
+    
+    /**
+     * Si la instancia actual es una colección, almacena en forma
      * de atributos los valores dentro de esa colección
      */
     private List<AttrInstancia> collectionValues;
@@ -103,6 +107,14 @@ public class MundoInstancia {
         this.isCollection = isCollection;
     }
 
+    public String getCollectionType() {
+        return collectionType;
+    }
+
+    public void setCollectionType(String collectionType) {
+        this.collectionType = collectionType;
+    }
+    
     public List<AttrInstancia> getCollectionValues() {
         return collectionValues;
     }

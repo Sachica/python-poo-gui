@@ -13,7 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.models.AttrInstancia;
@@ -26,7 +26,7 @@ import ufps.arqui.python.poo.gui.views.ViewBase;
  *
  * @author Sachikia
  */
-public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
+public class ViewModalInfoInstance extends ViewBase<VBox, MundoInstancia>{
     private Label lblName;
     
     private Label lblClass;
@@ -40,6 +40,14 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
     private TableColumn<AttrInstancia, String> colType;
     
     private TableColumn<AttrInstancia, String> colOwnerAttr;
+    
+    private TableView<AttrInstancia> tableCollection;
+
+    private TableColumn<AttrInstancia, String> colCPosKey;
+
+    private TableColumn<AttrInstancia, String> colCValue;
+
+    private TableColumn<AttrInstancia, String> colCType;
 
     private TableView<MethodInstancia> tableMethods;
 
@@ -65,6 +73,7 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
     @Override
     public void initialize() {
         this.configColsAttributes();
+        this.configColsCollection();
         this.configColsMethods();
         
         super.modal = new Stage();
@@ -76,13 +85,20 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
         this.lblName.setText(object.getName());
         this.lblClass.setText(object.getName_class());
         
-        if(!object.getIsCollection()){
+        //Valida si es una clase que esta heredando de una colección y no una colección pura
+        if(!object.getName_class().equals(object.getCollectionType())){
             object.getAttrs().forEach((clazz, list) -> this.tableAttributes.getItems().addAll(list));
-        }else{
-            this.configForCollection(object);
-            object.getCollectionValues().forEach((list) -> this.tableAttributes.getItems().addAll(list));
+            super.root.getChildren().add(this.tableAttributes);
         }
+        
+        if(object.getIsCollection()){
+            this.configForCollection(object);
+            object.getCollectionValues().forEach((list) -> this.tableCollection.getItems().addAll(list));
+            super.root.getChildren().add(this.tableCollection);
+        }
+        
         object.getMethods().forEach((clazz, list) -> this.tableMethods.getItems().addAll(list));
+        super.root.getChildren().add(this.tableMethods);
         
         super.modal.setTitle(object.getName());
     }
@@ -91,12 +107,9 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
         this.onClickObject = onClickObject;
     }
     
-    private void handleClickedReference(){
-        if(!this.tableAttributes.getSelectionModel().isEmpty()){
-            AttrInstancia selected = this.tableAttributes.getSelectionModel().getSelectedItem();
-            if(selected.getToReference()){
-                this.onClickObject.accept(selected.getValue());
-            }
+    private void handleClickedReference(AttrInstancia selected){
+        if(selected != null && selected.getToReference()){
+            this.onClickObject.accept(selected.getValue());
         }
     }
     
@@ -112,49 +125,56 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
     }
     
     private void configForCollection(MundoInstancia instance){
-        this.tableAttributes.getColumns().remove(this.colOwnerAttr);
-        switch(instance.getName_class()){
+        switch(instance.getCollectionType()){
             case "list":
             case "tuple":
-                this.colAttr.setText(super.resources.getString("ModalInfoInstance.tableIndex"));
+                this.colCPosKey.setText(super.resources.getString("ModalInfoInstance.tableIndex"));
             break;
             case "dict":
-                this.colAttr.setText(super.resources.getString("ModalInfoInstance.tableKey"));
+                this.colCPosKey.setText(super.resources.getString("ModalInfoInstance.tableKey"));
             break;
             case "set":
-                this.tableAttributes.getColumns().remove(this.colAttr);
+                this.tableCollection.getColumns().remove(this.colCPosKey);
         }
+    }
+    
+    private void configColsCollection(){
+        this.colCPosKey.setCellValueFactory(new PropertyValueFactory("key"));
+        this.colCValue.setCellValueFactory(new PropertyValueFactory("value"));
+        this.colCValue.setCellFactory(this.getCallbackCellFactoryForReferencedValue());
+        this.colCType.setCellValueFactory(new PropertyValueFactory("type"));
     }
     
     private void configColsAttributes(){
         this.colAttr.setCellValueFactory(new PropertyValueFactory("key"));
         this.colValue.setCellValueFactory(new PropertyValueFactory("value"));
-        this.colValue.setCellFactory(new Callback<TableColumn<AttrInstancia, String>, TableCell<AttrInstancia, String>>() {
-            @Override
-            public TableCell<AttrInstancia, String> call(TableColumn<AttrInstancia, String> arg0) {
-                TableCell<AttrInstancia, String> cell = new TableCell<>(){
-                    @Override
-                    protected void updateItem(String value, boolean empty) {
-                        super.updateItem(value, empty);
-                        if(value != null && !empty && getTableRow() != null
-                                && getTableRow().getItem().getToReference()){
-                            ImageView imgView = new ImageView(imageRef);
-                            setGraphic(imgView);
-                        }else{
-                            setText(value);
-                            setGraphic(null);
-                        }
-                    }
-                };
-                
-                cell.setOnMouseClicked(e -> handleClickedReference());
-                
-                return cell;
-            }
-        });
+        this.colValue.setCellFactory(this.getCallbackCellFactoryForReferencedValue());
         
         this.colType.setCellValueFactory(new PropertyValueFactory("type"));
         this.colOwnerAttr.setCellValueFactory(new PropertyValueFactory("owner"));
+    }
+    
+    private Callback getCallbackCellFactoryForReferencedValue(){
+        return (param) ->  {
+            TableCell<AttrInstancia, String> cell = new TableCell<>(){
+                @Override
+                protected void updateItem(String value, boolean empty) {
+                    super.updateItem(value, empty);
+                    if(value != null && !empty && getTableRow() != null
+                            && getTableRow().getItem().getToReference()){
+                        ImageView imgView = new ImageView(imageRef);
+                        setGraphic(imgView);
+                    }else{
+                        setText(value);
+                        setGraphic(null);
+                    }
+                }
+            };
+
+            cell.setOnMouseClicked(e -> handleClickedReference(cell.getTableRow().getItem()));
+
+            return cell;
+        };
     }
     
     private void configColsMethods(){
@@ -175,28 +195,29 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
         });
         
         this.colInfo.setCellValueFactory(new PropertyValueFactory("docs"));
-        this.colInfo.setCellFactory(new Callback<TableColumn<MethodInstancia, String>, TableCell<MethodInstancia, String>>() {
-            @Override
-            public TableCell<MethodInstancia, String> call(TableColumn<MethodInstancia, String> arg0) {
-                TableCell<MethodInstancia, String> cell = new TableCell<>(){
-                    @Override
-                    protected void updateItem(String value, boolean empty) {
-                        super.updateItem(value, empty);
-                        if(value != null && !empty){
-                            ImageView imgView = new ImageView(imageInfo);
-                            imgView.setFitWidth(20);
-                            imgView.setFitHeight(20);
-                            setGraphic(imgView);
-                        }else{
-                            setGraphic(null);
-                        }
+        this.colInfo.setCellFactory(this.getCallbackCellFactoryForInfo());
+    }
+    
+    private Callback getCallbackCellFactoryForInfo(){
+        return (param) -> {
+            TableCell<MethodInstancia, String> cell = new TableCell<>(){
+                @Override
+                protected void updateItem(String value, boolean empty) {
+                    super.updateItem(value, empty);
+                    if(value != null && !empty){
+                        ImageView imgView = new ImageView(imageInfo);
+                        imgView.setFitWidth(20);
+                        imgView.setFitHeight(20);
+                        setGraphic(imgView);
+                    }else{
+                        setGraphic(null);
                     }
-                };
-                
-                cell.setOnMouseClicked(e -> handleClickedInfo(cell.getTableRow().getItem()));
-                
-                return cell;
-            }
-        });
+                }
+            };
+
+            cell.setOnMouseClicked(e -> handleClickedInfo(cell.getTableRow().getItem()));
+
+            return cell;
+        };
     }
 }

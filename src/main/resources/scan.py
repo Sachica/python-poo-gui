@@ -135,17 +135,18 @@ class MethodInstancia:
         return str(self.name)
 
 class MundoInstancia:
-    def __init__(self, obj, name_var, name_class, iscollection):
+    def __init__(self, obj, name_var):
         self.obj = obj
         self.id = id(obj)
         self.name = name_var
         self.isdeclared = name_var != None
         #<class 'classes.A'> -> A
-        self.name_class = name_class.split("'")[1].split(".")[-1]
+        self.name_class = str(type(obj)).split("'")[1].split(".")[-1]
         self.attrs = []
         self.methods = []
-        self.iscollection = iscollection
+        self.iscollection = iscollection(obj)
         self.collection_values = []
+        self.collection_type = get_type_collection(obj)
 
     def append_attr(self, attr):
         attr.update_owner(self.name_class)
@@ -175,6 +176,7 @@ class MundoInstancia:
             'methods': self.__get_members_by_class(self.methods),
             'isDeclared': self.isdeclared,
             'isCollection': self.iscollection,
+            'collectionType': self.collection_type,
             'collectionValues': [x.to_json() for x in self.collection_values]
         }
     
@@ -280,7 +282,7 @@ def get_members_by_class(obj, dict_members):
         diff_methods = diff_methods.union(set(dir(base_class)))
 
         #Las colecciones de python y la clase object no cuentan con atributos        
-        if not iscollection(typecls) and base_class != object:
+        if '__dict__' in dir(ins_base_class):
             diff_attribs = diff_attribs.union(set(ins_base_class.__dict__.keys()))
 
         dict_members[str(typecls)]["bases"].add(str(base_class))
@@ -288,7 +290,7 @@ def get_members_by_class(obj, dict_members):
         get_members_by_class(ins_base_class, dict_members)
 
     #Las colecciones de python y la clase object no cuentan con atributos        
-    if not iscollection(obj) and typecls != object:
+    if '__dict__' in dir(obj):
         raw_attribs = set(obj.__dict__.keys())
         self_attribs = raw_attribs.difference(diff_attribs)
         dict_members[str(typecls)]["attribs"] = list(self_attribs)
@@ -309,7 +311,7 @@ def get_members_by_class(obj, dict_members):
     dict_members[str(typecls)]["methods"] = members
 
 def inspect_and_get_instance_from(name, obj, dict_instances, list_ids, classes):
-    attr_value = MundoInstancia(obj, name, str(type(obj)), iscollection(obj))
+    attr_value = MundoInstancia(obj, name)
     
     #Inspección de metodos
     inspect_and_save_methods(obj, attr_value)
@@ -401,7 +403,7 @@ def strategy_for_classproject_or_collection(x, dict_instances, list_ids, classes
     list_ids.append(id(x))
 
     if iscollection(x):
-        attr_instance = MundoInstancia(x, None, str(type(x)), True)
+        attr_instance = MundoInstancia(x, None)
         inspect_and_save_methods(x, attr_instance)
         attr_instance.set_collect_value(inspect_for_collection(x, dict_instances, list_ids, classes))
     else:
@@ -419,6 +421,18 @@ def isinstance_from_class_project(obj, classes):
 #Valida si el objeto 'obj' es una instancia de una python collection
 def iscollection(obj):
     return isinstance(obj, list) or isinstance(obj, dict) or isinstance(obj, tuple) or isinstance(obj, set)
+
+def get_type_collection(obj):
+    if iscollection(obj):
+        if isinstance(obj, list):
+            return "list"
+        elif isinstance(obj, dict):
+            return "dict"
+        elif isinstance(obj, tuple):
+            return "tuple"
+        else:
+            return "set"
+    return None   
 
 def list_all_python_class_and_errors(folder_root: Directorio):
     #Almacena errores que se encuentren al importar un modulo[str]
@@ -458,15 +472,19 @@ def list_all_python_class_and_errors(folder_root: Directorio):
                         class_bases = class_type.__bases__
                         if len(class_bases) != 1 or class_bases[0].__name__ != "object":
                             for type_class in class_bases:
+                                #<class 'path.to.Class'> -> [path, to, Class]
                                 class_split = str(type_class).split("'")[1].split(".")
-                                path_mod_herencia, class_name_herencia = ".".join(class_split[:-1]), class_split[-1]
                                 
-                                #Valida si la clase base ya se encuentra instanciada
-                                class_path_base = '.'.join([path_mod_herencia, class_name_herencia])
-                                if class_path_base not in dict_class_classpython:
-                                    dict_class_classpython[class_path_base] = ClasePython(class_name_herencia, path_mod_herencia)
+                                #Pertenece la clase base al proyecto?
+                                if class_split[0] == "src":
+                                    path_mod_herencia, class_name_herencia = ".".join(class_split[:-1]), class_split[-1]
+                                    
+                                    #Valida si la clase base ya se encuentra instanciada
+                                    class_path_base = '.'.join([path_mod_herencia, class_name_herencia])
+                                    if class_path_base not in dict_class_classpython:
+                                        dict_class_classpython[class_path_base] = ClasePython(class_name_herencia, path_mod_herencia)
 
-                                clase_python.bases.append(dict_class_classpython[class_path_base])
+                                    clase_python.bases.append(dict_class_classpython[class_path_base])
             except Exception as err:
                 list_errores.append(str(err))
         for sub_dir in directorio.directorios:

@@ -39,6 +39,8 @@
                 GridPane.rowIndex="1"
                 GridPane.columnIndex="1"/>
     </GridPane>
+    
+    <fx:define>
     <TableView fx:id="tableAttributes">
         <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
         <columns>
@@ -53,6 +55,21 @@
                             styleClass="table-column"/>
             <TableColumn    fx:id="colOwnerAttr"
                             text="%ModalInfoInstance.tableOwner"
+                            styleClass="table-column"/>
+        </columns>
+    </TableView>
+    
+    <TableView fx:id="tableCollection">
+        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+        <columns>
+            <TableColumn    fx:id="colCPosKey"
+                            text="%ModalInfoInstance.tableAttribute"
+                            styleClass="table-column"/>
+            <TableColumn    fx:id="colCValue"
+                            text="%ModalInfoInstance.tableValue"
+                            styleClass="table-column"/>
+            <TableColumn    fx:id="colCType"
+                            text="%ModalInfoInstance.tableDataType"
                             styleClass="table-column"/>
         </columns>
     </TableView>
@@ -73,7 +90,8 @@
                             styleClass="table-column"/>
         </columns>
     </TableView>
-
+    </fx:define>
+    
     <padding>
         <Insets top="5" bottom="5" right="5" left="5"/>
     </padding>

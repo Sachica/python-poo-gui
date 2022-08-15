@@ -33,6 +33,14 @@ public class FXMLControllerInfoInstance extends FXMLBaseController<ViewModalInfo
     @FXML private TableColumn<AttrInstancia, String> colType;
     
     @FXML private TableColumn<AttrInstancia, String> colOwnerAttr;
+    
+    @FXML private TableView<AttrInstancia> tableCollection;
+
+    @FXML private TableColumn<AttrInstancia, String> colCPosKey;
+
+    @FXML private TableColumn<AttrInstancia, String> colCValue;
+
+    @FXML private TableColumn<AttrInstancia, String> colCType;
 
     @FXML private TableView<MethodInstancia> tableMethods;
 
