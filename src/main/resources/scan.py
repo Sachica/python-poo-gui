@@ -96,6 +96,7 @@ class AttrInstancia:
         #<class 'clzz'> -> clzz
         self.rawtype = type.split("'")[1].split(".")[-1]
         self.to_reference = to_reference
+        self.owner_class = None
 
     def update_owner(self, owner_class):
         self.owner_class = owner_class
@@ -143,8 +144,8 @@ class MundoInstancia:
         self.name_class = name_class.split("'")[1].split(".")[-1]
         self.attrs = []
         self.methods = []
-        self.rawval = None
         self.iscollection = iscollection
+        self.collection_values = []
 
     def append_attr(self, attr):
         attr.update_owner(self.name_class)
@@ -154,8 +155,8 @@ class MundoInstancia:
         method.update_owner(self.name_class)
         self.methods.append(method)
     
-    def set_raw_val(self, rawval):
-        self.rawval = rawval
+    def set_collect_value(self, collection_values):
+        self.collection_values = collection_values
 
     def __get_members_by_class(self, list_members):
         res = {}
@@ -168,13 +169,13 @@ class MundoInstancia:
     def to_json(self):
         return {
             'id': str(self.id),
-            'name': self.name if self.name else "none",
+            'name': self.name if self.name else "-",
             'name_class': self.name_class,
             'attrs': self.__get_members_by_class(self.attrs),
             'methods': self.__get_members_by_class(self.methods),
-            'rawValue': str(self.rawval),
             'isDeclared': self.isdeclared,
-            'isCollection': self.iscollection
+            'isCollection': self.iscollection,
+            'collectionValues': [x.to_json() for x in self.collection_values]
         }
     
     def __str__(self):
@@ -365,14 +366,20 @@ def inspect_and_save_methods(obj, instance):
 def inspect_for_collection(obj, dict_instances, list_ids, classes):
     if isinstance(obj, list) or isinstance(obj, tuple) or isinstance(obj, set):
         res = []
+        i = 0
         for x in obj:
-            res.append(inspect_and_get_apropiate_value(x, dict_instances, list_ids, classes))
-        return res if isinstance(obj, list) else (tuple(res) if isinstance(obj, tuple) else set(res))
+            approp_value = inspect_and_get_apropiate_value(x, dict_instances, list_ids, classes)
+            attr = AttrInstancia(str(i), approp_value, str(type(x)), x != approp_value)
+            res.append(attr)
+            i += 1
+        return res
 
     if isinstance(obj, dict):
-        res = {}
+        res = []
         for k, v in obj.items():
-            res[k] = inspect_and_get_apropiate_value(v, dict_instances, list_ids, classes)
+            approp_value = inspect_and_get_apropiate_value(v, dict_instances, list_ids, classes)
+            attr = AttrInstancia(k, approp_value, str(type(v)), v != approp_value)
+            res.append(attr)
         return res
 
 #Inspecciona si el valor es una instancia del proyecto o es una python collection, en ese
@@ -382,7 +389,8 @@ def inspect_and_get_apropiate_value(x, dict_instances, list_ids, classes):
     isfromproject = isinstance_from_class_project(x, classes)
     iscollect = iscollection(x)
     if isfromproject or iscollect:
-        strategy_for_classproject_or_collection(x, dict_instances, list_ids, classes)
+        if id(x) not in list_ids:
+            strategy_for_classproject_or_collection(x, dict_instances, list_ids, classes)
         return id(x)
     return x
 
@@ -395,7 +403,7 @@ def strategy_for_classproject_or_collection(x, dict_instances, list_ids, classes
     if iscollection(x):
         attr_instance = MundoInstancia(x, None, str(type(x)), True)
         inspect_and_save_methods(x, attr_instance)
-        attr_instance.set_raw_val(str(inspect_for_collection(x, dict_instances, list_ids, classes)))
+        attr_instance.set_collect_value(inspect_for_collection(x, dict_instances, list_ids, classes))
     else:
         attr_instance = inspect_and_get_instance_from(None, x, dict_instances, list_ids, classes)
 

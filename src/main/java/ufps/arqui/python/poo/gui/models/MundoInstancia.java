@@ -1,6 +1,8 @@
 package ufps.arqui.python.poo.gui.models;
 
+import java.util.List;
 import java.util.Map;
+import ufps.arqui.python.poo.gui.models.AttrInstancia;
 
 /**
  * Clase que encapsula una instancia de una clase creada por el usuario.
@@ -34,11 +36,6 @@ public class MundoInstancia {
     private Map<String, MethodInstancia[]> methods;
     
     /**
-     * Valor puro de la instancia, puede ser un valor primitivo o coleccion
-     */
-    private String rawValue;
-    
-    /**
      * Indica si la instancia esta declarada
      */
     private boolean isDeclared;
@@ -47,6 +44,12 @@ public class MundoInstancia {
      * Indica si la instancia es una colleción de python
      */
     private boolean isCollection;
+    
+    /**
+     * Si la instancia actual es una colección, este atributo guardara en forma
+     * de atributos los valores dentro de esa colección
+     */
+    private List<AttrInstancia> collectionValues;
 
     public String getId() {
         return id;
@@ -84,14 +87,6 @@ public class MundoInstancia {
         this.methods = methods;
     }
 
-    public String getRawValue() {
-        return rawValue;
-    }
-
-    public void setRawValue(String rawValue) {
-        this.rawValue = rawValue;
-    }
-
     public Boolean getIsDeclared() {
         return isDeclared;
     }
@@ -108,8 +103,16 @@ public class MundoInstancia {
         this.isCollection = isCollection;
     }
 
+    public List<AttrInstancia> getCollectionValues() {
+        return collectionValues;
+    }
+
+    public void setCollectionValues(List<AttrInstancia> collectionValues) {
+        this.collectionValues = collectionValues;
+    }
+
     @Override
     public String toString() {
-        return "MundoInstancia{" + "id=" + id + ", name=" + name + ", name_class=" + name_class + ", attrs=" + attrs + ", methods=" + methods + ", rawValue=" + rawValue + ", isDeclared=" + isDeclared + ", isCollection=" + isCollection + '}';
+        return "MundoInstancia{" + "id=" + id + ", name=" + name + ", name_class=" + name_class + ", attrs=" + attrs + ", methods=" + methods + ", isDeclared=" + isDeclared + ", isCollection=" + isCollection + '}';
     }
 }

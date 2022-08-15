@@ -64,6 +64,69 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
 
     @Override
     public void initialize() {
+        this.configColsAttributes();
+        this.configColsMethods();
+        
+        super.modal = new Stage();
+        super.modal.setScene(new Scene(super.root));
+    }
+    
+    @Override
+    public void preload(MundoInstancia object) {
+        this.lblName.setText(object.getName());
+        this.lblClass.setText(object.getName_class());
+        
+        if(!object.getIsCollection()){
+            object.getAttrs().forEach((clazz, list) -> this.tableAttributes.getItems().addAll(list));
+        }else{
+            this.configForCollection(object);
+            object.getCollectionValues().forEach((list) -> this.tableAttributes.getItems().addAll(list));
+        }
+        object.getMethods().forEach((clazz, list) -> this.tableMethods.getItems().addAll(list));
+        
+        super.modal.setTitle(object.getName());
+    }
+    
+    public void setOnClickObject(Consumer<String> onClickObject) {
+        this.onClickObject = onClickObject;
+    }
+    
+    private void handleClickedReference(){
+        if(!this.tableAttributes.getSelectionModel().isEmpty()){
+            AttrInstancia selected = this.tableAttributes.getSelectionModel().getSelectedItem();
+            if(selected.getToReference()){
+                this.onClickObject.accept(selected.getValue());
+            }
+        }
+    }
+    
+    private void handleClickedInfo(MethodInstancia method){
+        if(method == null) return;
+        
+        String docs = method.getDocs();
+        if(docs != null && !docs.isBlank() && !docs.isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.NONE, docs, ButtonType.OK);
+            alert.setTitle(method.getName());
+            alert.show();
+        }
+    }
+    
+    private void configForCollection(MundoInstancia instance){
+        this.tableAttributes.getColumns().remove(this.colOwnerAttr);
+        switch(instance.getName_class()){
+            case "list":
+            case "tuple":
+                this.colAttr.setText(super.resources.getString("ModalInfoInstance.tableIndex"));
+            break;
+            case "dict":
+                this.colAttr.setText(super.resources.getString("ModalInfoInstance.tableKey"));
+            break;
+            case "set":
+                this.tableAttributes.getColumns().remove(this.colAttr);
+        }
+    }
+    
+    private void configColsAttributes(){
         this.colAttr.setCellValueFactory(new PropertyValueFactory("key"));
         this.colValue.setCellValueFactory(new PropertyValueFactory("value"));
         this.colValue.setCellFactory(new Callback<TableColumn<AttrInstancia, String>, TableCell<AttrInstancia, String>>() {
@@ -92,7 +155,9 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
         
         this.colType.setCellValueFactory(new PropertyValueFactory("type"));
         this.colOwnerAttr.setCellValueFactory(new PropertyValueFactory("owner"));
-        
+    }
+    
+    private void configColsMethods(){
         this.colMethod.setCellValueFactory(new PropertyValueFactory("name"));
         this.colOwnerMeth.setCellValueFactory(new PropertyValueFactory("owner"));
         this.coLParams.setCellValueFactory(new PropertyValueFactory<MethodInstancia, String>("args"){
@@ -133,42 +198,5 @@ public class ViewModalInfoInstance extends ViewBase<BorderPane, MundoInstancia>{
                 return cell;
             }
         });
-        
-        super.modal = new Stage();
-        super.modal.setScene(new Scene(super.root));
-    }
-    
-    @Override
-    public void preload(MundoInstancia object) {
-        this.lblName.setText(object.getName());
-        this.lblClass.setText(object.getName_class());
-        
-        object.getAttrs().forEach((clazz, list) -> this.tableAttributes.getItems().addAll(list));
-        object.getMethods().forEach((clazz, list) -> this.tableMethods.getItems().addAll(list));
-        super.modal.setTitle(object.getName());
-    }
-    
-    public void setOnClickObject(Consumer<String> onClickObject) {
-        this.onClickObject = onClickObject;
-    }
-    
-    private void handleClickedReference(){
-        if(!this.tableAttributes.getSelectionModel().isEmpty()){
-            AttrInstancia selected = this.tableAttributes.getSelectionModel().getSelectedItem();
-            if(selected.getToReference()){
-                this.onClickObject.accept(selected.getValue());
-            }
-        }
-    }
-    
-    private void handleClickedInfo(MethodInstancia method){
-        if(method == null) return;
-        
-        String docs = method.getDocs();
-        if(docs != null && !docs.isBlank() && !docs.isEmpty()){
-            Alert alert = new Alert(Alert.AlertType.NONE, docs, ButtonType.OK);
-            alert.setTitle(method.getName());
-            alert.show();
-        }
     }
 }
