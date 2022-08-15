@@ -41,6 +41,8 @@ public class FXMLControllerInfoInstance extends FXMLBaseController<ViewModalInfo
     @FXML private TableColumn<MethodInstancia, String> coLParams;
     
     @FXML private TableColumn<MethodInstancia, String> colOwnerMeth;
+    
+    @FXML private TableColumn<MethodInstancia, String> colInfo;
 
     public FXMLControllerInfoInstance(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);

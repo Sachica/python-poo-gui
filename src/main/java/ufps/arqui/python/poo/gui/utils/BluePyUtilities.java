@@ -40,6 +40,7 @@ public class BluePyUtilities {
     public final static String PYTHON_FILE_LOGO = "/python_logo.png";
     public final static String FOLDER_ICON = "/folder_icon.png";
     public final static String REF_ARROW = "/arrow.png";
+    public final static String INFO_ICON = "/info-icon.png";
     
     public static Object[] loadView(String fxml, Callback<Class<?>, Object> controllerFactory, ResourceBundle resources) throws IOException{
         FXMLLoader loader = new FXMLLoader(BluePyUtilities.class.getResource(fxml), resources);
