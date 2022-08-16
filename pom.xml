@@ -15,11 +15,13 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>13</version>
+			<classifier>linux</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>13</version>
+			<classifier>linux</classifier>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
