@@ -9,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.controllers.FXMLBaseController;
 import ufps.arqui.python.poo.gui.controllers.complements.FXMLPanelInstanceController;
@@ -29,13 +30,14 @@ public class ViewMundo extends ViewBase<ScrollPane, Object> {
     
     private Callback<Class<?>, Object> controllerFactory;
     
-    private Consumer<String> onClickObject;
+    //[Stage(Back Stage), ID_Reference(Key to Next Stage)]
+    private Consumer<Object[]> onClickObject;
 
     public ViewMundo() {
         super();
         
-        this.onClickObject = (id) -> {
-            this.showModal(id);
+        this.onClickObject = (object) -> {
+            this.showModal((Stage)object[0], object[1].toString());
         };
     }
 
@@ -108,8 +110,10 @@ public class ViewMundo extends ViewBase<ScrollPane, Object> {
         return modalInfoInstance;
     }
     
-    private void showModal(String id){
-        this.viewInstances.get(id).getModal().show();
-        this.viewInstances.get(id).getModal().requestFocus();
+    private void showModal(Stage preStage, String id){
+        ViewModalInfoInstance modalInfo = this.viewInstances.get(id);
+        modalInfo.setCurrentPosition(preStage);
+        modalInfo.getModal().show();
+        modalInfo.getModal().requestFocus();
     }
 }

@@ -59,7 +59,10 @@ public class ViewModalInfoInstance extends ViewBase<VBox, MundoInstancia>{
     
     private TableColumn<MethodInstancia, String> colInfo;
     
-    private Consumer<String> onClickObject;
+    //[Stage(Back Stage), ID_Reference(Key to Next Stage)]
+    private Consumer<Object[]> onClickObject;
+    
+    private boolean wasMoved;
     
     private final Image imageRef;
     
@@ -103,13 +106,13 @@ public class ViewModalInfoInstance extends ViewBase<VBox, MundoInstancia>{
         super.modal.setTitle(object.getName());
     }
     
-    public void setOnClickObject(Consumer<String> onClickObject) {
+    public void setOnClickObject(Consumer<Object[]> onClickObject) {
         this.onClickObject = onClickObject;
     }
     
     private void handleClickedReference(AttrInstancia selected){
         if(selected != null && selected.getToReference()){
-            this.onClickObject.accept(selected.getValue());
+            this.onClickObject.accept(new Object[]{super.modal, selected.getValue()});
         }
     }
     
@@ -219,5 +222,13 @@ public class ViewModalInfoInstance extends ViewBase<VBox, MundoInstancia>{
 
             return cell;
         };
+    }
+    
+    public void setCurrentPosition(Stage preStage){
+        if(!this.wasMoved){
+            super.modal.setX(preStage.getX()+40);
+            super.modal.setY(preStage.getY()+40);
+            this.wasMoved = true;
+        }
     }
 }
