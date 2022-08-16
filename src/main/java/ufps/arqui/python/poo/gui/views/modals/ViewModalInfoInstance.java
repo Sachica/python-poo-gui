@@ -166,6 +166,7 @@ public class ViewModalInfoInstance extends ViewBase<VBox, MundoInstancia>{
                     if(value != null && !empty && getTableRow() != null
                             && getTableRow().getItem().getToReference()){
                         ImageView imgView = new ImageView(imageRef);
+                        setText(null);
                         setGraphic(imgView);
                     }else{
                         setText(value);

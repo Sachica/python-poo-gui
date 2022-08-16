@@ -3,6 +3,7 @@ package ufps.arqui.python.poo.gui.views.complements;
 import java.io.IOException;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import ufps.arqui.python.poo.gui.controllers.FXMLBaseController;
@@ -44,7 +45,8 @@ public class ViewPanelInstance extends ViewBase<BorderPane, MundoInstancia>{
         super.preload(object);
         
         this.lblName.setText(object.getName());
-        this.lblClass.setText(object.getName_class());
+        this.lblClass.setText(String.format("< %s >", object.getName_class()));
+        this.lblClass.setTooltip(new Tooltip(object.getName_class()));
         
         try{
             Object objInfoInstance[] = BluePyUtilities.loadView(BluePyUtilities.MODAL_INFO_INSTANCE, this.controllerFactory, resources);

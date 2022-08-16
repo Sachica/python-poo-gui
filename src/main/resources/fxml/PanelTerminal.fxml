@@ -9,6 +9,7 @@
 <BorderPane fx:id="root"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@../styles/panel_terminal.css"
             fx:controller="ufps.arqui.python.poo.gui.controllers.FXMLTerminalController">
     <center>
         <ScrollPane fx:id="scrollPaneOutput">

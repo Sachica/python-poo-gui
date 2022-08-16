@@ -103,7 +103,12 @@ public class ViewTerminal extends ViewBase<BorderPane, Object> {
             } else if (output.getTipo().equals(TipoMensaje.ERROR)) {
                 lbl.setStyle("-fx-text-fill: #f00");
             }
-
+            
+            lbl.setWrapText(true);
+            lbl.setPrefWidth(this.scrollPaneOutput.widthProperty().get());
+            this.scrollPaneOutput.widthProperty().addListener((e) -> {
+                lbl.setPrefWidth(this.scrollPaneOutput.widthProperty().get());
+            });
             this.paneOutput.getChildren().add(lbl);
         });
     }

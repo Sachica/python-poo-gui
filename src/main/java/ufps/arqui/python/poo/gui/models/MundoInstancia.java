@@ -20,7 +20,7 @@ public class MundoInstancia {
     private String name;
 
     /**
-     * Nombre de la clase a la que pertenece la instalcia.
+     * Nombre de la clase a la que pertenece la instancia.
      */
     private String name_class;
 
