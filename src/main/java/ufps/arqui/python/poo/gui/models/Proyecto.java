@@ -78,11 +78,8 @@ public class Proyecto {
     private TerminalInteractiva terminalInteractiva;
 
     public Proyecto() {
-    }
-
-    public Proyecto(TerminalInteractiva terminalInteractiva, Editor editor) {
-        this.terminalInteractiva = terminalInteractiva;
-        this.editor = editor;
+        this.terminalInteractiva = new TerminalInteractiva();
+        this.editor = new Editor(this);
         
         terminalInteractiva.getCurrentMessage().addListener(new ChangeListener<Mensaje>() {
             @Override

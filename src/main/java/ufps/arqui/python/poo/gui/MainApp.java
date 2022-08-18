@@ -46,7 +46,7 @@ public class MainApp extends Application {
     private Scene getMainScene(Stage stage) throws IOException{
         ResourceBundle resources = BluePyUtilities.getDefaultResources();
         
-        Proyecto proyecto = new Proyecto(new TerminalInteractiva(), new Editor());
+        Proyecto proyecto = new Proyecto();
         
         FXMLBaseController baseController = new FXMLBaseController(stage, proyecto);
         Callback controllerFactory = baseController.getControllerFactory();

@@ -18,9 +18,6 @@
                             onAction="#handleSaveFile"/>
                 <MenuItem   text="%PanelEditorTexto.file.saveAll"
                             onAction="#handleSaveAllFiles"/>
-                <SeparatorMenuItem />
-                <MenuItem   text="%PanelEditorTexto.file.close"
-                            onAction="#handleCloseTab"/>
             </Menu>
             <Menu text="%PanelEditorTexto.tools">
                 <MenuItem   text="%PanelEditorTexto.tools.newClass"

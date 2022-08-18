@@ -10,13 +10,16 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import javafx.concurrent.Task;
-import javafx.scene.control.Tab;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.wellbehaved.event.EventPattern;
+import org.fxmisc.wellbehaved.event.InputMap;
+import org.fxmisc.wellbehaved.event.Nodes;
 import org.reactfx.Subscription;
 import ufps.arqui.python.poo.gui.exceptions.Exceptions;
-import ufps.arqui.python.poo.gui.models.ArchivoPython;
 
 /**
  *
@@ -27,21 +30,16 @@ public class CustomCodeArea {
     private CodeArea codeArea;
     private Subscription subscription;
     private ExecutorService executor;
-    private ArchivoPython archivoPython;
-    private Tab tab;
 
-    public CustomCodeArea(ArchivoPython archivoPython, Tab tab) throws Exceptions {
-        this.archivoPython = archivoPython;
-        this.tab = tab;
-        
+    public CustomCodeArea(String initialContent) throws Exceptions {
         this.codeArea = new CodeArea();
         this.codeArea.setStyle("-fx-font-size: 12pt;");
         this.executor = ManageTextEditor.getExecutor();
 
-        this.init();
+        this.init(initialContent);
     }
 
-    private void init() throws Exceptions {
+    private void init(String initialContent) throws Exceptions {
         this.codeArea.setParagraphGraphicFactory(LineNumberFactory.get(this.codeArea));
         this.subscription = this.codeArea.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(500))
@@ -58,8 +56,9 @@ public class CustomCodeArea {
                 })
                 .subscribe(this::applyHighlighting);
         // call when no longer need it: `cleanupWhenFinished.unsubscribe();`
+        this.codeArea.replaceText(0, 0, initialContent);
         
-        codeArea.replaceText(0, 0, this.archivoPython.getContenido());
+        this.configTabKey();
     }
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
@@ -77,17 +76,17 @@ public class CustomCodeArea {
     private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
         this.codeArea.setStyleSpans(0, highlighting);
     }
+    
+    private void configTabKey(){
+        InputMap<KeyEvent> im = InputMap.consume(
+            EventPattern.keyPressed(KeyCode.TAB), 
+            e -> codeArea.replaceSelection("    ")
+        );
+        Nodes.addInputMap(this.codeArea, im);
+    }
 
     public CodeArea getCodeArea() {
         return this.codeArea;
-    }
-
-    public Tab getTab() {
-        return tab;
-    }
-
-    public void setArchivoPython(ArchivoPython archivoPython) {
-        this.archivoPython = archivoPython;
     }
     
     public void stop(){

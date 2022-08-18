@@ -7,8 +7,8 @@ package ufps.arqui.python.poo.gui.controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import java.util.function.Consumer;
+import javafx.collections.ListChangeListener;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,22 +25,25 @@ import ufps.arqui.python.poo.gui.views.ViewEditorTexto;
 public class FXMLEditorTextoController extends FXMLBaseController<ViewEditorTexto>{
 
     @FXML
-    public TabPane tabPane;
+    private TabPane tabPane;
+    
+    private final Consumer<ArchivoPython> onCloseTab;
 
     public FXMLEditorTextoController(Stage stage, Proyecto proyecto) {
         super(stage, proyecto);
         
-        super.proyecto.getEditor().getUltimoArchivoAbiertoProperty().addListener(new ChangeListener<ArchivoPython>() {
-            @Override
-            public void changed(ObservableValue<? extends ArchivoPython> arg0, ArchivoPython arg1, ArchivoPython arg2) {
-                view.preload(arg2);
-            }
-        });
+        this.onCloseTab = (archivoPython) -> {
+            this.proyecto.getEditor().cerrarArchivo(archivoPython);
+        };
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
+        
+        this.bindOpenFiles();
+        
+        this.view.setOnCloseTab(this.onCloseTab);
     }
 
     public void handleSaveFile(ActionEvent actionEvent) {
@@ -49,12 +52,25 @@ public class FXMLEditorTextoController extends FXMLBaseController<ViewEditorText
     public void handleSaveAllFiles(ActionEvent actionEvent) {
     }
 
-    public void handleCloseTab(ActionEvent actionEvent) {
-    }
-
     public void handleNewClass(ActionEvent actionEvent) {
     }
 
     public void handleDeleteClass(ActionEvent actionEvent) {
+    }
+    
+    private void bindOpenFiles(){
+        super.proyecto.getEditor().getArchivosAbiertos().addListener(new ListChangeListener<ArchivoPython>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends ArchivoPython> e) {
+                if( e.next()){
+                    //Ya estaba abierto o fue un nuevo archivo?
+                    if(e.wasReplaced() || e.wasAdded()){
+                        view.abriArchivos(e.getAddedSubList());
+                    }else if(e.wasRemoved()){
+                        view.cerrarArchivos(e.getRemoved());
+                    }
+                }
+            }
+        });
     }
 }
